@@ -1,11 +1,12 @@
 import java.util.Scanner;
+import processor.Registers;
 
 public class SimulatorMain {
 
     // Memory and Register objects to interact with the pseudo RISC-V processor.
-    private static Memory memory = new Memory();
+    //private static Memory memory = new Memory();
     private static Registers registers = new Registers();
-    private static Pipeline pipeline = new Pipeline(memory, registers);
+    //private static Pipeline pipeline = new Pipeline(memory, registers);
 
     public static void main(String[] args) {
         // Load the .dat file into memory. (Loader logic should be completed separately.)
@@ -36,7 +37,7 @@ public class SimulatorMain {
                     pipeline.runNextInstruction();
                     break;
                 case "pc":
-                    System.out.println(registers.getPC());
+                    System.out.println(registers.getRegisterValue(input));
                     break;
                 case "insn":
                     // Assuming a method in Pipeline class fetches the next instruction.
