@@ -1,5 +1,8 @@
+package processor;
+
 import java.util.Scanner;
 import processor.Registers;
+import processor.Utility;
 
 public class SimulatorMain {
 
@@ -10,7 +13,7 @@ public class SimulatorMain {
 
     public static void main(String[] args) {
         // Load the .dat file into memory. (Loader logic should be completed separately.)
-        Loader.loadFileIntoMemory("path_to_dat_file.dat", memory); // TODO: Take in via stdin
+        //Loader.loadFileIntoMemory("path_to_dat_file.dat", memory); // TODO: Take in via stdin
 
         Scanner scanner = new Scanner(System.in);
         boolean isRunning = true;
@@ -31,34 +34,33 @@ public class SimulatorMain {
 
             switch(input) {
                 case "r":
-                    pipeline.runUntilBreakpointOrEnd();
+                    //pipeline.runUntilBreakpointOrEnd();
                     break;
                 case "s":
-                    pipeline.runNextInstruction();
+                    //pipeline.runNextInstruction();
                     break;
                 case "pc":
                     System.out.println(registers.getRegisterValue(input));
                     break;
                 case "insn":
                     // Assuming a method in Pipeline class fetches the next instruction.
-                    System.out.println(pipeline.getNextInstructionInAssembly());
+                    //System.out.println(pipeline.getNextInstructionInAssembly());
                     break;
                 case "c":
-                    pipeline.continueExecution();
+                    //pipeline.continueExecution();
                     break;
                 case "q":
                     isRunning = false;
                     break;
                 default:
                     if(input.startsWith("x")) {
-                        int registerNumber = Integer.parseInt(input.substring(1));
-                        System.out.println(registers.getRegisterValue(registerNumber));
+                        System.out.println(registers.getRegisterValue(input));
                     } else if(input.startsWith("b ")) {
                         int pcValue = Integer.parseInt(input.split(" ")[1]);
-                        pipeline.addBreakpoint(pcValue);
+                        //pipeline.addBreakpoint(pcValue);
                     } else if(input.matches("^0x[0-9a-fA-F]{8}$")) {
-                        String value = memory.getDataFromAddress(input);
-                        System.out.println(value);
+                        //String value = memory.getDataFromAddress(input);
+                        //System.out.println(value);
                     } else {
                         System.out.println("Invalid command!");
                     }
