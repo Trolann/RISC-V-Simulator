@@ -17,15 +17,15 @@ public class SimulatorMain {
 
         while(isRunning) {
             System.out.println("Choose an option:");
-            System.out.println("r: Run the program");
-            System.out.println("s: Run next instruction");
-            System.out.println("x[0-31]: View register content");
-            System.out.println("0x######## (8 hex digits): View memory content at address");
-            System.out.println("pc: View PC value");
-            System.out.println("insn: View next assembly instruction");
-            System.out.println("b [pc]: Set a breakpoint at [pc] where pc is a hex value");
-            System.out.println("c: Continue execution till next breakpoint or exit");
-            System.out.println("q: Quit simulator");
+            System.out.println("      r: Run the program");
+            System.out.println("      s: Run next instruction");
+            System.out.println("      x[0-31]: View register content");
+            System.out.println("      0x######## (8 hex digits): View memory content at address");
+            System.out.println("      pc: View PC value");
+            System.out.println("      insn: View next assembly instruction");
+            System.out.println("      b [pc]: Set a breakpoint at [pc] where pc is a hex value");
+            System.out.println("      c: Continue execution till next breakpoint or exit");
+            System.out.println("      q: Quit simulator");
 
             String input = scanner.nextLine();
 
