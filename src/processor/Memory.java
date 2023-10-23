@@ -2,7 +2,7 @@ package processor;
 
 import java.util.HashMap;
 
-public class Memory {
+public class Memory{
 
   private HashMap<String, String> memoryMap;
   
@@ -11,6 +11,7 @@ public class Memory {
   }
 
   public void setMemoryValue(String address, String value) {
+	  //check to make sure value is not too large
     memoryMap.put(address, value); 
   }
 
