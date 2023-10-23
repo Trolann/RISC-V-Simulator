@@ -11,7 +11,7 @@ public class Memory{
   }
 
   public void setMemoryValue(String address, String value) {
-	  //check to make sure value is not too large
+	  //TODO: error handling for memory? ie. check if value is valid?
     memoryMap.put(address, value); 
   }
 
