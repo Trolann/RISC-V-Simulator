@@ -13,6 +13,8 @@ public class SimulatorMain {
 
     public static void main(String[] args) {
         // Load the .dat file into memory. (Loader logic should be completed separately.)
+        Loader loader = new Loader("src\\processor\\input_files\\addi_hazards.dat");
+        loader.loadData();
         //Loader.loadFileIntoMemory("path_to_dat_file.dat", memory); // TODO: Take in via stdin
 
         Scanner scanner = new Scanner(System.in);

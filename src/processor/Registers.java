@@ -7,13 +7,13 @@ public class Registers {
     private final HashMap<String, String> registerMap;
 
     public Registers() {
-        this.registerMap = new HashMap<>();
+        this.registerMap = new HashMap<>(32);
 
         // Initialize general-purpose registers x1 to x31
         for (int i = 0; i <= 31; i++) {
             registerMap.put("x" + i, "00000000000000000000000000000000");
         }
-        registerMap.put("pc", "00000000000000000000000000000000");
+        registerMap.put("pc", "00000000000000000000000000000110");
     }
 
     public void setRegisterValue(String registerKey, String value) {

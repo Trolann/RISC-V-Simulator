@@ -1,3 +1,5 @@
+package processor;
+
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,7 +12,7 @@ public class Loader {
     public Loader(String filePath) {
         this.filePath = filePath;
     }
-    
+
     public void loadData() {
         try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(filePath))) {
             int count = 0;
@@ -36,3 +38,4 @@ public class Loader {
             System.out.println("Error reading the file: " + e.getMessage());
         }
     }
+}
