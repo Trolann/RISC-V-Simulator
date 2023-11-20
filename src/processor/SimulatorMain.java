@@ -3,17 +3,26 @@ package processor;
 import java.util.Scanner;
 import processor.Registers;
 import processor.Utility;
+import processor.Loader;
 
 public class SimulatorMain {
 
     // Memory and Register objects to interact with the pseudo RISC-V processor.
     private static Memory memory = new Memory();
     private static Registers registers = new Registers();
+    private static Loader loader = new Loader(memory);
     //private static Pipeline pipeline = new Pipeline(memory, registers);
 
     public static void main(String[] args) {
         // Load the .dat file into memory. (Loader logic should be completed separately.)
-        Utility.loadData("src\\processor\\input_files\\addi_hazards.dat", memory); // TODO: Take in via stdin
+        // Load instructions using Loader
+        try {
+          loader.loadInstructions("src\\processor\\input_files\\addi_hazards.dat"); 
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        //Question: do we need line below?
+        // Utility.loadData("src\\processor\\input_files\\addi_hazards.dat", memory); // TODO: Take in via stdin
 
         Scanner scanner = new Scanner(System.in);
         boolean isRunning = true;
