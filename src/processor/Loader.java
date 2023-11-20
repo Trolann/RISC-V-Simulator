@@ -1,7 +1,9 @@
+package processor;
+
 import java.io.*;
+import processor.Memory;
 
 public class Loader {
-
   private Memory memory;
 
   public Loader(Memory memory) {

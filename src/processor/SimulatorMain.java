@@ -1,5 +1,6 @@
 package processor;
 
+import java.io.IOException;
 import java.util.Scanner;
 import processor.Registers;
 import processor.Utility;
