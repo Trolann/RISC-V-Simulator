@@ -2,9 +2,6 @@ package processor;
 
 import java.io.IOException;
 import java.util.Scanner;
-import processor.Registers;
-import processor.Utility;
-import processor.Loader;
 
 public class SimulatorMain {
 
