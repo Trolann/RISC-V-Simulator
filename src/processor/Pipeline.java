@@ -1,5 +1,6 @@
 package processor;
 
+import javax.sound.midi.SysexMessage;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -64,88 +65,172 @@ public class Pipeline {
     public HashMap<String, String> machineToAsm(String instruction) {
         HashMap<String, String> decodedInstruction = new HashMap<>();
 
-        String opcode = instruction.substring(25, 32);
-        String funct3 = "";
-        String funct7 = "";
-        String rd = "";
-        String rs1 = "";
-        String rs2 = "";
-        String immediate = "";
-        String asmInstruction = "";
+        String oc = instruction.substring(25, 32); // opcode
+        String rd = instruction.substring(20, 25); // destination register
+        String fc = instruction.substring(17, 20); // function code
+        String rs1 = instruction.substring(12, 17); // source register 1
+        String rs2 = instruction.substring(7, 12); // source register 2
+        String finalASM = "";
 
-        switch(opcode) {
+        switch (oc) {
             case "0110111":
+                finalASM = "lui";
+                break;
             case "0010111":
-                // LUI and AUIPC
-                rd = instruction.substring(20, 25);
-                immediate = instruction.substring(0, 20);
+                finalASM = "auipc";
                 break;
-
             case "1101111":
-                // JAL - J-type instruction
-                rd = instruction.substring(20, 25);
-                // Properly form J-type immediate
-                immediate = instruction.charAt(0)
-                        + instruction.substring(12, 20)
-                        + instruction.charAt(11)
-                        + instruction.substring(1, 11);
+                finalASM = "jal";
                 break;
-
             case "1100111":
-                // JALR
-                rd = instruction.substring(20, 25);
-                funct3 = instruction.substring(17, 20);
-                rs1 = instruction.substring(12, 17);
-                immediate = instruction.substring(0, 12);
+                finalASM = "jalr";
                 break;
-
             case "1100011":
-                // B-type (BEQ, BNE, BLT, BGE, BLTU, BGEU)
-                funct3 = instruction.substring(17, 20);
-                rs1 = instruction.substring(12, 17);
-                rs2 = instruction.substring(7, 12);
-                // Properly form B-type immediate
-                immediate = instruction.charAt(0)
-                        + instruction.charAt(24)
-                        + instruction.substring(1, 7)
-                        + instruction.substring(20, 24);
-                break;
-
-            case "0000011":
-            case "0100011":
-                // Loads (LB, LH, LW, LBU, LHU) and Stores (SB, SH, SW)
-                funct3 = instruction.substring(17, 20);
-                rd = instruction.substring(20, 25);
-                rs1 = instruction.substring(12, 17);
-                rs2 = instruction.substring(7, 12);
-                immediate = instruction.substring(0, 7) + instruction.substring(20, 25); // I/S-type immediate
-                break;
-
-            case "0010011":
-            case "0110011":
-                // I-type and R-type instructions (e.g., ADDI, SLTI, AND, OR...)
-                rd = instruction.substring(20, 25);
-                funct3 = instruction.substring(17, 20);
-                rs1 = instruction.substring(12, 17);
-                rs2 = instruction.substring(7, 12);
-                funct7 = instruction.substring(0, 7);
-                if(opcode.equals("0010011")) {  // I-type
-                    immediate = funct7;
+                switch (fc) {
+                    case "000":
+                        finalASM = "beq";
+                        break;
+                    case "001":
+                        finalASM = "bne";
+                        break;
+                    case "100":
+                        finalASM = "blt";
+                        break;
+                    case "101":
+                        finalASM = "bge";
+                        break;
+                    case "110":
+                        finalASM = "bltu";
+                        break;
+                    case "111":
+                        finalASM = "bgeu";
+                        break;
                 }
                 break;
-
+            case "0000011":
+                switch (fc) {
+                    case "000":
+                        finalASM = "lb";
+                        break;
+                    case "001":
+                        finalASM = "lh";
+                        break;
+                    case "010":
+                        finalASM = "lw";
+                        break;
+                    case "100":
+                        finalASM = "lbu";
+                        break;
+                    case "101":
+                        finalASM = "lhu";
+                        break;
+                }
+                break;
+            case "0100011":
+                switch (fc) {
+                    case "000":
+                        finalASM = "sb";
+                        break;
+                    case "001":
+                        finalASM = "sh";
+                        break;
+                    case "010":
+                        finalASM = "sw";
+                        break;
+                }
+                break;
+            case "0010011":
+                switch (fc) {
+                    case "000":
+                        finalASM = "addi";
+                        break;
+                    case "010":
+                        finalASM = "slti";
+                        break;
+                    case "011":
+                        finalASM = "sltiu";
+                        break;
+                    case "100":
+                        finalASM = "xori";
+                        break;
+                    case "110":
+                        finalASM = "ori";
+                        break;
+                    case "111":
+                        finalASM = "andi";
+                        break;
+                    case "001":
+                        finalASM = "slli";
+                        break;
+                    case "101":
+                        String imm = instruction.substring(0, 7);
+                        if (imm.equals("0000000")) {
+                            finalASM = "srli";
+                        } else if (imm.equals("0100000")) {
+                            finalASM = "srai";
+                        }
+                        break;
+                }
+                break;
+            case "0110011":
+                switch (fc) {
+                    case "000":
+                        String imm = instruction.substring(0, 7);
+                        if (imm.equals("0000000")) {
+                            finalASM = "add";
+                        } else if (imm.equals("0100000")) {
+                            finalASM = "sub";
+                        }
+                        break;
+                    case "001":
+                        finalASM = "sll";
+                        break;
+                    case "010":
+                        finalASM = "slt";
+                        break;
+                    case "011":
+                        finalASM = "sltu";
+                        break;
+                    case "100":
+                        finalASM = "xor";
+                        break;
+                    case "101":
+                        imm = instruction.substring(0, 7);
+                        if (imm.equals("0000000")) {
+                            finalASM = "srl";
+                        } else if (imm.equals("0100000")) {
+                            finalASM = "sra";
+                        }
+                        break;
+                    case "110":
+                        finalASM = "or";
+                        break;
+                    case "111":
+                        finalASM = "and";
+                        break;
+                }
+                break;
+            case "0001111":
+                finalASM = "fence";
+                break; // Assuming 'fence' for simplicity
+            case "1110011":
+                if (instruction.substring(0, 20).equals("00000000000000000000")) {
+                    finalASM = "ecall";
+                } else if (instruction.substring(0, 20).equals("00000000000100000000")) {
+                    finalASM = "ebreak";
+                }
+                break;
+            // Additional cases for other instructions, if any
             default:
-                // Not supported or system instruction
-                return decodedInstruction; // Empty HashMap
+                finalASM = "unknown";
+                break;
         }
-
-        decodedInstruction.put("opcode", opcode);
-        if (!rd.isEmpty()) decodedInstruction.put("rd", rd);
-        if (!funct3.isEmpty()) decodedInstruction.put("funct3", funct3);
-        if (!rs1.isEmpty()) decodedInstruction.put("rs1", rs1);
-        if (!rs2.isEmpty()) decodedInstruction.put("rs2", rs2);
-        if (!immediate.isEmpty()) decodedInstruction.put("immediate", immediate);
-
+        System.out.println("final ASM" + finalASM);
+        System.out.println("rd as String: " + registers.getRegisterString(rd));
+        System.out.println("rs1 as String: " + registers.getRegisterString(rs1));
+        System.out.println("rs2 as String: " + registers.getRegisterString(rs2));
+        decodedInstruction.put("asm", finalASM);
+        // Other decoded fields can be added to the map as needed
         return decodedInstruction;
     }
 

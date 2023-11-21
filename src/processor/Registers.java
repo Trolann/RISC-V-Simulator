@@ -1,6 +1,7 @@
 package processor;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Registers {
 
@@ -16,9 +17,24 @@ public class Registers {
         registerMap.put("pc", Utility.ALLZEROS);
     }
 
+    public static String getRegisterString(String registerKey) {
+        //Convert from binary string to decimal integer
+        int registerInt = Integer.parseInt(registerKey, 2);
+        String returnString = "";
+        if(registerInt == 5) returnString = "t0";
+        if(registerInt == 6) returnString = "t1";
+        if(registerInt == 7) returnString = "t2";
+        if(registerInt == 28) returnString = "t3";
+        if(registerInt == 29) returnString = "t4";
+        if(registerInt == 30) returnString = "t5";
+        if(registerInt == 31) returnString = "t6";
+        if(returnString.equals("")) returnString = "x" + registerInt;
+        return returnString;
+    }
+
     public void setRegisterValue(String registerKey, String value) {
         // Only set the value if the key exists (no new keys allowed)
-        if (registerMap.containsKey(registerKey) && registerKey != "x0" && value.length() == 32) {
+        if (registerMap.containsKey(registerKey) && !Objects.equals(registerKey, "x0") && value.length() == 32) {
             registerMap.put(registerKey, value);
         }
     }

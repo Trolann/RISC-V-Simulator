@@ -60,6 +60,7 @@ public class SimulatorMain {
                     while(!value.equals(allZeroes)) {
                         // Address is binary string, convert to hex
                         System.out.println("0x" + Integer.toHexString(Integer.parseInt(address, 2)) + ": " + value);
+                        System.out.println(pipeline.machineToAsm(value));
                         address = Utility.StringCrement(address, 1);
                         value = memory.getMemoryValue(address);
                     }
@@ -75,7 +76,7 @@ public class SimulatorMain {
                     break;
                 case "insn":
                     // Assuming a method in Pipeline class fetches the next instruction.
-                    System.out.println(pipeline.getNextInstructionInAssembly());
+                    //System.out.println(pipeline.getNextInstructionInAssembly());
                     break;
                 case "c":
                     pipeline.continueExecution();
@@ -90,8 +91,8 @@ public class SimulatorMain {
                         int pcValue = Integer.parseInt(input.split(" ")[1]);
                         pipeline.addBreakpoint(pcValue);
                     } else if(input.matches("^0x[0-9a-fA-F]{8}$")) {
-                        //String value = memory.getDataFromAddress(input);
-                        //System.out.println(value);
+                        String value2 = memory.getMemoryValue(input.substring(2));
+                        System.out.println(value2);
                     } else {
                         System.out.println("Invalid command!");
                     }
