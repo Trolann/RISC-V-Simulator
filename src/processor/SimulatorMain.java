@@ -9,20 +9,30 @@ public class SimulatorMain {
     private static Memory memory = new Memory();
     private static Registers registers = new Registers();
     private static Loader loader = new Loader(memory);
-    //private static Pipeline pipeline = new Pipeline(memory, registers);
+    private static Pipeline pipeline = new Pipeline(memory, registers);
+    // Define a constant for all zeroes
+    private static final String allZeroes = Utility.ALLZEROS;
+
 
     public static void main(String[] args) {
+        String inputFile;
+        Scanner scanner = new Scanner(System.in);
+        // Get input file from stdin
+        if(args.length == 0) {
+            System.out.println("Please enter the input file name:");
+            inputFile = scanner.nextLine();
+            inputFile = "src/processor/input_files/" + inputFile;
+        } else {
+            inputFile = args[0];
+        }
         // Load the .dat file into memory. (Loader logic should be completed separately.)
         // Load instructions using Loader
         try {
-          loader.loadInstructions("src\\processor\\input_files\\addi_hazards.dat"); 
+          loader.loadInstructions(inputFile);
         } catch (IOException e) {
           e.printStackTrace();
         }
-        //Question: do we need line below?
-        // Utility.loadData("src\\processor\\input_files\\addi_hazards.dat", memory); // TODO: Take in via stdin
 
-        Scanner scanner = new Scanner(System.in);
         boolean isRunning = true;
 
         while(isRunning) {
@@ -40,21 +50,35 @@ public class SimulatorMain {
             String input = scanner.nextLine();
 
             switch(input) {
+                case "m":
+                    // While memory values are not 0, keep printing them in format
+                    // 0xaddress: string value
+                    // Increment address by 1 each time
+
+                    String address = allZeroes;
+                    String value = memory.getMemoryValue(address);
+                    while(!value.equals(allZeroes)) {
+                        // Address is binary string, convert to hex
+                        System.out.println("0x" + Integer.toHexString(Integer.parseInt(address, 2)) + ": " + value);
+                        address = Utility.StringCrement(address, 1);
+                        value = memory.getMemoryValue(address);
+                    }
+                    break;
                 case "r":
-                    //pipeline.runUntilBreakpointOrEnd();
+                    pipeline.runUntilBreakpointOrEnd();
                     break;
                 case "s":
-                    //pipeline.runNextInstruction();
+                    pipeline.runNextInstruction();
                     break;
                 case "pc":
                     System.out.println(registers.getRegisterValue(input));
                     break;
                 case "insn":
                     // Assuming a method in Pipeline class fetches the next instruction.
-                    //System.out.println(pipeline.getNextInstructionInAssembly());
+                    System.out.println(pipeline.getNextInstructionInAssembly());
                     break;
                 case "c":
-                    //pipeline.continueExecution();
+                    pipeline.continueExecution();
                     break;
                 case "q":
                     isRunning = false;
@@ -64,7 +88,7 @@ public class SimulatorMain {
                         System.out.println(registers.getRegisterValue(input));
                     } else if(input.startsWith("b ")) {
                         int pcValue = Integer.parseInt(input.split(" ")[1]);
-                        //pipeline.addBreakpoint(pcValue);
+                        pipeline.addBreakpoint(pcValue);
                     } else if(input.matches("^0x[0-9a-fA-F]{8}$")) {
                         //String value = memory.getDataFromAddress(input);
                         //System.out.println(value);

@@ -14,6 +14,9 @@ public class Utility {
      * @param value The value to add.
      * @return The resulting 32-bit binary string.
      */
+
+    public static String ALLZEROS = "00000000000000000000000000000000";
+
     public static String StringCrement(String binaryString, int value) {
         // Convert the binary string to an integer
         int intValue = Integer.parseInt(binaryString, 2);
@@ -39,7 +42,7 @@ public class Utility {
     public static void loadData(String filePath, Memory memory) {
         try (DataInputStream dataInputStream = new DataInputStream(new FileInputStream(filePath))) {
             int count = 0;
-            String memoryAddress = "00000000000000000000000000000000";
+            String memoryAddress = ALLZEROS;
             String instruction = "";
 
             // Read data from the file

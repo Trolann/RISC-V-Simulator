@@ -13,7 +13,7 @@ public class Registers {
         for (int i = 0; i <= 31; i++) {
             registerMap.put("x" + i, "00000000000000000000000000000000");
         }
-        registerMap.put("pc", "00000000000000000000000000000110");
+        registerMap.put("pc", "00000000000000000000000000000000");
     }
 
     public void setRegisterValue(String registerKey, String value) {
