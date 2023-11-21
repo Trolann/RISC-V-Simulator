@@ -11,9 +11,9 @@ public class Registers {
 
         // Initialize general-purpose registers x1 to x31
         for (int i = 0; i <= 31; i++) {
-            registerMap.put("x" + i, "00000000000000000000000000000000");
+            registerMap.put("x" + i, Utility.ALLZEROS);
         }
-        registerMap.put("pc", "00000000000000000000000000000000");
+        registerMap.put("pc", Utility.ALLZEROS);
     }
 
     public void setRegisterValue(String registerKey, String value) {

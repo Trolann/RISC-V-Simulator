@@ -19,7 +19,7 @@ public class Memory{
     if(memoryMap.containsKey(address)) {
       return memoryMap.get(address);
     } else {
-      return "00000000000000000000000000000000"; // default to 0
+      return Utility.ALLZEROS; // default to 0
     }
   }
 

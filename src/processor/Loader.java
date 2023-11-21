@@ -14,7 +14,7 @@ public class Loader {
     FileInputStream fis = new FileInputStream(filename);
     DataInputStream dis = new DataInputStream(fis);
 
-    String address = "00000000000000000000000000000000";
+    String address = Utility.ALLZEROS;
 
     while(dis.available() > 0) {
      
