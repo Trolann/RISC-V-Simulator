@@ -70,104 +70,104 @@ public class Pipeline {
         String fc = instruction.substring(17, 20); // function code
         String rs1 = instruction.substring(12, 17); // source register 1
         String rs2 = instruction.substring(7, 12); // source register 2
-        String finalASM = "";
+        String instructionName = "";
 
         switch (oc) {
             case "0110111":
-                finalASM = "lui";
+                instructionName = "lui";
                 break;
             case "0010111":
-                finalASM = "auipc";
+                instructionName = "auipc";
                 break;
             case "1101111":
-                finalASM = "jal";
+                instructionName = "jal";
                 break;
             case "1100111":
-                finalASM = "jalr";
+                instructionName = "jalr";
                 break;
             case "1100011":
                 switch (fc) {
                     case "000":
-                        finalASM = "beq";
+                        instructionName = "beq";
                         break;
                     case "001":
-                        finalASM = "bne";
+                        instructionName = "bne";
                         break;
                     case "100":
-                        finalASM = "blt";
+                        instructionName = "blt";
                         break;
                     case "101":
-                        finalASM = "bge";
+                        instructionName = "bge";
                         break;
                     case "110":
-                        finalASM = "bltu";
+                        instructionName = "bltu";
                         break;
                     case "111":
-                        finalASM = "bgeu";
+                        instructionName = "bgeu";
                         break;
                 }
                 break;
             case "0000011":
                 switch (fc) {
                     case "000":
-                        finalASM = "lb";
+                        instructionName = "lb";
                         break;
                     case "001":
-                        finalASM = "lh";
+                        instructionName = "lh";
                         break;
                     case "010":
-                        finalASM = "lw";
+                        instructionName = "lw";
                         break;
                     case "100":
-                        finalASM = "lbu";
+                        instructionName = "lbu";
                         break;
                     case "101":
-                        finalASM = "lhu";
+                        instructionName = "lhu";
                         break;
                 }
                 break;
             case "0100011":
                 switch (fc) {
                     case "000":
-                        finalASM = "sb";
+                        instructionName = "sb";
                         break;
                     case "001":
-                        finalASM = "sh";
+                        instructionName = "sh";
                         break;
                     case "010":
-                        finalASM = "sw";
+                        instructionName = "sw";
                         break;
                 }
                 break;
             case "0010011":
                 switch (fc) {
                     case "000":
-                        finalASM = "addi";
+                        instructionName = "addi";
                         break;
                     case "010":
-                        finalASM = "slti";
+                        instructionName = "slti";
                         break;
                     case "011":
-                        finalASM = "sltiu";
+                        instructionName = "sltiu";
                         break;
                     case "100":
-                        finalASM = "xori";
+                        instructionName = "xori";
                         break;
                     case "110":
-                        finalASM = "ori";
+                        instructionName = "ori";
                         break;
                     case "111":
-                        finalASM = "andi";
+                        instructionName = "andi";
                         break;
                     case "001":
-                        finalASM = "slli";
+                        instructionName = "slli";
                         break;
                     case "101":
                         String imm = instruction.substring(0, 7);
                         if (imm.equals("0000000")) {
-                            finalASM = "srli";
+                            instructionName = "srli";
                         } else if (imm.equals("0100000")) {
-                            finalASM = "srai";
+                            instructionName = "srai";
                         }
                         break;
                 }
@@ -177,59 +177,59 @@ public class Pipeline {
                     case "000":
                         String imm = instruction.substring(0, 7);
                         if (imm.equals("0000000")) {
-                            finalASM = "add";
+                            instructionName = "add";
                         } else if (imm.equals("0100000")) {
-                            finalASM = "sub";
+                            instructionName = "sub";
                         }
                         break;
                     case "001":
-                        finalASM = "sll";
+                        instructionName = "sll";
                         break;
                     case "010":
-                        finalASM = "slt";
+                        instructionName = "slt";
                         break;
                     case "011":
-                        finalASM = "sltu";
+                        instructionName = "sltu";
                         break;
                     case "100":
-                        finalASM = "xor";
+                        instructionName = "xor";
                         break;
                     case "101":
                         imm = instruction.substring(0, 7);
                         if (imm.equals("0000000")) {
-                            finalASM = "srl";
+                            instructionName = "srl";
                         } else if (imm.equals("0100000")) {
-                            finalASM = "sra";
+                            instructionName = "sra";
                         }
                         break;
                     case "110":
-                        finalASM = "or";
+                        instructionName = "or";
                         break;
                     case "111":
-                        finalASM = "and";
+                        instructionName = "and";
                         break;
                 }
                 break;
             case "0001111":
-                finalASM = "fence";
+                instructionName = "fence";
                 break; // Assuming 'fence' for simplicity
             case "1110011":
                 if (instruction.substring(0, 20).equals("00000000000000000000")) {
-                    finalASM = "ecall";
+                    instructionName = "ecall";
                 } else if (instruction.substring(0, 20).equals("00000000000100000000")) {
-                    finalASM = "ebreak";
+                    instructionName = "ebreak";
                 }
                 break;
             // Additional cases for other instructions, if any
             default:
-                finalASM = "unknown";
+                instructionName = "unknown";
                 break;
         }
-        System.out.println("final ASM" + finalASM);
+        System.out.println("final ASM" + instructionName);
         System.out.println("rd as String: " + registers.getRegisterString(rd));
         System.out.println("rs1 as String: " + registers.getRegisterString(rs1));
         System.out.println("rs2 as String: " + registers.getRegisterString(rs2));
-        decodedInstruction.put("asm", finalASM);
+        decodedInstruction.put("asm", instructionName);
         // Other decoded fields can be added to the map as needed
         return decodedInstruction;
     }
