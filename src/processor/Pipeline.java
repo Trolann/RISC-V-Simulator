@@ -70,7 +70,7 @@ public class Pipeline {
         String fc = instruction.substring(17, 20); // function code
         String rs1 = instruction.substring(12, 17); // source register 1
         String rs2 = instruction.substring(7, 12); // source register 2
-        String instructionName = "";
+        String instructionName = "Error: {" + oc + "} Instruction not found"; // Assume an error
 
         switch (oc) {
             case "0110111":
@@ -87,6 +87,9 @@ public class Pipeline {
                 break;
             case "1100011":
                 switch (fc) {
+                    default:
+                        instructionName += " fc: " + fc;
+                        break;
                     case "000":
                         instructionName = "beq";
                         break;
@@ -109,6 +112,9 @@ public class Pipeline {
                 break;
             case "0000011":
                 switch (fc) {
+                    default:
+                        instructionName += " fc: " + fc;
+                        break;
                     case "000":
                         instructionName = "lb";
                         break;
@@ -128,6 +134,9 @@ public class Pipeline {
                 break;
             case "0100011":
                 switch (fc) {
+                    default:
+                        instructionName += " fc: " + fc;
+                        break;
                     case "000":
                         instructionName = "sb";
                         break;
@@ -141,6 +150,9 @@ public class Pipeline {
                 break;
             case "0010011":
                 switch (fc) {
+                    default:
+                        instructionName += " fc: " + fc;
+                        break;
                     case "000":
                         instructionName = "addi";
                         break;
@@ -164,6 +176,7 @@ public class Pipeline {
                         break;
                     case "101":
                         String imm = instruction.substring(0, 7);
+                        instructionName += " case: 101 imm: " + imm;
                         if (imm.equals("0000000")) {
                             instructionName = "srli";
                         } else if (imm.equals("0100000")) {
@@ -174,6 +187,9 @@ public class Pipeline {
                 break;
             case "0110011":
                 switch (fc) {
+                    default:
+                        instructionName += " fc: " + fc;
+                        break;
                     case "000":
                         String imm = instruction.substring(0, 7);
                         if (imm.equals("0000000")) {
@@ -225,7 +241,6 @@ public class Pipeline {
                 instructionName = "unknown";
                 break;
         }
-        System.out.println("final ASM" + instructionName);
         System.out.println("rd as String: " + registers.getRegisterString(rd));
         System.out.println("rs1 as String: " + registers.getRegisterString(rs1));
         System.out.println("rs2 as String: " + registers.getRegisterString(rs2));
