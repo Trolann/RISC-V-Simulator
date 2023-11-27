@@ -62,5 +62,43 @@ public class Instructions {
         asmInstruction.add(instruction);
         return instruction;
     }
+
+    // have this varib in it: public HashMap<String, String> machineToAsm(String instruction) { to make the sortting isntruction easier
+    private Memory memory;
+    private Registers registers;
+
+    public Instructions(Memory memory, Registers registers) {
+        this.memory = memory;
+        this.registers = registers;
+    }
+    
+    
+    public void addi(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); //destination register
+        String rs1 = instructionComponents.get("rs1"); //source register 1
+        String imm = instructionComponents.get("imm"); //immediate register
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+        // Convert immediate value from binary string to integer
+        int immediate = Integer.parseInt(imm, 2);
+
+        // Perform addition operation
+        int result = valueIntRs1 + immediate;
+
+        // Convert result back to binary string representation
+        String resultBinary = Integer.toBinaryString(result);
+
+        // Ensure resultBinary is 32-bit length
+        while (resultBinary.length() < 32) {
+            resultBinary = "0" + resultBinary;
+        }
+
+        // Update rd register value
+        registers.setRegisterValue(rd, resultBinary);
+    }
 }
 
