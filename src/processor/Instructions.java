@@ -63,7 +63,6 @@ public class Instructions {
         return instruction;
     }
 
-    // have this varib in it: public HashMap<String, String> machineToAsm(String instruction) { to make the sortting isntruction easier
     private Memory memory;
     private Registers registers;
 
