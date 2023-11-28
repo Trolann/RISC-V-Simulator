@@ -6,8 +6,10 @@ import java.util.Objects;
 public class Registers {
 
     private final HashMap<String, String> registerMap;
+    private int programCounter;
 
     public Registers() {
+        this.programCounter = 0;
         this.registerMap = new HashMap<>(32);
 
         // Initialize general-purpose registers x1 to x31
@@ -47,6 +49,14 @@ public class Registers {
     @Override
     public String toString() {
         return registerMap.toString();
+    }
+
+    public int getProgramCounter() {
+        return programCounter;
+    }
+
+    public void setProgramCounter(int programCounter) {
+        this.programCounter = programCounter;
     }
 
 }
