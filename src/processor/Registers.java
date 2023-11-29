@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Registers {
 
     private final HashMap<String, String> registerMap;
-    private int programCounter;
+    public int programCounter;
 
     public Registers() {
         this.programCounter = 0;
@@ -48,7 +48,12 @@ public class Registers {
 
     @Override
     public String toString() {
-        return registerMap.toString();
+        // For each register, print the register name and value on its own line
+        StringBuilder returnString = new StringBuilder();
+        for (String key : registerMap.keySet()) {
+            returnString.append(key).append(": ").append(registerMap.get(key)).append("\n");
+        }
+        return returnString.toString();
     }
 
     public int getProgramCounter() {

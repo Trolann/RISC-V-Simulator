@@ -1,8 +1,8 @@
 package processor;
 
-import javax.sound.midi.SysexMessage;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class Pipeline {
 
@@ -10,12 +10,56 @@ public class Pipeline {
     private Memory memory;                  // Memory interface
     private HashSet<Integer> breakpoints;   // Store breakpoints as integer addresses
     private boolean hasReachedBreakpoint;
+    private Map<String, InstructionFunction> functionMap;
+    private Instructions instructions;
 
     public Pipeline(Memory memory, Registers registers) {
         this.memory = memory;
         this.registers = registers;
         this.breakpoints = new HashSet<>();
         this.hasReachedBreakpoint = false;
+        this.functionMap = new HashMap<>();
+        this.instructions = new Instructions(memory, registers);
+        functionMap.put("lui", this.instructions::LUI); // 1
+        functionMap.put("auipc", this.instructions::AUIPC); // 2
+        functionMap.put("jal", this.instructions::JAL); // 3
+        functionMap.put("jalr", this.instructions::JALR); // 4
+        functionMap.put("beq", this.instructions::BEQ); // 5
+        functionMap.put("bne", this.instructions::BNE); // 6
+        functionMap.put("blt", this.instructions::BLT); // 7
+        functionMap.put("bge", this.instructions::BGE); // 8
+        functionMap.put("bltu", this.instructions::BLTU); // 9
+        functionMap.put("bgeu", this.instructions::BGEU); // 10
+        functionMap.put("lb", this.instructions::LB); // 11
+        functionMap.put("lh", this.instructions::LH); // 12
+        functionMap.put("lw", this.instructions::LW); // 13
+        functionMap.put("lbu", this.instructions::LBU); // 14
+        functionMap.put("lhu", this.instructions::LHU); // 15
+        functionMap.put("sb", this.instructions::SB); // 16
+        // functionMap.put("sh", this.instructions::SH); // 17
+        // functionMap.put("sw", this.instructions::SW); // 18
+        functionMap.put("addi", this.instructions::ADDI); // 19
+        functionMap.put("slti", this.instructions::SLTI); // 20
+        functionMap.put("sltiu", this.instructions::SLTIU); // 21
+        functionMap.put("xori", this.instructions::XORI); // 22
+        functionMap.put("ori", this.instructions::ORI); // 23
+        // functionMap.put("andi", this.instructions::ANDI); // 24
+        // functionMap.put("slli", this.instructions::SLLI); // 25
+        // functionMap.put("srli", this.instructions::SRLI); // 26
+        // functionMap.put("srai", this.instructions::SRAI); // 27
+        // functionMap.put("add", this.instructions::ADD); // 28
+        // functionMap.put("sub", this.instructions::SUB); // 29
+        // functionMap.put("sll", this.instructions::SLL); // 30
+        // functionMap.put("slt", this.instructions::SLT); // 31
+        // functionMap.put("sltu", this.instructions::SLTU); // 32
+        // functionMap.put("xor", this.instructions::XOR); // 33
+        // functionMap.put("srl", this.instructions::SRL); // 34
+        // functionMap.put("sra", this.instructions::SRA); // 35
+        // functionMap.put("or", this.instructions::OR); // 36
+        // functionMap.put("and", this.instructions::AND); // 37
+        // functionMap.put("fence", this.instructions::FENCE); // 38
+        // functionMap.put("ecall", this.instructions::ECALL); // 39
+        // functionMap.put("ebreak", this.instructions::ERBEAK); // 40
     }
 
     // Run until a breakpoint or end
@@ -37,8 +81,13 @@ public class Pipeline {
 
         // Convert machine instruction to assembly components (you'll need to implement this)
         HashMap<String, String> asmComponents = machineToAsm(instruction);
+        System.out.println("instructionName: " + asmComponents.get("instructionName"));
 
-        // TODO: Execute Instruction method here (switch case)
+        if (functionMap.containsKey(asmComponents.get("instructionName"))) {
+            functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
+        } else {
+            return;
+        }
 
         // Check for breakpoints
         int pcIntValue = Integer.parseInt(pcValue, 2); // Convert binary to int
@@ -71,6 +120,7 @@ public class Pipeline {
         String rs1 = instruction.substring(12, 17); // source register 1
         String rs2 = instruction.substring(7, 12); // source register 2
         String instructionName = "Error: {" + oc + "} Instruction not found"; // Assume an error
+        String imm = instruction.substring(0, 12); // immediate value
 
         switch (oc) {
             case "0110111":
@@ -175,7 +225,7 @@ public class Pipeline {
                         instructionName = "slli";
                         break;
                     case "101":
-                        String imm = instruction.substring(0, 7);
+                        imm = instruction.substring(0, 7);
                         instructionName += " case: 101 imm: " + imm;
                         if (imm.equals("0000000")) {
                             instructionName = "srli";
@@ -191,7 +241,7 @@ public class Pipeline {
                         instructionName += " fc: " + fc;
                         break;
                     case "000":
-                        String imm = instruction.substring(0, 7);
+                        imm = instruction.substring(0, 7);
                         if (imm.equals("0000000")) {
                             instructionName = "add";
                         } else if (imm.equals("0100000")) {
@@ -244,8 +294,12 @@ public class Pipeline {
         System.out.println("rd as String: " + registers.getRegisterString(rd));
         System.out.println("rs1 as String: " + registers.getRegisterString(rs1));
         System.out.println("rs2 as String: " + registers.getRegisterString(rs2));
-        decodedInstruction.put("asm", instructionName);
-        // Other decoded fields can be added to the map as needed
+        decodedInstruction.put("instructionName", instructionName);
+        decodedInstruction.put("rd", registers.getRegisterString(rd));
+        decodedInstruction.put("rs1", registers.getRegisterString(rs1));
+        decodedInstruction.put("rs2", registers.getRegisterString(rs2));
+        decodedInstruction.put("imm", imm);
+
         return decodedInstruction;
     }
 

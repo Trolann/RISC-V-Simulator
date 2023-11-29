@@ -1,47 +1,51 @@
 package processor;
 
 import java.util.HashMap;
-import java.util.HashSet;
+
+@FunctionalInterface
+interface InstructionFunction {
+	void execute(HashMap<String, String> asmInstruction);
+}
 
 public class Instructions {
     private Memory memory;
-    private Registers registers;
+    public Registers registers;
 
     public Instructions(Memory memory, Registers registers) {
         this.memory = memory;
         this.registers = registers;
     }
 
-    	public HashMap<String, Object> executeInstruction(String opcode, HashMap<String, String> instructionComponents) {
-		HashMap<String, Object> result = new HashMap<>();
+    public HashMap<String, Object> executeInstruction(String opcode, HashMap<String, String> instructionComponents) {
+    HashMap<String, Object> result = new HashMap<>();
 
-		switch (opcode) {
-		case "LUI":
-			result.put("asmInstruction", LUI(instructionComponents));
-			break;
-		case "AUIPC":
-			result.put("asmInstruction", AUIPC(instructionComponents));
-			break;
-		case "JAL":
-			result.put("asmInstruction", JAL(instructionComponents));
-			result.put("newPC", calculateNewPC(instructionComponents));
-			break;
-		case "JALR":
-			result.put("asmInstruction", JALR(instructionComponents));
-			result.put("newPC", calculateNewPC(instructionComponents));
-			break;
-		case "BEQ":
-			result.put("asmInstruction", BEQ(instructionComponents));
-			result.put("newPC", calculateBranchPC(instructionComponents));
-			break;
-		// Add cases for other instructions
+    switch (opcode) {
+        case "LUI":
+            result.put("asmInstruction", LUI(instructionComponents));
+            break;
+        case "AUIPC":
+            result.put("asmInstruction", AUIPC(instructionComponents));
+            break;
+        case "JAL":
+            result.put("asmInstruction", JAL(instructionComponents));
+            result.put("newPC", calculateNewPC(instructionComponents));
+            break;
+        case "JALR":
+            result.put("asmInstruction", JALR(instructionComponents));
+            result.put("newPC", calculateNewPC(instructionComponents));
+            break;
+        case "BEQ":
+            result.put("asmInstruction", BEQ(instructionComponents));
+            // result.put("newPC", calculateBranchPC(instructionComponents)); // TODO: Fix?
+            break;
+        // Add cases for other instructions
 
-		default:
-			throw new UnsupportedOperationException("Unsupported opcode: " + opcode);
-		}
+        default:
+            throw new UnsupportedOperationException("Unsupported opcode: " + opcode);
+        }
 
-		return result;
-	}
+    return result;
+}
 
 	/**private int calculateBranchPC(HashMap<String, String> instructionComponents) {
 		// Calculate the new program counter for branch instructions
@@ -58,11 +62,11 @@ public class Instructions {
 		int currentPC = registers.getProgramCounter();
 		// Perform the calculation based on the instruction and update the PC
 		int newPC = currentPC + 1; // Assuming a simple increment for the next instruction
-		registers.setProgramCounter(newPC);
+        registers.setProgramCounter(newPC);
 		return newPC;
 	}
 
-	private String LUI(HashMap<String, String> instructionComponents) {
+	public String LUI(HashMap<String, String> instructionComponents) {
 	    // Extract components from the HashMap
 	    String rd = instructionComponents.get("rd");
 	    String imm = instructionComponents.get("imm");
@@ -87,7 +91,7 @@ public class Instructions {
 	    return "LUI assembly instruction";
 	}
 
-	private String AUIPC(HashMap<String, String> instructionComponents) {
+	public String AUIPC(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd");
 		String imm = instructionComponents.get("imm");
@@ -112,7 +116,7 @@ public class Instructions {
 		return "AUIPC assembly instruction";
 	}
 
-	private String JAL(HashMap<String, String> instructionComponents) {
+	public String JAL(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd");
 		String imm = instructionComponents.get("imm");
@@ -129,7 +133,7 @@ public class Instructions {
 		return "JAL assembly instruction";
 	}
 
-	private String JALR(HashMap<String, String> instructionComponents) {
+	public String JALR(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd");
 		String rs1 = instructionComponents.get("rs1");
@@ -151,7 +155,7 @@ public class Instructions {
 		return "JALR assembly instruction";
 	}
 
-	private String BEQ(HashMap<String, String> instructionComponents) {
+	public String BEQ(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rs1 = instructionComponents.get("rs1");
 		String rs2 = instructionComponents.get("rs2");
@@ -181,9 +185,12 @@ public class Instructions {
         String rd = instructionComponents.get("rd"); //destination register
         String rs1 = instructionComponents.get("rs1"); //source register 1
         String imm = instructionComponents.get("imm"); //immediate register
-
+        // Print the whole hashmap
+        System.out.println(instructionComponents);
         // Get values from registers
         String valueRs1 = registers.getRegisterValue(rs1);
+        System.out.println("rs1: " + valueRs1);
+        System.out.println("valueRs1: " + valueRs1);
         int valueIntRs1 = Integer.parseInt(valueRs1, 2);
 
         // Convert immediate value from binary string to integer
@@ -204,7 +211,7 @@ public class Instructions {
         registers.setRegisterValue(rd, resultBinary);
     }
     
-    private String BNE(HashMap<String, String> instructionComponents) {
+    public String BNE(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
         String rs2 = instructionComponents.get("rs2"); // Source register 2
@@ -231,7 +238,7 @@ public class Instructions {
         }
     }
     
-    private String BLT(HashMap<String, String> instructionComponents) {
+    public String BLT(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
         String rs2 = instructionComponents.get("rs2"); // Source register 2
@@ -262,7 +269,7 @@ public class Instructions {
         }
     }
     
-    private String BGE(HashMap<String, String> instructionComponents) {
+    public String BGE(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
         String rs2 = instructionComponents.get("rs2"); // Source register 2
@@ -293,7 +300,7 @@ public class Instructions {
         }
     }
     
-    private String BLTU(HashMap<String, String> instructionComponents) {
+    public String BLTU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
         String rs2 = instructionComponents.get("rs2"); // Source register 2
@@ -324,7 +331,7 @@ public class Instructions {
         }
     }
     
-    private String BGEU(HashMap<String, String> instructionComponents) {
+    public String BGEU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
         String rs2 = instructionComponents.get("rs2"); // Source register 2
@@ -355,7 +362,7 @@ public class Instructions {
         }
     }
     
-    private String LB(HashMap<String, String> instructionComponents) {
+    public String LB(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -380,7 +387,7 @@ public class Instructions {
         return "LB assembly instruction executed";
     }
 
-    private String LH(HashMap<String, String> instructionComponents) {
+    public String LH(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -405,7 +412,7 @@ public class Instructions {
         return "LH assembly instruction executed";
     }
     
-    private String LW(HashMap<String, String> instructionComponents) {
+    public String LW(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -427,7 +434,7 @@ public class Instructions {
         return "LW assembly instruction executed";
     }
 
-    private String LBU(HashMap<String, String> instructionComponents) {
+    public String LBU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -450,7 +457,7 @@ public class Instructions {
     }
     
     
-    private String LHU(HashMap<String, String> instructionComponents) {
+    public String LHU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -472,7 +479,7 @@ public class Instructions {
         return "LHU assembly instruction executed";
     }
 
-    private String SB(HashMap<String, String> instructionComponents) {
+    public String SB(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
         String rs2 = instructionComponents.get("rs2"); // Source register 2
@@ -496,7 +503,7 @@ public class Instructions {
     }
 
 
-    private String SLTI(HashMap<String, String> instructionComponents) {
+    public String SLTI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -516,7 +523,7 @@ public class Instructions {
         return "SLTI assembly instruction executed";
     }
     
-    private String SLTIU(HashMap<String, String> instructionComponents) {
+    public String SLTIU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -536,7 +543,7 @@ public class Instructions {
         return "SLTIU assembly instruction executed";
     }
 
-    private String XORI(HashMap<String, String> instructionComponents) {
+    public String XORI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -565,7 +572,7 @@ public class Instructions {
     }
 
 
-    private String ORI(HashMap<String, String> instructionComponents) {
+    public String ORI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -594,7 +601,7 @@ public class Instructions {
     }
 
 
-    private String ADDSUB(HashMap<String, String> instructionComponents) {
+    public String ADDSUB(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
         String rs1 = instructionComponents.get("rs1"); // Source register 1

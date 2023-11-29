@@ -50,6 +50,9 @@ public class SimulatorMain {
             String input = scanner.nextLine();
 
             switch(input) {
+                case "reg":
+                    System.out.println(registers.toString());
+                    break;
                 case "m":
                     // While memory values are not 0, keep printing them in format
                     // 0xaddress: string value
