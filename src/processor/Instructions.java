@@ -19,6 +19,8 @@ public class Instructions {
     public HashMap<String, Object> executeInstruction(String opcode, HashMap<String, String> instructionComponents) {
     HashMap<String, Object> result = new HashMap<>();
 
+    // TODO: What is this?
+    /*
     switch (opcode) {
         case "LUI":
             result.put("asmInstruction", LUI(instructionComponents));
@@ -43,8 +45,9 @@ public class Instructions {
         default:
             throw new UnsupportedOperationException("Unsupported opcode: " + opcode);
         }
+     */
 
-    return result;
+    return result; // TODO: What is this?
 }
 
 	/**private int calculateBranchPC(HashMap<String, String> instructionComponents) {
@@ -57,15 +60,15 @@ public class Instructions {
 		return newPC;
 	}*/
 
-	private int calculateNewPC(HashMap<String, String> instructionComponents) {
+	private String calculateNewPC(HashMap<String, String> instructionComponents) {
 		// Calculate the new program counter based on the instruction
-		int currentPC = registers.getProgramCounter();
+		String currentPC = registers.getProgramCounter();
 		// Perform the calculation based on the instruction and update the PC
-		int newPC = currentPC + 1; // Assuming a simple increment for the next instruction
+		String newPC = Utility.StringCrement(currentPC, 1); // Assuming a simple increment for the next instruction
         registers.setProgramCounter(newPC);
 		return newPC;
 	}
-
+/*
 	public String LUI(HashMap<String, String> instructionComponents) {
 	    // Extract components from the HashMap
 	    String rd = instructionComponents.get("rd");
@@ -90,7 +93,8 @@ public class Instructions {
 
 	    return "LUI assembly instruction";
 	}
-
+*/
+/*
 	public String AUIPC(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd");
@@ -115,7 +119,7 @@ public class Instructions {
 
 		return "AUIPC assembly instruction";
 	}
-
+/*
 	public String JAL(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd");
@@ -132,7 +136,7 @@ public class Instructions {
 
 		return "JAL assembly instruction";
 	}
-
+/*
 	public String JALR(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd");
@@ -154,7 +158,7 @@ public class Instructions {
 
 		return "JALR assembly instruction";
 	}
-
+/*
 	public String BEQ(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rs1 = instructionComponents.get("rs1");
@@ -178,8 +182,7 @@ public class Instructions {
 			return "Branch not taken";
 		}
 	}
-    
-    
+*/
     public void ADDI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); //destination register
@@ -210,7 +213,7 @@ public class Instructions {
         // Update rd register value
         registers.setRegisterValue(rd, resultBinary);
     }
-    
+/*
     public String BNE(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -237,7 +240,8 @@ public class Instructions {
             return "BNE not taken: rs1 and rs2 are equal";
         }
     }
-    
+ */
+/*
     public String BLT(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -268,7 +272,9 @@ public class Instructions {
             return "BLT not taken: rs1 is not less than rs2";
         }
     }
-    
+
+ */
+/*
     public String BGE(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -299,7 +305,9 @@ public class Instructions {
             return "BGE not taken: rs1 is less than rs2";
         }
     }
-    
+
+ */
+/*
     public String BLTU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -330,7 +338,9 @@ public class Instructions {
             return "BLTU not taken: rs1 is not less than rs2";
         }
     }
-    
+
+ */
+/*
     public String BGEU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -361,7 +371,9 @@ public class Instructions {
             return "BGEU not taken: rs1 is less than rs2";
         }
     }
-    
+
+ */
+/*
     public String LB(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -387,6 +399,8 @@ public class Instructions {
         return "LB assembly instruction executed";
     }
 
+ */
+/*
     public String LH(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -411,7 +425,9 @@ public class Instructions {
 
         return "LH assembly instruction executed";
     }
-    
+
+ */
+/*
     public String LW(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -434,6 +450,8 @@ public class Instructions {
         return "LW assembly instruction executed";
     }
 
+ */
+/*
     public String LBU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -455,8 +473,9 @@ public class Instructions {
 
         return "LBU assembly instruction executed";
     }
-    
-    
+
+ */
+/*
     public String LHU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -479,6 +498,8 @@ public class Instructions {
         return "LHU assembly instruction executed";
     }
 
+ */
+/*
     public String SB(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rs1 = instructionComponents.get("rs1"); // Source register 1
@@ -502,7 +523,8 @@ public class Instructions {
         return "SB assembly instruction executed";
     }
 
-
+ */
+/*
     public String SLTI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -522,7 +544,9 @@ public class Instructions {
 
         return "SLTI assembly instruction executed";
     }
-    
+
+ */
+/*
     public String SLTIU(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -543,6 +567,8 @@ public class Instructions {
         return "SLTIU assembly instruction executed";
     }
 
+ */
+/*
     public String XORI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -571,7 +597,8 @@ public class Instructions {
         return "XORI assembly instruction executed";
     }
 
-
+ */
+/*
     public String ORI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -600,7 +627,8 @@ public class Instructions {
         return "ORI assembly instruction executed";
     }
 
-
+ */
+/*
     public String ADDSUB(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); // Destination register
@@ -629,6 +657,8 @@ public class Instructions {
 
         return "ADDSUB assembly instruction executed";
     }
+
+ */
     
     
 }

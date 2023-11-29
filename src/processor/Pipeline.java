@@ -20,29 +20,29 @@ public class Pipeline {
         this.hasReachedBreakpoint = false;
         this.functionMap = new HashMap<>();
         this.instructions = new Instructions(memory, registers);
-        functionMap.put("lui", this.instructions::LUI); // 1
-        functionMap.put("auipc", this.instructions::AUIPC); // 2
-        functionMap.put("jal", this.instructions::JAL); // 3
-        functionMap.put("jalr", this.instructions::JALR); // 4
-        functionMap.put("beq", this.instructions::BEQ); // 5
-        functionMap.put("bne", this.instructions::BNE); // 6
-        functionMap.put("blt", this.instructions::BLT); // 7
-        functionMap.put("bge", this.instructions::BGE); // 8
-        functionMap.put("bltu", this.instructions::BLTU); // 9
-        functionMap.put("bgeu", this.instructions::BGEU); // 10
-        functionMap.put("lb", this.instructions::LB); // 11
-        functionMap.put("lh", this.instructions::LH); // 12
-        functionMap.put("lw", this.instructions::LW); // 13
-        functionMap.put("lbu", this.instructions::LBU); // 14
-        functionMap.put("lhu", this.instructions::LHU); // 15
-        functionMap.put("sb", this.instructions::SB); // 16
+        // functionMap.put("lui", this.instructions::LUI); // 1
+        // functionMap.put("auipc", this.instructions::AUIPC); // 2
+        // functionMap.put("jal", this.instructions::JAL); // 3
+        // functionMap.put("jalr", this.instructions::JALR); // 4
+        // functionMap.put("beq", this.instructions::BEQ); // 5
+        // functionMap.put("bne", this.instructions::BNE); // 6
+        // functionMap.put("blt", this.instructions::BLT); // 7
+        // functionMap.put("bge", this.instructions::BGE); // 8
+        // functionMap.put("bltu", this.instructions::BLTU); // 9
+        // functionMap.put("bgeu", this.instructions::BGEU); // 10
+        // functionMap.put("lb", this.instructions::LB); // 11
+        // functionMap.put("lh", this.instructions::LH); // 12
+        // functionMap.put("lw", this.instructions::LW); // 13
+        // functionMap.put("lbu", this.instructions::LBU); // 14
+        // functionMap.put("lhu", this.instructions::LHU); // 15
+        // functionMap.put("sb", this.instructions::SB); // 16
         // functionMap.put("sh", this.instructions::SH); // 17
         // functionMap.put("sw", this.instructions::SW); // 18
         functionMap.put("addi", this.instructions::ADDI); // 19
-        functionMap.put("slti", this.instructions::SLTI); // 20
-        functionMap.put("sltiu", this.instructions::SLTIU); // 21
-        functionMap.put("xori", this.instructions::XORI); // 22
-        functionMap.put("ori", this.instructions::ORI); // 23
+        // functionMap.put("slti", this.instructions::SLTI); // 20
+        // functionMap.put("sltiu", this.instructions::SLTIU); // 21
+        // functionMap.put("xori", this.instructions::XORI); // 22
+        // functionMap.put("ori", this.instructions::ORI); // 23
         // functionMap.put("andi", this.instructions::ANDI); // 24
         // functionMap.put("slli", this.instructions::SLLI); // 25
         // functionMap.put("srli", this.instructions::SRLI); // 26
@@ -90,7 +90,7 @@ public class Pipeline {
 
         // Check for breakpoints
         //int pcIntValue = Integer.parseInt(pcValue, 2); // Convert binary to int
-        int pcIntValue = Integer.parseInt(localPcValue, 2); // Convert binary to int
+        int pcIntValue = Integer.parseInt(registers.getProgramCounter(), 2); // Convert binary to int
         if(breakpoints.contains(pcIntValue)) {
             hasReachedBreakpoint = true;
         }
@@ -291,13 +291,13 @@ public class Pipeline {
                 instructionName = "unknown";
                 break;
         }
-        System.out.println("rd as String: " + registers.getRegisterString(rd));
-        System.out.println("rs1 as String: " + registers.getRegisterString(rs1));
-        System.out.println("rs2 as String: " + registers.getRegisterString(rs2));
+        System.out.println("rd as String: " + registers.getRegisterString(Integer.parseInt(rd, 2)));
+        System.out.println("rs1 as String: " + registers.getRegisterString(Integer.parseInt(rs1, 2)));
+        System.out.println("rs2 as String: " + registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("instructionName", instructionName);
-        decodedInstruction.put("rd", registers.getRegisterString(rd));
-        decodedInstruction.put("rs1", registers.getRegisterString(rs1));
-        decodedInstruction.put("rs2", registers.getRegisterString(rs2));
+        decodedInstruction.put("rd", registers.getRegisterString(Integer.parseInt(rd, 2)));
+        decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
+        decodedInstruction.put("rs2", registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("imm", imm);
 
         return decodedInstruction;
