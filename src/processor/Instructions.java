@@ -1,5 +1,6 @@
 package processor;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Instructions {
@@ -175,7 +176,7 @@ public class Instructions {
 	}
     
     
-    public void addi(HashMap<String, String> instructionComponents) {
+    public void ADDI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
         String rd = instructionComponents.get("rd"); //destination register
         String rs1 = instructionComponents.get("rs1"); //source register 1
@@ -202,5 +203,158 @@ public class Instructions {
         // Update rd register value
         registers.setRegisterValue(rd, resultBinary);
     }
+    
+    private String BNE(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String rs2 = instructionComponents.get("rs2"); // Source register 2
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        String valueRs2 = registers.getRegisterValue(rs2);
+
+        // Convert immediate value from binary string to signed integer
+        int immediate = Integer.parseInt(imm, 2);
+
+        // Check if the values in rs1 and rs2 are not equal
+        if (!valueRs1.equals(valueRs2)) {
+            // Calculate the new program counter
+            int newPC = registers.getProgramCounter() + immediate;
+
+            // Update the program counter register with the new address
+            registers.setProgramCounter(newPC);
+
+            return "BNE taken: Jumping to address " + newPC;
+        } else {
+            return "BNE not taken: rs1 and rs2 are equal";
+        }
+    }
+    
+    private String BLT(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String rs2 = instructionComponents.get("rs2"); // Source register 2
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        String valueRs2 = registers.getRegisterValue(rs2);
+
+        // Convert immediate value from binary string to signed integer
+        int immediate = Integer.parseInt(imm, 2);
+
+        // Convert register values from binary strings to signed integers
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+        int valueIntRs2 = Integer.parseInt(valueRs2, 2);
+
+        // Check if the value in rs1 is less than the value in rs2
+        if (valueIntRs1 < valueIntRs2) {
+            // Calculate the new program counter
+            int newPC = registers.getProgramCounter() + immediate;
+
+            // Update the program counter register with the new address
+            registers.setProgramCounter(newPC);
+
+            return "BLT taken: Jumping to address " + newPC;
+        } else {
+            return "BLT not taken: rs1 is not less than rs2";
+        }
+    }
+    
+    private String BGE(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String rs2 = instructionComponents.get("rs2"); // Source register 2
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        String valueRs2 = registers.getRegisterValue(rs2);
+
+        // Convert immediate value from binary string to signed integer
+        int immediate = Integer.parseInt(imm, 2);
+
+        // Convert register values from binary strings to signed integers
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+        int valueIntRs2 = Integer.parseInt(valueRs2, 2);
+
+        // Check if the value in rs1 is greater than or equal to the value in rs2
+        if (valueIntRs1 >= valueIntRs2) {
+            // Calculate the new program counter
+            int newPC = registers.getProgramCounter() + immediate;
+
+            // Update the program counter register with the new address
+            registers.setProgramCounter(newPC);
+
+            return "BGE taken: Jumping to address " + newPC;
+        } else {
+            return "BGE not taken: rs1 is less than rs2";
+        }
+    }
+    
+    private String BLTU(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String rs2 = instructionComponents.get("rs2"); // Source register 2
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        String valueRs2 = registers.getRegisterValue(rs2);
+
+        // Convert immediate value from binary string to signed integer
+        int immediate = Integer.parseInt(imm, 2);
+
+        // Convert register values from binary strings to unsigned integers
+        long valueUnsignedRs1 = Long.parseLong(valueRs1, 2) & 0xFFFFFFFFL;
+        long valueUnsignedRs2 = Long.parseLong(valueRs2, 2) & 0xFFFFFFFFL;
+
+        // Check if the value in rs1 is less than the value in rs2 (unsigned comparison)
+        if (valueUnsignedRs1 < valueUnsignedRs2) {
+            // Calculate the new program counter
+            int newPC = registers.getProgramCounter() + immediate;
+
+            // Update the program counter register with the new address
+            registers.setProgramCounter(newPC);
+
+            return "BLTU taken: Jumping to address " + newPC;
+        } else {
+            return "BLTU not taken: rs1 is not less than rs2";
+        }
+    }
+    
+    private String BGEU(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String rs2 = instructionComponents.get("rs2"); // Source register 2
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        String valueRs2 = registers.getRegisterValue(rs2);
+
+        // Convert immediate value from binary string to signed integer
+        int immediate = Integer.parseInt(imm, 2);
+
+        // Convert register values from binary strings to unsigned integers
+        long valueUnsignedRs1 = Long.parseLong(valueRs1, 2) & 0xFFFFFFFFL;
+        long valueUnsignedRs2 = Long.parseLong(valueRs2, 2) & 0xFFFFFFFFL;
+
+        // Check if the value in rs1 is greater than or equal to the value in rs2 (unsigned comparison)
+        if (valueUnsignedRs1 >= valueUnsignedRs2) {
+            // Calculate the new program counter
+            int newPC = registers.getProgramCounter() + immediate;
+
+            // Update the program counter register with the new address
+            registers.setProgramCounter(newPC);
+
+            return "BGEU taken: Jumping to address " + newPC;
+        } else {
+            return "BGEU not taken: rs1 is less than rs2";
+        }
+    }
+
+    
 }
 
