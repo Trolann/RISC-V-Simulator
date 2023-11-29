@@ -212,6 +212,7 @@ public class Instructions {
 
         // Update rd register value
         registers.setRegisterValue(rd, resultBinary);
+        registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
     }
 /*
     public String BNE(HashMap<String, String> instructionComponents) {
