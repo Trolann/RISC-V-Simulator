@@ -42,48 +42,48 @@ public class Instructions {
 		return result;
 	}
 
-	private int calculateBranchPC(HashMap<String, String> instructionComponents) {
+	/**private int calculateBranchPC(HashMap<String, String> instructionComponents) {
 		// Calculate the new program counter for branch instructions
 		int currentPC = registers.getProgramCounter();
 		// Perform the calculation based on the branch instruction and update the PC
 		// Replace with the actual calculation based on branch conditions
-		int newPC = currentPC + 4; // Placeholder, replace with actual branch calculation
+		int newPC = currentPC + 1; // Placeholder, replace with actual branch calculation
 		registers.setProgramCounter(newPC);
 		return newPC;
-	}
+	}*/
 
 	private int calculateNewPC(HashMap<String, String> instructionComponents) {
 		// Calculate the new program counter based on the instruction
 		int currentPC = registers.getProgramCounter();
 		// Perform the calculation based on the instruction and update the PC
-		int newPC = currentPC + 4; // Assuming a simple increment for the next instruction
+		int newPC = currentPC + 1; // Assuming a simple increment for the next instruction
 		registers.setProgramCounter(newPC);
 		return newPC;
 	}
 
 	private String LUI(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
-		String rd = instructionComponents.get("rd");
-		String imm = instructionComponents.get("imm");
+	    // Extract components from the HashMap
+	    String rd = instructionComponents.get("rd");
+	    String imm = instructionComponents.get("imm");
 
-		// Convert immediate value from binary string to integer
-		int immediate = Integer.parseInt(imm, 2);
+	    // Convert immediate value from binary string to integer
+	    int immediate = Integer.parseInt(imm, 2);
 
-		// Left shift immediate by 12 bits to get the result
-		int result = immediate << 12;
+	    // Left shift immediate by 12 bits to get the result
+	    int result = immediate << 12;
 
-		// Convert result back to binary string representation
-		String resultBinary = Integer.toBinaryString(result);
+	    // Convert result to binary string representation
+	    String resultBinary = Integer.toBinaryString(result);
 
-		// Ensure resultBinary is 32-bit length
-		while (resultBinary.length() < 32) {
-			resultBinary = "0" + resultBinary;
-		}
+	    // Ensure resultBinary is 32-bit length
+	    while (resultBinary.length() < 32) {
+	        resultBinary = "0" + resultBinary;
+	    }
 
-		// Update rd register value
-		registers.setRegisterValue(rd, resultBinary);
+	    // Update rd register value
+	    registers.setRegisterValue(rd, resultBinary);
 
-		return "LUI assembly instruction";
+	    return "LUI assembly instruction";
 	}
 
 	private String AUIPC(HashMap<String, String> instructionComponents) {
