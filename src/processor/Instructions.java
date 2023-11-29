@@ -354,7 +354,278 @@ public class Instructions {
             return "BGEU not taken: rs1 is less than rs2";
         }
     }
+    
+    private String LB(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String imm = instructionComponents.get("imm"); // Immediate value
 
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+        // Calculate the memory address to load the byte from
+        int address = valueIntRs1 + Integer.parseInt(imm, 2);
+
+        // Fetch the byte from memory based on the address
+        String memoryValue = memory.getMemoryValue(Integer.toBinaryString(address));
+
+        // Sign-extend the byte to 32 bits (assuming two's complement)
+        String signExtendedValue = memoryValue.substring(7, 8).repeat(24) + memoryValue;
+
+        // Update rd register value with the sign-extended byte
+        registers.setRegisterValue(rd, signExtendedValue);
+
+        return "LB assembly instruction executed";
+    }
+
+    private String LH(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+        // Calculate the memory address to load the halfword from
+        int address = valueIntRs1 + Integer.parseInt(imm, 2);
+
+        // Fetch the halfword from memory based on the address
+        String memoryValue = memory.getMemoryValue(Integer.toBinaryString(address));
+
+        // Sign-extend the halfword to 32 bits (assuming two's complement)
+        String signExtendedValue = memoryValue.substring(15, 16).repeat(16) + memoryValue;
+
+        // Update rd register value with the sign-extended halfword
+        registers.setRegisterValue(rd, signExtendedValue);
+
+        return "LH assembly instruction executed";
+    }
+    
+    private String LW(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+        // Calculate the memory address to load the word from
+        int address = valueIntRs1 + Integer.parseInt(imm, 2);
+
+        // Fetch the word (32-bit) from memory based on the address
+        String memoryValue = memory.getMemoryValue(Integer.toBinaryString(address));
+
+        // Update rd register value with the loaded word
+        registers.setRegisterValue(rd, memoryValue);
+
+        return "LW assembly instruction executed";
+    }
+
+    private String LBU(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+        // Calculate the memory address to load the unsigned byte from
+        int address = valueIntRs1 + Integer.parseInt(imm, 2);
+
+        // Fetch the byte (8-bit) from memory based on the address
+        String memoryValue = memory.getMemoryValue(Integer.toBinaryString(address));
+
+        // Update rd register value with the loaded byte
+        registers.setRegisterValue(rd, memoryValue.substring(24)); // Consider only the 8 LSBs
+
+        return "LBU assembly instruction executed";
+    }
+    
+    
+    private String LHU(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+        // Calculate the memory address to load the unsigned halfword from
+        int address = valueIntRs1 + Integer.parseInt(imm, 2);
+
+        // Fetch the halfword (16-bit) from memory based on the address
+        String memoryValue = memory.getMemoryValue(Integer.toBinaryString(address));
+
+        // Update rd register value with the loaded unsigned halfword
+        registers.setRegisterValue(rd, memoryValue);
+
+        return "LHU assembly instruction executed";
+    }
+
+    private String SB(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String rs2 = instructionComponents.get("rs2"); // Source register 2
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        String valueRs2 = registers.getRegisterValue(rs2);
+        int valueIntRs2 = Integer.parseInt(valueRs2, 2);
+
+        // Calculate the memory address to store the byte to
+        int address = Integer.parseInt(valueRs1, 2) + Integer.parseInt(imm, 2);
+
+        // Convert the least significant byte of rs2 to a binary string
+        String byteToStore = Integer.toBinaryString(valueIntRs2 & 0xFF);
+
+        // Store the byte to memory at the calculated address
+        memory.setMemoryValue(Integer.toBinaryString(address), byteToStore);
+
+        return "SB assembly instruction executed";
+    }
+
+    // SW implementation is similar to LW with the difference in storing a word
+
+    private String SLTI(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+        int immediate = Integer.parseInt(imm, 2);
+
+        // Perform SLTI operation: set rd to 1 if rs1 is less than immediate; otherwise set to 0
+        String result = (valueIntRs1 < immediate) ? "00000000000000000000000000000001" : "00000000000000000000000000000000";
+
+        // Update rd register value
+        registers.setRegisterValue(rd, result);
+
+        return "SLTI assembly instruction executed";
+    }
+    
+    private String SLTIU(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseUnsignedInt(valueRs1, 2);
+        int immediate = Integer.parseUnsignedInt(imm, 2);
+
+        // Perform SLTIU operation: set rd to 1 if rs1 is less than unsigned immediate; otherwise set to 0
+        String result = (valueIntRs1 < immediate) ? "00000000000000000000000000000001" : "00000000000000000000000000000000";
+
+        // Update rd register value
+        registers.setRegisterValue(rd, result);
+
+        return "SLTIU assembly instruction executed";
+    }
+
+    private String XORI(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+        int immediate = Integer.parseInt(imm, 2);
+
+        // Perform XOR operation: rd = rs1 ^ immediate
+        int result = valueIntRs1 ^ immediate;
+
+        // Convert result back to binary string representation
+        String resultBinary = Integer.toBinaryString(result);
+
+        // Ensure resultBinary is 32-bit length
+        while (resultBinary.length() < 32) {
+            resultBinary = "0" + resultBinary;
+        }
+
+        // Update rd register value
+        registers.setRegisterValue(rd, resultBinary);
+
+        return "XORI assembly instruction executed";
+    }
+
+    // ORI, ANDI, SLLI, SRAI implementations are similar to XORI with different operations
+
+    private String ORI(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String imm = instructionComponents.get("imm"); // Immediate value
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+        int immediate = Integer.parseInt(imm, 2);
+
+        // Perform OR operation: rd = rs1 | immediate
+        int result = valueIntRs1 | immediate;
+
+        // Convert result back to binary string representation
+        String resultBinary = Integer.toBinaryString(result);
+
+        // Ensure resultBinary is 32-bit length
+        while (resultBinary.length() < 32) {
+            resultBinary = "0" + resultBinary;
+        }
+
+        // Update rd register value
+        registers.setRegisterValue(rd, resultBinary);
+
+        return "ORI assembly instruction executed";
+    }
+
+    // ANDI, SLLI, SRAI implementations are similar to ORI with different operations
+
+    private String ADDSUB(HashMap<String, String> instructionComponents) {
+        // Extract components from the HashMap
+        String rd = instructionComponents.get("rd"); // Destination register
+        String rs1 = instructionComponents.get("rs1"); // Source register 1
+        String rs2 = instructionComponents.get("rs2"); // Source register 2
+
+        // Get values from registers
+        String valueRs1 = registers.getRegisterValue(rs1);
+        String valueRs2 = registers.getRegisterValue(rs2);
+        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+        int valueIntRs2 = Integer.parseInt(valueRs2, 2);
+
+        // Perform ADDSUB operation: rd = rs1 + rs2
+        int result = valueIntRs1 + valueIntRs2;
+
+        // Convert result back to binary string representation
+        String resultBinary = Integer.toBinaryString(result);
+
+        // Ensure resultBinary is 32-bit length
+        while (resultBinary.length() < 32) {
+            resultBinary = "0" + resultBinary;
+        }
+
+        // Update rd register value
+        registers.setRegisterValue(rd, resultBinary);
+
+        return "ADDSUB assembly instruction executed";
+    }
+    
     
 }
 
