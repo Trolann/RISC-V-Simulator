@@ -71,8 +71,7 @@ public class Pipeline {
 
     // Execute a single instruction
     public void runNextInstruction() {
-        String pcValue = registers.getRegisterValue("pc");
-        String instruction = memory.getMemoryValue(pcValue);
+        String instruction = memory.getMemoryValue(registers.getProgramCounter());
 
         if(instruction == null) {
             // TODO Handle error: instruction at pcValue not found in memory
@@ -90,7 +89,8 @@ public class Pipeline {
         }
 
         // Check for breakpoints
-        int pcIntValue = Integer.parseInt(pcValue, 2); // Convert binary to int
+        //int pcIntValue = Integer.parseInt(pcValue, 2); // Convert binary to int
+        int pcIntValue = Integer.parseInt(localPcValue, 2); // Convert binary to int
         if(breakpoints.contains(pcIntValue)) {
             hasReachedBreakpoint = true;
         }
