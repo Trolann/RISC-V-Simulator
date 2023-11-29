@@ -495,7 +495,6 @@ public class Instructions {
         return "SB assembly instruction executed";
     }
 
-    // SW implementation is similar to LW with the difference in storing a word
 
     private String SLTI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
@@ -565,7 +564,6 @@ public class Instructions {
         return "XORI assembly instruction executed";
     }
 
-    // ORI, ANDI, SLLI, SRAI implementations are similar to XORI with different operations
 
     private String ORI(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
@@ -595,7 +593,6 @@ public class Instructions {
         return "ORI assembly instruction executed";
     }
 
-    // ANDI, SLLI, SRAI implementations are similar to ORI with different operations
 
     private String ADDSUB(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
