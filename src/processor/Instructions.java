@@ -153,34 +153,24 @@ public class Instructions {
 	    String rs1 = instructionComponents.get("rs1");
 	    String rs2 = instructionComponents.get("rs2");
 	    String imm = instructionComponents.get("imm");
-	
-	    // Ensure that rs1 and rs2 are valid register names
-	    if (!registers.isValidRegister(rs1) || !registers.isValidRegister(rs2)) {
-	        throw new IllegalArgumentException("Invalid register name");
-	    }
-	
-	    // Get the values of rs1 and rs2 from registers
+
 	    String valueRs1 = registers.getRegisterValue(rs1);
 	    String valueRs2 = registers.getRegisterValue(rs2);
-	
-	    // Parse the immediate value from binary to integer
+
 	    int immediate = Integer.parseInt(imm, 2);
-	
-	    // Compare the values of rs1 and rs2
+
 	    if (!valueRs1.equals(valueRs2)) {
-	        // Branch if not equal
 	        int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
 	        int targetAddress = currentProgramCounter + immediate;
-	
-	        // Ensure that the target address is within the valid address range
-	        if (targetAddress < 0 || targetAddress >= (1 << 32)) {
-	            throw new IllegalArgumentException("Invalid target address");
+
+	        String targetAddressBinary = Integer.toBinaryString(targetAddress);
+
+	        while (targetAddressBinary.length() < 32) {
+	            targetAddressBinary = "0" + targetAddressBinary;
 	        }
-	
-	        // Set the program counter to the target address
-	        registers.setProgramCounter(String.format("%32s", Integer.toBinaryString(targetAddress)).replace(' ', '0'));
+
+	        registers.setProgramCounter(targetAddressBinary);
 	    } else {
-	        // Increment the program counter if values are equal
 	        registers.incrementProgramCounter();
 	    }
 	}
