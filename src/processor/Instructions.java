@@ -270,31 +270,33 @@ public class Instructions {
 		String rd = instructionComponents.get("rd"); // destination register
 		String rs1 = instructionComponents.get("rs1"); // source register 1
 		String imm = instructionComponents.get("imm"); // immediate register
-		// Print the whole hashmap
-		System.out.println(instructionComponents);
+
 		// Get values from registers
 		String valueRs1 = registers.getRegisterValue(rs1);
-		System.out.println("rs1: " + valueRs1);
-		System.out.println("valueRs1: " + valueRs1);
-		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
 
+		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		//int valueIntRs1 = Integer.parseInt(valueRs1, 2);
 		// Convert immediate value from binary string to integer
-		int immediate = Integer.parseInt(imm, 2);
+		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
 
 		// Perform addition operation
 		int result = valueIntRs1 + immediate;
 
 		// Convert result back to binary string representation
-		String resultBinary = Integer.toBinaryString(result);
-
-		// Ensure resultBinary is 32-bit length
-		while (resultBinary.length() < 32) {
-			resultBinary = "0" + resultBinary;
+		//String resultBinary = Integer.toBinaryString(result);
+		String resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
+		if (immediate < 0 ) {
+			resultBinary = Utility.leftPad("1" + Integer.toBinaryString(result));
 		}
+		//String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+		// Ensure resultBinary is 32-bit length
+		//while (resultBinary.length() < 32) {
+		//	resultBinary = "0" + resultBinary;
+		//}
 
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
-		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+		registers.incrementProgramCounter();
 	}
 
 	public void SLTI(HashMap<String, String> instructionComponents) {

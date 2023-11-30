@@ -39,11 +39,21 @@ public class Utility {
         return result;
     }
 
+    public static String leftPad(String binaryString) {
+        int firstChar = Integer.parseInt(binaryString.substring(0, 1));
+        while (binaryString.length() < 32) {
+            binaryString = firstChar + binaryString;
+        }
+        //return binaryString;
+        // Return the last 32 bits
+        return binaryString.substring(binaryString.length() - 32);
+    }
+
 
 
     public static void main(String[] args) {
-        System.out.println(StringCrement("00000000000000000000000000000001", 1)); // Should print "00000000000000000000000000000010"
-        System.out.println(StringCrement("00000000000000000000000000000010", -1)); // Should print "00000000000000000000000000000001"
-        System.out.println(StringCrement("11111111111111111111111111111111", 1)); // For demonstration, results in overflow and wraps around
+        System.out.println("leftPad with a 0: " + leftPad("0111"));
+        System.out.println("leftPad with a 1: " + leftPad("1001"));
+        System.out.println(Integer.toBinaryString(-10));
     }
 }
