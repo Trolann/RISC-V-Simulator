@@ -8,13 +8,13 @@ interface InstructionFunction {
 }
 
 public class Instructions {
-    private Memory memory;
-    public Registers registers;
+	private Memory memory;
+	public Registers registers;
 
-    public Instructions(Memory memory, Registers registers) {
-        this.memory = memory;
-        this.registers = registers;
-    }
+	public Instructions(Memory memory, Registers registers) {
+		this.memory = memory;
+		this.registers = registers;
+	}
 
 	public void LUI(HashMap<String, String> instructionComponents) {
 		String rd = instructionComponents.get("rd"); // destination register
@@ -85,6 +85,7 @@ public class Instructions {
 		while (targetAddressBinary.length() < 32) {
 			targetAddressBinary = "0" + targetAddressBinary;
 		}
+
 		// Update program counter to the target address
 		registers.setProgramCounter(targetAddressBinary);
 	}
@@ -114,182 +115,374 @@ public class Instructions {
 		while (targetAddressBinary.length() < 32) {
 			targetAddressBinary = "0" + targetAddressBinary;
 		}
+
 		// Update program counter to the target address
 		registers.setProgramCounter(targetAddressBinary);
 	}
 
 	public void BEQ(HashMap<String, String> instructionComponents) {
-	    // Extract components from the HashMap
-	    String rs1 = instructionComponents.get("rs1"); // source register 1
-	    String rs2 = instructionComponents.get("rs2"); // source register 2
-	    String imm = instructionComponents.get("imm"); // immediate value
-	    // Get values from source registers
-	    String valueRs1 = registers.getRegisterValue(rs1);
-	    String valueRs2 = registers.getRegisterValue(rs2);
+		// Extract components from the HashMap
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+		String imm = instructionComponents.get("imm"); // immediate value
 
-	    // Convert immediate value from binary string to integer
-	    int immediate = Integer.parseInt(imm, 2);
+		// Get values from source registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
 
-	    // Check if the values in rs1 and rs2 are equal
-	    if (valueRs1.equals(valueRs2)) {
-	    	// Calculate the target address by adding immediate to the current program counter
-	    	int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
-	    	int targetAddress = currentProgramCounter + immediate;
-	        // Convert target address back to binary string representation
-	        String targetAddressBinary = Integer.toBinaryString(targetAddress);
-	        // Ensure targetAddressBinary is 32-bit length
-	        while (targetAddressBinary.length() < 32) {
-	            targetAddressBinary = "0" + targetAddressBinary;
-	        }
-	        // Update program counter to the target address
-	        registers.setProgramCounter(targetAddressBinary);
-	    } else {
-	        // If the values are not equal, proceed to the next instruction
-	        registers.incrementProgramCounter();
-	    }
+		// Convert immediate value from binary string to integer
+		int immediate = Integer.parseInt(imm, 2);
+
+		// Check if the values in rs1 and rs2 are equal
+		if (valueRs1.equals(valueRs2)) {
+			// Calculate the target address by adding immediate to the current program
+			// counter
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			int targetAddress = currentProgramCounter + immediate;
+
+			// Convert target address back to binary string representation
+			String targetAddressBinary = Integer.toBinaryString(targetAddress);
+
+			// Ensure targetAddressBinary is 32-bit length
+			while (targetAddressBinary.length() < 32) {
+				targetAddressBinary = "0" + targetAddressBinary;
+			}
+
+			// Update program counter to the target address
+			registers.setProgramCounter(targetAddressBinary);
+		} else {
+			// If the values are not equal, proceed to the next instruction
+			registers.incrementProgramCounter();
+		}
 	}
-	
+
 	public void BNE(HashMap<String, String> instructionComponents) {
-	    String rs1 = instructionComponents.get("rs1");
-	    String rs2 = instructionComponents.get("rs2");
-	    String imm = instructionComponents.get("imm");
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
 
-	    String valueRs1 = registers.getRegisterValue(rs1);
-	    String valueRs2 = registers.getRegisterValue(rs2);
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
 
-	    int immediate = Integer.parseInt(imm, 2);
+		int immediate = Integer.parseInt(imm, 2);
 
-	    if (!valueRs1.equals(valueRs2)) {
-	        int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
-	        int targetAddress = currentProgramCounter + immediate;
+		if (!valueRs1.equals(valueRs2)) {
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			int targetAddress = currentProgramCounter + immediate;
 
-	        String targetAddressBinary = Integer.toBinaryString(targetAddress);
+			String targetAddressBinary = Integer.toBinaryString(targetAddress);
 
-	        while (targetAddressBinary.length() < 32) {
-	            targetAddressBinary = "0" + targetAddressBinary;
-	        }
+			while (targetAddressBinary.length() < 32) {
+				targetAddressBinary = "0" + targetAddressBinary;
+			}
 
-	        registers.setProgramCounter(targetAddressBinary);
-	    } else {
-	        registers.incrementProgramCounter();
-	    }
+			registers.setProgramCounter(targetAddressBinary);
+		} else {
+			registers.incrementProgramCounter();
+		}
 	}
-	
+
 	public void BGE(HashMap<String, String> instructionComponents) {
-	    String rs1 = instructionComponents.get("rs1");
-	    String rs2 = instructionComponents.get("rs2");
-	    String imm = instructionComponents.get("imm");
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
 
-	    String valueRs1 = registers.getRegisterValue(rs1);
-	    String valueRs2 = registers.getRegisterValue(rs2);
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
 
-	    int immediate = Integer.parseInt(imm, 2);
+		int immediate = Integer.parseInt(imm, 2);
 
-	    if (!valueRs1.equals(valueRs2)) {
-	        int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
-	        int targetAddress = currentProgramCounter + immediate;
+		if (!valueRs1.equals(valueRs2)) {
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			int targetAddress = currentProgramCounter + immediate;
 
-	        String targetAddressBinary = Integer.toBinaryString(targetAddress);
+			String targetAddressBinary = Integer.toBinaryString(targetAddress);
 
-	        while (targetAddressBinary.length() < 32) {
-	            targetAddressBinary = "0" + targetAddressBinary;
-	        }
+			while (targetAddressBinary.length() < 32) {
+				targetAddressBinary = "0" + targetAddressBinary;
+			}
 
-	        registers.setProgramCounter(targetAddressBinary);
-	    } else {
-	        registers.incrementProgramCounter();
-	    }
+			registers.setProgramCounter(targetAddressBinary);
+		} else {
+			registers.incrementProgramCounter();
+		}
 	}
-	
+
 	public void BLTU(HashMap<String, String> instructionComponents) {
-	    // Extracting instruction components
-	    String rs1 = instructionComponents.get("rs1");
-	    String rs2 = instructionComponents.get("rs2");
-	    String imm = instructionComponents.get("imm");
+		// Extracting instruction components
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
 
-	    // Getting register values
+		// Getting register values
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// Parsing immediate value
+		int immediate = Integer.parseInt(imm, 2);
+
+		// Comparing rs1 and rs2
+		if (Integer.parseInt(valueRs1, 2) < Integer.parseInt(valueRs2, 2)) {
+			// Branch taken
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			int targetAddress = currentProgramCounter + immediate;
+
+			// Ensure the target address is a 32-bit binary string
+			String targetAddressBinary = String.format("%32s", Integer.toBinaryString(targetAddress)).replace(' ', '0');
+
+			// Set the program counter to the target address
+			registers.setProgramCounter(targetAddressBinary);
+		} else {
+			// Branch not taken, increment program counter
+			registers.incrementProgramCounter();
+		}
+	}
+
+	public void BGEU(HashMap<String, String> instructionComponents) {
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
+
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		int immediate = Integer.parseInt(imm, 2);
+
+		if (!valueRs1.equals(valueRs2)) {
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			long targetAddress = (long) currentProgramCounter + immediate;
+
+			if (targetAddress > Integer.MAX_VALUE) {
+				throw new IllegalStateException("Target address overflow");
+			}
+
+			String targetAddressBinary = Integer.toBinaryString((int) targetAddress);
+			targetAddressBinary = String.format("%32s", targetAddressBinary).replace(' ', '0');
+
+			registers.setProgramCounter(targetAddressBinary);
+		} else {
+			registers.incrementProgramCounter();
+		}
+	}
+
+	public void ADDI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate register
+		// Print the whole hashmap
+		System.out.println(instructionComponents);
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
+		System.out.println("valueRs1: " + valueRs1);
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+		// Convert immediate value from binary string to integer
+		int immediate = Integer.parseInt(imm, 2);
+
+		// Perform addition operation
+		int result = valueIntRs1 + immediate;
+
+		// Convert result back to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
+
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	public void SLTI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate register
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
+
+		// Convert values from binary string to integers
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+		int immediate = Integer.parseInt(imm, 2);
+
+		// Perform SLTI operation
+		int result = (valueIntRs1 < immediate) ? 1 : 0;
+
+		// Convert result to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
+
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+
+		// Increment program counter
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	public void SRLI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate value
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
+
+		// Convert rs1 value from binary string to integer
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+		// Convert immediate value from binary string to integer
+		int shiftAmount = Integer.parseInt(imm, 2);
+
+		// Perform right shift operation
+		int result = valueIntRs1 >>> shiftAmount;
+
+		// Convert result back to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
+
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	public void SLTIU(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate register
+		// Print the whole hashmap
+		System.out.println(instructionComponents);
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
+		System.out.println("valueRs1: " + valueRs1);
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+		// Convert immediate value from binary string to integer
+		int immediate = Integer.parseInt(imm, 2);
+
+		// Perform addition operation
+		int result = valueIntRs1 + immediate;
+
+		// Convert result back to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
+
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	public void XORI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate value
+
+		// Print the whole hashmap
+		System.out.println(instructionComponents);
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
+
+		// Convert register values from binary string to integer
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+		int immediate = Integer.parseInt(imm, 2);
+
+		// Perform XOR operation
+		int result = valueIntRs1 ^ immediate;
+
+		// Convert result back to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
+
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	public void ORI(HashMap<String, String> instructionComponents) {
+	    // Extract components from the HashMap
+	    String rd = instructionComponents.get("rd"); // destination register
+	    String rs1 = instructionComponents.get("rs1"); // source register 1
+	    String imm = instructionComponents.get("imm"); // immediate register
+	    
+	    // Get values from registers
 	    String valueRs1 = registers.getRegisterValue(rs1);
-	    String valueRs2 = registers.getRegisterValue(rs2);
-
-	    // Parsing immediate value
+	    System.out.println("rs1: " + valueRs1);
+	    
+	    // Convert register values from binary string to integers
+	    int valueIntRs1 = Integer.parseInt(valueRs1, 2);
 	    int immediate = Integer.parseInt(imm, 2);
 
-	    // Comparing rs1 and rs2
-	    if (Integer.parseInt(valueRs1, 2) < Integer.parseInt(valueRs2, 2)) {
-	        // Branch taken
-	        int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
-	        int targetAddress = currentProgramCounter + immediate;
+	    // Perform bitwise OR operation
+	    int result = valueIntRs1 | immediate;
 
-	        // Ensure the target address is a 32-bit binary string
-	        String targetAddressBinary = String.format("%32s", Integer.toBinaryString(targetAddress)).replace(' ', '0');
+	    // Convert result back to 32-bit binary string representation
+	    String resultBinary = String.format("%32s", Integer.toBinaryString(result)).replace(' ', '0');
 
-	        // Set the program counter to the target address
-	        registers.setProgramCounter(targetAddressBinary);
-	    } else {
-	        // Branch not taken, increment program counter
-	        registers.incrementProgramCounter();
+	    // Update rd register value
+	    registers.setRegisterValue(rd, resultBinary);
+	    registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+
+	public void ANDI(HashMap<String, String> instructionComponents) {
+	    // Extract components from the HashMap
+	    String rd = instructionComponents.get("rd"); // destination register
+	    String rs1 = instructionComponents.get("rs1"); // source register 1
+	    String imm = instructionComponents.get("imm"); // immediate register
+
+	    // Get values from registers
+	    String valueRs1 = registers.getRegisterValue(rs1);
+	    System.out.println("rs1: " + valueRs1);
+	    
+	    // Convert register values from binary string to integers
+	    int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+	    int immediate = Integer.parseInt(imm, 2);
+
+	    // Perform bitwise AND operation
+	    int result = valueIntRs1 & immediate;
+
+	    // Convert result back to binary string representation
+	    String resultBinary = Integer.toBinaryString(result);
+
+	    // Ensure resultBinary is 32-bit length
+	    while (resultBinary.length() < 32) {
+	        resultBinary = "0" + resultBinary;
 	    }
+
+	    // Update rd register value
+	    registers.setRegisterValue(rd, resultBinary);
+	    registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
 	}
 
 	
-	public void BGEU(HashMap<String, String> instructionComponents) {
-	    String rs1 = instructionComponents.get("rs1");
-	    String rs2 = instructionComponents.get("rs2");
-	    String imm = instructionComponents.get("imm");
-
-	    String valueRs1 = registers.getRegisterValue(rs1);
-	    String valueRs2 = registers.getRegisterValue(rs2);
-
-	    int immediate = Integer.parseInt(imm, 2);
-
-	    if (!valueRs1.equals(valueRs2)) {
-	        int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
-	        long targetAddress = (long) currentProgramCounter + immediate;
-
-	        if (targetAddress > Integer.MAX_VALUE) {
-	            throw new IllegalStateException("Target address overflow");
-	        }
-
-	        String targetAddressBinary = Integer.toBinaryString((int) targetAddress);
-	        targetAddressBinary = String.format("%32s", targetAddressBinary).replace(' ', '0');
-
-	        registers.setProgramCounter(targetAddressBinary);
-	    } else {
-	        registers.incrementProgramCounter();
-	    }
-	}
-
-    public void ADDI(HashMap<String, String> instructionComponents) {
-        // Extract components from the HashMap
-        String rd = instructionComponents.get("rd"); //destination register
-        String rs1 = instructionComponents.get("rs1"); //source register 1
-        String imm = instructionComponents.get("imm"); //immediate register
-        // Print the whole hashmap
-        System.out.println(instructionComponents);
-        // Get values from registers
-        String valueRs1 = registers.getRegisterValue(rs1);
-        System.out.println("rs1: " + valueRs1);
-        System.out.println("valueRs1: " + valueRs1);
-        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
-
-        // Convert immediate value from binary string to integer
-        int immediate = Integer.parseInt(imm, 2);
-
-        // Perform addition operation
-        int result = valueIntRs1 + immediate;
-
-        // Convert result back to binary string representation
-        String resultBinary = Integer.toBinaryString(result);
-
-        // Ensure resultBinary is 32-bit length
-        while (resultBinary.length() < 32) {
-            resultBinary = "0" + resultBinary;
-        }
-
-        // Update rd register value
-        registers.setRegisterValue(rd, resultBinary);
-        registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
-    }
 /*
     public String LB(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap
