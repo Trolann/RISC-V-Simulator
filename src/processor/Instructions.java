@@ -173,16 +173,22 @@ public class Instructions {
 	    String rs1 = instructionComponents.get("rs1");
 	    String rs2 = instructionComponents.get("rs2");
 	    String imm = instructionComponents.get("imm");
+
 	    String valueRs1 = registers.getRegisterValue(rs1);
 	    String valueRs2 = registers.getRegisterValue(rs2);
+
 	    int immediate = Integer.parseInt(imm, 2);
+
 	    if (!valueRs1.equals(valueRs2)) {
 	        int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
 	        int targetAddress = currentProgramCounter + immediate;
+
 	        String targetAddressBinary = Integer.toBinaryString(targetAddress);
+
 	        while (targetAddressBinary.length() < 32) {
 	            targetAddressBinary = "0" + targetAddressBinary;
 	        }
+
 	        registers.setProgramCounter(targetAddressBinary);
 	    } else {
 	        registers.incrementProgramCounter();
@@ -190,24 +196,35 @@ public class Instructions {
 	}
 	
 	public void BLTU(HashMap<String, String> instructionComponents) {
+	    // Extracting instruction components
 	    String rs1 = instructionComponents.get("rs1");
 	    String rs2 = instructionComponents.get("rs2");
 	    String imm = instructionComponents.get("imm");
+
+	    // Getting register values
 	    String valueRs1 = registers.getRegisterValue(rs1);
 	    String valueRs2 = registers.getRegisterValue(rs2);
+
+	    // Parsing immediate value
 	    int immediate = Integer.parseInt(imm, 2);
-	    if (!valueRs1.equals(valueRs2)) {
+
+	    // Comparing rs1 and rs2
+	    if (Integer.parseInt(valueRs1, 2) < Integer.parseInt(valueRs2, 2)) {
+	        // Branch taken
 	        int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
 	        int targetAddress = currentProgramCounter + immediate;
-	        String targetAddressBinary = Integer.toBinaryString(targetAddress);
-	        while (targetAddressBinary.length() < 32) {
-	            targetAddressBinary = "0" + targetAddressBinary;
-	        }
+
+	        // Ensure the target address is a 32-bit binary string
+	        String targetAddressBinary = String.format("%32s", Integer.toBinaryString(targetAddress)).replace(' ', '0');
+
+	        // Set the program counter to the target address
 	        registers.setProgramCounter(targetAddressBinary);
 	    } else {
+	        // Branch not taken, increment program counter
 	        registers.incrementProgramCounter();
 	    }
 	}
+
 	
 	public void BGEU(HashMap<String, String> instructionComponents) {
 	    String rs1 = instructionComponents.get("rs1");
@@ -221,13 +238,14 @@ public class Instructions {
 
 	    if (!valueRs1.equals(valueRs2)) {
 	        int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
-	        int targetAddress = currentProgramCounter + immediate;
+	        long targetAddress = (long) currentProgramCounter + immediate;
 
-	        String targetAddressBinary = Integer.toBinaryString(targetAddress);
-
-	        while (targetAddressBinary.length() < 32) {
-	            targetAddressBinary = "0" + targetAddressBinary;
+	        if (targetAddress > Integer.MAX_VALUE) {
+	            throw new IllegalStateException("Target address overflow");
 	        }
+
+	        String targetAddressBinary = Integer.toBinaryString((int) targetAddress);
+	        targetAddressBinary = String.format("%32s", targetAddressBinary).replace(' ', '0');
 
 	        registers.setProgramCounter(targetAddressBinary);
 	    } else {
