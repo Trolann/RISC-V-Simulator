@@ -64,14 +64,15 @@ public class Pipeline {
 
     // Run until a breakpoint or end
     public void runUntilBreakpointOrEnd() {
-        while(!hasReachedBreakpoint && registers.getRegisterValue("pc") != null) {
+        while(!hasReachedBreakpoint && registers.getProgramCounter() != null) {
             runNextInstruction();
         }
     }
 
     // Execute a single instruction
     public void runNextInstruction() {
-        String instruction = memory.getMemoryValue(registers.getProgramCounter());
+        System.out.println("Running next instruction: " + registers.getProgramCounter());
+        String instruction = memory.getInstruction(registers.getProgramCounter());
 
         if(instruction == null) {
             // TODO Handle error: instruction at pcValue not found in memory
@@ -307,7 +308,7 @@ public class Pipeline {
     // Fetch the next instruction in assembly for display purposes
     public String getNextInstructionInAssembly() {
         // Using the machineToAsm function to get components
-        HashMap<String, String> components = machineToAsm(memory.getMemoryValue(registers.getRegisterValue("pc")));
+        HashMap<String, String> components = machineToAsm(memory.getMemoryValue(registers.getProgramCounter()));
 
         // TODO: Convert components to human-readable assembly string
 

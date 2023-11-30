@@ -23,4 +23,13 @@ public class Memory{
     }
   }
 
+  public String getInstruction(String startingAddress) {
+      String instruction = "";
+      for(int i = 0; i < 4; i++) {
+          instruction = getMemoryValue(startingAddress) + instruction;
+          startingAddress = Utility.StringCrement(startingAddress, 1);
+      }
+      return instruction;
+  }
+
 }
