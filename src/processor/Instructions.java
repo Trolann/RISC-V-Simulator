@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 @FunctionalInterface
 interface InstructionFunction {
-	void execute(HashMap<String, String> asmInstruction);
+	String execute(HashMap<String, String> asmInstruction);
 }
 
 public class Instructions {
@@ -265,7 +265,7 @@ public class Instructions {
 		}
 	}
 
-	public void ADDI(HashMap<String, String> instructionComponents) {
+	public String ADDI(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd"); // destination register
 		String rs1 = instructionComponents.get("rs1"); // source register 1
@@ -297,6 +297,7 @@ public class Instructions {
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
 		registers.incrementProgramCounter();
+		return "return instruction here";
 	}
 
 	public void SLTI(HashMap<String, String> instructionComponents) {

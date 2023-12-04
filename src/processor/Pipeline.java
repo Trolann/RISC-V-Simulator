@@ -84,7 +84,9 @@ public class Pipeline {
         System.out.println("instructionName: " + asmComponents.get("instructionName"));
 
         if (functionMap.containsKey(asmComponents.get("instructionName"))) {
-            functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
+            String result;
+            result = functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
+            System.out.println("result: " + result);
         } else {
             return;
         }
