@@ -1,5 +1,4 @@
 package processor;
-
 import java.io.*;
 
 public class Loader {
@@ -9,15 +8,15 @@ public class Loader {
     this.memory = memory;
   }
 
-  public void loadInstructions(String filename) throws IOException {
-	  
-	  
-	  //TODO: Given any file
-	  //TODO: Loader class has to be able to load data memory
-	  //TODO Plan: make two instructions load instructions and load data where one 
+  public void load(String filename, String datafilename) throws IOException {
 
     FileInputStream fis = new FileInputStream(filename);
     DataInputStream dis = new DataInputStream(fis);
+    
+    if(datafilename.length()!=0) {
+    	FileInputStream fis1 = new FileInputStream(datafilename);
+        DataInputStream dataDis = new DataInputStream(fis1);
+    }
     
 
     String address = Utility.ALLZEROS;    
@@ -32,6 +31,25 @@ public class Loader {
         // Increment the address for the next memory location
         address = Utility.StringCrement(address, 1);
     }
+       
+    // Check if dataAddress is provided
+    if (datafilename.length() != 0) {
+        FileInputStream dataFis = new FileInputStream(datafilename);
+        DataInputStream dataDis = new DataInputStream(dataFis);
+
+        String dataMemAddress = "1000"; // Start address for data memory
+
+        // Read data from dataAddress file and store it in memory at address 1000 onwards
+        while (dataDis.available() > 0) {
+            String dataLine = dataDis.readLine();
+            memory.setMemoryValue(dataMemAddress, dataLine);
+            dataMemAddress = Utility.StringCrement(dataMemAddress, 1); // Increment data memory address
+        }
+
+        dataDis.close();
+        dataFis.close();
+    }
+        
 
     dis.close();
     fis.close();

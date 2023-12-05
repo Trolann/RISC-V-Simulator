@@ -15,24 +15,91 @@ public class SimulatorMain {
 
 
     public static void main(String[] args) {
-        String inputFile;
-        Scanner scanner = new Scanner(System.in);
+    	
+    	Scanner scanner = new Scanner(System.in);
+        Loader loader = new Loader(new Memory()); // Assuming Memory class constructor requires no arguments
+
+        String inputFile = "";
+        String dataFile = "";
+
         // Get input file from stdin
-        if(args.length == 0) {
+        if (args.length == 0) {
             System.out.println("Please enter the input file name:");
             inputFile = scanner.nextLine();
             inputFile = "src/processor/input_files/" + inputFile;
         } else {
             inputFile = args[0];
         }
-        // Load the .dat file into memory. (Loader logic should be completed separately.)
-        // Load instructions using Loader
-        try {
-          loader.loadInstructions(inputFile);
-        } catch (IOException e) {
-          e.printStackTrace();
+
+        // Ask if the user wants to provide a data file
+        System.out.println("Do you want to provide a data file? (Y/N)");
+        String provideDataFile = scanner.nextLine().trim().toLowerCase();
+
+        if (provideDataFile.equals("y")) {
+            System.out.println("Please enter the data file name:");
+            dataFile = scanner.nextLine();
+            dataFile = "src/processor/input_files/" + dataFile;
+        } else {
+            dataFile = ""; // Make it an empty string
         }
 
+        // Load the .dat file into memory using Loader
+        try {
+            loader.load(inputFile, dataFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    	
+    	//old
+//        String inputFile;
+//        Scanner scanner = new Scanner(System.in);
+//        
+//        //old
+//        // Get input file from stdin
+//        if(args.length == 0) {
+//            System.out.println("Please enter the input file name:");
+//            inputFile = scanner.nextLine();
+//            inputFile = "src/processor/input_files/" + inputFile;
+//        } else {
+//            inputFile = args[0];
+//        }
+//        // Load the .dat file into memory. (Loader logic should be completed separately.)
+//        // Load instructions using Loader
+//        try {
+//          loader.loadInstructions(inputFile, dataFile);
+//        } catch (IOException e) {
+//          e.printStackTrace();
+//        }
+//    	old one
+        
+        //crap
+//     // Get input file from stdin
+//        String dataFile = ""; // Initialize dataFile variable
+//
+//        if (args.length == 0) {
+//            System.out.println("Please enter the input file name:");
+//            inputFile = scanner.nextLine();
+//            inputFile = "src/processor/input_files/" + inputFile;
+//        } else {
+//            inputFile = args[0];
+//            
+//            // Check if a data file is provided as a command-line argument
+//            if (args.length > 1) {
+//                dataFile = args[1];
+//            }
+//        }
+        
+
+        // Load the .dat file into memory. (Loader logic should be completed separately.)
+        // Load instructions using Loader
+//        try {
+//            loader.loadInstructions(inputFile, dataFile.isEmpty() ? Utility.ALLZEROS : dataFile);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        //end crap
+
+        
         boolean isRunning = true;
 
         while(isRunning) {
