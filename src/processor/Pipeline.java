@@ -22,59 +22,59 @@ public class Pipeline {
         this.hasReachedBreakpoint = false;
         this.functionMap = new HashMap<>();
         this.instructions = new Instructions(memory, registers);
-        // functionMap.put("lui", this.instructions::LUI); // 1
-        // functionMap.put("auipc", this.instructions::AUIPC); // 2
-        // functionMap.put("jal", this.instructions::JAL); // 3
-        // functionMap.put("jalr", this.instructions::JALR); // 4
-        // functionMap.put("beq", this.instructions::BEQ); // 5
-        // functionMap.put("bne", this.instructions::BNE); // 6
-        // functionMap.put("blt", this.instructions::BLT); // 7
-        // functionMap.put("bge", this.instructions::BGE); // 8
-        // functionMap.put("bltu", this.instructions::BLTU); // 9
-        // functionMap.put("bgeu", this.instructions::BGEU); // 10
-        // functionMap.put("lb", this.instructions::LB); // 11
-        // functionMap.put("lh", this.instructions::LH); // 12
-        // functionMap.put("lw", this.instructions::LW); // 13
-        // functionMap.put("lbu", this.instructions::LBU); // 14
-        // functionMap.put("lhu", this.instructions::LHU); // 15
-        // functionMap.put("sb", this.instructions::SB); // 16
-        // functionMap.put("sh", this.instructions::SH); // 17
-        // functionMap.put("sw", this.instructions::SW); // 18
+        functionMap.put("lui", this.instructions::LUI); // 1
+        functionMap.put("auipc", this.instructions::AUIPC); // 2
+        functionMap.put("jal", this.instructions::JAL); // 3
+        functionMap.put("jalr", this.instructions::JALR); // 4
+        functionMap.put("beq", this.instructions::BEQ); // 5
+        functionMap.put("bne", this.instructions::BNE); // 6
+        functionMap.put("blt", this.instructions::BLT); // 7
+        functionMap.put("bge", this.instructions::BGE); // 8
+        functionMap.put("bltu", this.instructions::BLTU); // 9
+        functionMap.put("bgeu", this.instructions::BGEU); // 10
+        functionMap.put("lb", this.instructions::LB); // 11
+        functionMap.put("lh", this.instructions::LH); // 12
+        functionMap.put("lw", this.instructions::LW); // 13
+        functionMap.put("lbu", this.instructions::LBU); // 14
+        functionMap.put("lhu", this.instructions::LHU); // 15
+        functionMap.put("sb", this.instructions::SB); // 16
+        functionMap.put("sh", this.instructions::SH); // 17
+        functionMap.put("sw", this.instructions::SW); // 18
         functionMap.put("addi", this.instructions::ADDI); // 19
-        // functionMap.put("slti", this.instructions::SLTI); // 20
-        // functionMap.put("sltiu", this.instructions::SLTIU); // 21
-        // functionMap.put("xori", this.instructions::XORI); // 22
-        // functionMap.put("ori", this.instructions::ORI); // 23
-        // functionMap.put("andi", this.instructions::ANDI); // 24
-        // functionMap.put("slli", this.instructions::SLLI); // 25
-        // functionMap.put("srli", this.instructions::SRLI); // 26
-        // functionMap.put("srai", this.instructions::SRAI); // 27
-        // functionMap.put("add", this.instructions::ADD); // 28
-        // functionMap.put("sub", this.instructions::SUB); // 29
-        // functionMap.put("sll", this.instructions::SLL); // 30
-        // functionMap.put("slt", this.instructions::SLT); // 31
-        // functionMap.put("sltu", this.instructions::SLTU); // 32
-        // functionMap.put("xor", this.instructions::XOR); // 33
-        // functionMap.put("srl", this.instructions::SRL); // 34
-        // functionMap.put("sra", this.instructions::SRA); // 35
-        // functionMap.put("or", this.instructions::OR); // 36
-        // functionMap.put("and", this.instructions::AND); // 37
-        // functionMap.put("fence", this.instructions::FENCE); // 38
-        // functionMap.put("ecall", this.instructions::ECALL); // 39
-        // functionMap.put("ebreak", this.instructions::ERBEAK); // 40
+        functionMap.put("slti", this.instructions::SLTI); // 20
+        functionMap.put("sltiu", this.instructions::SLTIU); // 21
+        functionMap.put("xori", this.instructions::XORI); // 22
+        functionMap.put("ori", this.instructions::ORI); // 23
+        functionMap.put("andi", this.instructions::ANDI); // 24
+        functionMap.put("slli", this.instructions::SLLI); // 25
+        functionMap.put("srli", this.instructions::SRLI); // 26
+        functionMap.put("srai", this.instructions::SRAI); // 27
+        functionMap.put("add", this.instructions::ADD); // 28
+        functionMap.put("sub", this.instructions::SUB); // 29
+        functionMap.put("sll", this.instructions::SLL); // 30
+        functionMap.put("slt", this.instructions::SLT); // 31
+        functionMap.put("sltu", this.instructions::SLTU); // 32
+        functionMap.put("xor", this.instructions::XOR); // 33
+        functionMap.put("srl", this.instructions::SRL); // 34
+        functionMap.put("sra", this.instructions::SRA); // 35
+        functionMap.put("or", this.instructions::OR); // 36
+        functionMap.put("and", this.instructions::AND); // 37
+        //functionMap.put("fence", this.instructions::FENCE); // 38
+        //functionMap.put("ecall", this.instructions::ECALL); // 39
+        //functionMap.put("ebreak", this.instructions::ERBEAK); // 40
     }
 
     // Run until a breakpoint or end
-    public boolean runUntilEnd() {
-        while(!memory.getInstruction(registers.getProgramCounter()).equals(Utility.ALLZEROS)) {
+    public boolean runUntilBreakpointOrEnd() {
+        while(!hasReachedBreakpoint && registers.getProgramCounter() != null) {
             runNextInstruction();
         }
-        return STOP;
+        return registers.getProgramCounter() != null;
     }
 
     // Execute a single instruction
     public boolean runNextInstruction() {
-        System.out.println("PIPELINE DEBUG: Running next instruction: " + registers.getProgramCounter());
+        System.out.println("Running next instruction: " + registers.getProgramCounter());
         String instruction = memory.getInstruction(registers.getProgramCounter());
 
         if(instruction == null) {
@@ -83,21 +83,20 @@ public class Pipeline {
 
         // Convert machine instruction to assembly components (you'll need to implement this)
         HashMap<String, String> asmComponents = machineToAsm(instruction);
-        System.out.println("PIPELINE DEBUG: instructionName: " + asmComponents.get("instructionName"));
+        System.out.println("instructionName: " + asmComponents.get("instructionName"));
 
         if (functionMap.containsKey(asmComponents.get("instructionName"))) {
             String result;
             result = functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
-            System.out.println("PIPELINE DEBUG: result: " + result);
+            System.out.println("result: " + result);
         } else {
-            System.out.println("PIPELINE DEBUG: Instruction not found: " + asmComponents);
+            System.out.println("Instruction not found: " + asmComponents);
             return STOP;
         }
 
         // Check for breakpoints
         //int pcIntValue = Integer.parseInt(pcValue, 2); // Convert binary to int
         int pcIntValue = Integer.parseInt(registers.getProgramCounter(), 2); // Convert binary to int
-        System.out.println("PIPELINE DEBUG: Checking for breakpoint at: " + pcIntValue);
         if(breakpoints.contains(pcIntValue)) {
             hasReachedBreakpoint = true;
         }
@@ -105,22 +104,14 @@ public class Pipeline {
     }
 
     // Continue execution until the next breakpoint or end
-    public boolean continueExecution() {
-        boolean done;
+    public void continueExecution() {
         hasReachedBreakpoint = false; // Reset breakpoint flag
-        while(!hasReachedBreakpoint) {
-            done = runNextInstruction();
-            if(!done) {
-                return STOP;
-            }
-        }
-        return RUN;
+        runUntilBreakpointOrEnd();
     }
 
     // Add a breakpoint at a specific address
-    public boolean addBreakpoint(int address) {
+    public void addBreakpoint(int address) {
         breakpoints.add(address);
-        return true;
     }
 
 
@@ -330,7 +321,7 @@ public class Pipeline {
         decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
         decodedInstruction.put("rs2", registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("imm", imm);
-        System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
+        System.out.println("decodedInstruction: " + decodedInstruction);
 
         return decodedInstruction;
     }
