@@ -127,26 +127,38 @@ public class Pipeline {
         String rs1 = instruction.substring(12, 17); // source register 1
         String rs2 = instruction.substring(7, 12); // source register 2
         String instructionName = "Error: {" + oc + "} Instruction not found"; // Assume an error
-        String imm = instruction.substring(0, 12); // immediate value
+        String imm = instruction.substring(0, 12); // default immediate value
 
         switch (oc) {
             case "0110111":
-                // TODO: Extract immediate
+                imm = instruction.substring(0, 20);
                 instructionName = "lui";
                 break;
             case "0010111":
-                // TODO: Extract immediate
+                imm = instruction.substring(0, 20);
                 instructionName = "auipc";
                 break;
             case "1101111":
-                // TODO: Extract immediate
+                imm = String.valueOf(instruction.charAt(0)) +
+                        instruction.charAt(12) + instruction.charAt(13) + instruction.charAt(14) +
+                        instruction.charAt(15) + instruction.charAt(16) + instruction.charAt(17) +
+                        instruction.charAt(18) + instruction.charAt(19) + instruction.charAt(11) +
+                        instruction.charAt(1) + instruction.charAt(2) + instruction.charAt(3) +
+                        instruction.charAt(4) + instruction.charAt(5) + instruction.charAt(6) +
+                        instruction.charAt(7) + instruction.charAt(8) + instruction.charAt(9) +
+                        instruction.charAt(10);
                 instructionName = "jal";
                 break;
             case "1100111":
+                // Default immediate value
                 instructionName = "jalr";
                 break;
             case "1100011":
-                // TODO: Extract immediate (branches)
+                imm = String.valueOf(instruction.charAt(0)) +
+                        instruction.charAt(24) + instruction.charAt(1) + instruction.charAt(2) +
+                        instruction.charAt(3) + instruction.charAt(4) + instruction.charAt(5) +
+                        instruction.charAt(6) + instruction.charAt(20) + instruction.charAt(21) +
+                        instruction.charAt(23) + instruction.charAt(23);
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -172,7 +184,7 @@ public class Pipeline {
                 }
                 break;
             case "0000011":
-                // TODO: Extract immediate (loads)
+                // Default immediate value
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -195,7 +207,11 @@ public class Pipeline {
                 }
                 break;
             case "0100011":
-                // TODO: Extract immediate (stores)
+                imm = String.valueOf(instruction.charAt(0)) +
+                        instruction.charAt(1) + instruction.charAt(2) + instruction.charAt(3) +
+                        instruction.charAt(4) + instruction.charAt(5) + instruction.charAt(6) +
+                        instruction.charAt(20) + instruction.charAt(21) + instruction.charAt(22) +
+                        instruction.charAt(23) + instruction.charAt(24);
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -290,25 +306,20 @@ public class Pipeline {
                 }
                 break;
             case "0001111":
-                // TODO: Extract fm, pred, succ
+                decodedInstruction.put("fm", instruction.substring(0, 5));
+                decodedInstruction.put("pred", instruction.substring(5, 9));
+                decodedInstruction.put("succ", instruction.substring(9, 12));
                 instructionName = "fence";
-                break; // Assuming 'fence' for simplicity
+                break;
             case "1110011":
                 imm = instruction.substring(0, 12);
-                if (instruction.substring(0, 20).equals("00000000000000000000")) {
-                    instructionName = "ecall";
-                } else if (instruction.substring(0, 20).equals("00000000000100000000")) {
-                    instructionName = "ebreak";
-                }
+                instructionName = imm.contains("1") ? "ebreak" : "ecall";
                 break;
             // Additional cases for other instructions, if any
             default:
                 instructionName = "unknown";
                 break;
         }
-        //System.out.println("rd as String: " + registers.getRegisterString(Integer.parseInt(rd, 2)));
-        //System.out.println("rs1 as String: " + registers.getRegisterString(Integer.parseInt(rs1, 2)));
-        //System.out.println("rs2 as String: " + registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("instructionName", instructionName);
         decodedInstruction.put("rd", registers.getRegisterString(Integer.parseInt(rd, 2)));
         decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
