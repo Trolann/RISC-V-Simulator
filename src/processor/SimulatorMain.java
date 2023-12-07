@@ -17,7 +17,7 @@ public class SimulatorMain {
     public static void main(String[] args) {
     	
     	Scanner scanner = new Scanner(System.in);
-        Loader loader = new Loader(new Memory()); // Assuming Memory class constructor requires no arguments
+        //Loader loader = new Loader(new Memory()); // Assuming Memory class constructor requires no arguments
 
         String inputFile = "";
         String dataFile = "";
@@ -49,56 +49,6 @@ public class SimulatorMain {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    	
-    	//old
-//        String inputFile;
-//        Scanner scanner = new Scanner(System.in);
-//        
-//        //old
-//        // Get input file from stdin
-//        if(args.length == 0) {
-//            System.out.println("Please enter the input file name:");
-//            inputFile = scanner.nextLine();
-//            inputFile = "src/processor/input_files/" + inputFile;
-//        } else {
-//            inputFile = args[0];
-//        }
-//        // Load the .dat file into memory. (Loader logic should be completed separately.)
-//        // Load instructions using Loader
-//        try {
-//          loader.loadInstructions(inputFile, dataFile);
-//        } catch (IOException e) {
-//          e.printStackTrace();
-//        }
-//    	old one
-        
-        //crap
-//     // Get input file from stdin
-//        String dataFile = ""; // Initialize dataFile variable
-//
-//        if (args.length == 0) {
-//            System.out.println("Please enter the input file name:");
-//            inputFile = scanner.nextLine();
-//            inputFile = "src/processor/input_files/" + inputFile;
-//        } else {
-//            inputFile = args[0];
-//            
-//            // Check if a data file is provided as a command-line argument
-//            if (args.length > 1) {
-//                dataFile = args[1];
-//            }
-//        }
-        
-
-        // Load the .dat file into memory. (Loader logic should be completed separately.)
-        // Load instructions using Loader
-//        try {
-//            loader.loadInstructions(inputFile, dataFile.isEmpty() ? Utility.ALLZEROS : dataFile);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        //end crap
-
         
         boolean isRunning = true;
 
@@ -121,17 +71,13 @@ public class SimulatorMain {
                     System.out.println(registers.toString());
                     break;
                 case "m":
-                    // While memory values are not 0, keep printing them in format
-                    // 0xaddress: string value
-                    // Increment address by 1 each time
-
                     String address = allZeroes;
                     String value = memory.getInstruction(address);
                     int values = 0;
-                    while(!value.equals(allZeroes) && values < 50) {
+                    while(!value.equals(allZeroes) && values < 100) {
                         // Address is binary string, convert to hex
                         System.out.println("0x" + Integer.toHexString(Integer.parseInt(address, 2)) + ": " + value);
-                        System.out.println(pipeline.machineToAsm(value));
+                        pipeline.machineToAsm(value);
                         address = Utility.StringCrement(address, 4);
                         value = memory.getInstruction(address);
                         values++;

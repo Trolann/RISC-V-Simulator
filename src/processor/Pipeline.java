@@ -228,7 +228,6 @@ public class Pipeline {
                 }
                 break;
             case "0010011":
-                imm = instruction.substring(0, 7);
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -252,15 +251,12 @@ public class Pipeline {
                         instructionName = "andi";
                         break;
                     case "001":
+                        imm = instruction.substring(0, 7);
                         instructionName = "slli";
                         break;
                     case "101":
-                        instructionName += " case: 101 imm: " + imm;
-                        if (imm.equals("0000000")) {
-                            instructionName = "srli";
-                        } else if (imm.equals("0100000")) {
-                            instructionName = "srai";
-                        }
+                        imm = instruction.substring(0, 7);
+                        instructionName = imm.contains("1") ? "srai" : "srli";
                         break;
                 }
                 break;
