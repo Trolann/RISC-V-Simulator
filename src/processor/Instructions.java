@@ -4,107 +4,27 @@ import java.util.HashMap;
 
 @FunctionalInterface
 interface InstructionFunction {
-	void execute(HashMap<String, String> asmInstruction);
+	String execute(HashMap<String, String> asmInstruction);
 }
 
 public class Instructions {
-    private Memory memory;
-    public Registers registers;
+	private Memory memory;
+	public Registers registers;
 
-    public Instructions(Memory memory, Registers registers) {
-        this.memory = memory;
-        this.registers = registers;
-    }
-
-    public HashMap<String, Object> executeInstruction(String opcode, HashMap<String, String> instructionComponents) {
-    HashMap<String, Object> result = new HashMap<>();
-
-    // TODO: What is this?
-    /*
-    switch (opcode) {
-        case "LUI":
-            result.put("asmInstruction", LUI(instructionComponents));
-            break;
-        case "AUIPC":
-            result.put("asmInstruction", AUIPC(instructionComponents));
-            break;
-        case "JAL":
-            result.put("asmInstruction", JAL(instructionComponents));
-            result.put("newPC", calculateNewPC(instructionComponents));
-            break;
-        case "JALR":
-            result.put("asmInstruction", JALR(instructionComponents));
-            result.put("newPC", calculateNewPC(instructionComponents));
-            break;
-        case "BEQ":
-            result.put("asmInstruction", BEQ(instructionComponents));
-            // result.put("newPC", calculateBranchPC(instructionComponents)); // TODO: Fix?
-            break;
-        // Add cases for other instructions
-
-        default:
-            throw new UnsupportedOperationException("Unsupported opcode: " + opcode);
-        }
-     */
-
-    return result; // TODO: What is this?
-}
-
-	/**private int calculateBranchPC(HashMap<String, String> instructionComponents) {
-		// Calculate the new program counter for branch instructions
-		int currentPC = registers.getProgramCounter();
-		// Perform the calculation based on the branch instruction and update the PC
-		// Replace with the actual calculation based on branch conditions
-		int newPC = currentPC + 1; // Placeholder, replace with actual branch calculation
-		registers.setProgramCounter(newPC);
-		return newPC;
-	}*/
-
-	private String calculateNewPC(HashMap<String, String> instructionComponents) {
-		// Calculate the new program counter based on the instruction
-		String currentPC = registers.getProgramCounter();
-		// Perform the calculation based on the instruction and update the PC
-		String newPC = Utility.StringCrement(currentPC, 1); // Assuming a simple increment for the next instruction
-        registers.setProgramCounter(newPC);
-		return newPC;
+	public Instructions(Memory memory, Registers registers) {
+		this.memory = memory;
+		this.registers = registers;
 	}
-/*
-	public String LUI(HashMap<String, String> instructionComponents) {
-	    // Extract components from the HashMap
-	    String rd = instructionComponents.get("rd");
-	    String imm = instructionComponents.get("imm");
 
-	    // Convert immediate value from binary string to integer
-	    int immediate = Integer.parseInt(imm, 2);
-
-	    // Left shift immediate by 12 bits to get the result
-	    int result = immediate << 12;
-
-	    // Convert result to binary string representation
-	    String resultBinary = Integer.toBinaryString(result);
-
-	    // Ensure resultBinary is 32-bit length
-	    while (resultBinary.length() < 32) {
-	        resultBinary = "0" + resultBinary;
-	    }
-
-	    // Update rd register value
-	    registers.setRegisterValue(rd, resultBinary);
-
-	    return "LUI assembly instruction";
-	}
-*/
-/*
-	public String AUIPC(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
-		String rd = instructionComponents.get("rd");
-		String imm = instructionComponents.get("imm");
+	public void LUI(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String imm = instructionComponents.get("imm"); // immediate value
 
 		// Convert immediate value from binary string to integer
 		int immediate = Integer.parseInt(imm, 2);
 
-		// Add immediate to the current PC value
-		int result = registers.getProgramCounter() + immediate;
+		// Left-shift immediate value by 12 bits to load upper 20 bits
+		int result = immediate << 12;
 
 		// Convert result back to binary string representation
 		String resultBinary = Integer.toBinaryString(result);
@@ -116,56 +36,97 @@ public class Instructions {
 
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
-
-		return "AUIPC assembly instruction";
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
 	}
-/*
-	public String JAL(HashMap<String, String> instructionComponents) {
+
+	public void AUIPC(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
-		String rd = instructionComponents.get("rd");
-		String imm = instructionComponents.get("imm");
+		String rd = instructionComponents.get("rd"); // destination register
+		String imm = instructionComponents.get("imm"); // immediate value
 
 		// Convert immediate value from binary string to integer
 		int immediate = Integer.parseInt(imm, 2);
 
-		// Calculate the new program counter
-		int newPC = registers.getProgramCounter() + immediate;
+		// Add immediate value to the current value of the program counter
+		int result = immediate + Integer.parseInt(registers.getProgramCounter(), 2);
 
-		// Update rd register value with the old PC + 4
-		registers.setRegisterValue(rd, Integer.toBinaryString(registers.getProgramCounter() + 4));
+		// Convert result back to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
 
-		return "JAL assembly instruction";
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
 	}
-/*
-	public String JALR(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
-		String rd = instructionComponents.get("rd");
-		String rs1 = instructionComponents.get("rs1");
-		String imm = instructionComponents.get("imm");
 
-		// Get values from registers
+	public void JAL(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String imm = instructionComponents.get("imm"); // immediate value
+
+		// Convert immediate value from binary string to integer
+		int immediate = Integer.parseInt(imm, 2);
+
+		// Calculate the target address by adding immediate to the current program
+		// counter
+		int targetAddress = immediate + Integer.parseInt(registers.getProgramCounter(), 2);
+
+		// Save the return address (address of the next instruction) in rd
+		registers.setRegisterValue(rd, registers.getProgramCounter());
+
+		// Convert target address back to binary string representation
+		String targetAddressBinary = Integer.toBinaryString(targetAddress);
+
+		// Ensure targetAddressBinary is 32-bit length
+		while (targetAddressBinary.length() < 32) {
+			targetAddressBinary = "0" + targetAddressBinary;
+		}
+
+		// Update program counter to the target address
+		registers.setProgramCounter(targetAddressBinary);
+	}
+
+	public void JALR(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate value
+
+		// Get value from source register
 		String valueRs1 = registers.getRegisterValue(rs1);
-		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
 
 		// Convert immediate value from binary string to integer
 		int immediate = Integer.parseInt(imm, 2);
 
-		// Calculate the new program counter
-		int newPC = (valueIntRs1 + immediate) & ~1;
+		// Calculate the target address by adding immediate to the value in rs1
+		int targetAddress = immediate + Integer.parseInt(valueRs1, 2);
 
-		// Update rd register value with the old PC + 4
-		registers.setRegisterValue(rd, Integer.toBinaryString(registers.getProgramCounter() + 4));
+		// Save the return address (address of the next instruction) in rd
+		registers.setRegisterValue(rd, registers.getProgramCounter());
 
-		return "JALR assembly instruction";
+		// Convert target address back to binary string representation
+		String targetAddressBinary = Integer.toBinaryString(targetAddress);
+
+		// Ensure targetAddressBinary is 32-bit length
+		while (targetAddressBinary.length() < 32) {
+			targetAddressBinary = "0" + targetAddressBinary;
+		}
+
+		// Update program counter to the target address
+		registers.setProgramCounter(targetAddressBinary);
 	}
-/*
-	public String BEQ(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
-		String rs1 = instructionComponents.get("rs1");
-		String rs2 = instructionComponents.get("rs2");
-		String imm = instructionComponents.get("imm");
 
-		// Get values from registers
+	public void BEQ(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+		String imm = instructionComponents.get("imm"); // immediate value
+
+		// Get values from source registers
 		String valueRs1 = registers.getRegisterValue(rs1);
 		String valueRs2 = registers.getRegisterValue(rs2);
 
@@ -174,206 +135,357 @@ public class Instructions {
 
 		// Check if the values in rs1 and rs2 are equal
 		if (valueRs1.equals(valueRs2)) {
-			// Calculate the new program counter
-			int newPC = registers.getProgramCounter() + immediate;
+			// Calculate the target address by adding immediate to the current program
+			// counter
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			int targetAddress = currentProgramCounter + immediate;
 
-			return "BEQ assembly instruction";
+			// Convert target address back to binary string representation
+			String targetAddressBinary = Integer.toBinaryString(targetAddress);
+
+			// Ensure targetAddressBinary is 32-bit length
+			while (targetAddressBinary.length() < 32) {
+				targetAddressBinary = "0" + targetAddressBinary;
+			}
+
+			// Update program counter to the target address
+			registers.setProgramCounter(targetAddressBinary);
 		} else {
-			return "Branch not taken";
+			// If the values are not equal, proceed to the next instruction
+			registers.incrementProgramCounter();
 		}
 	}
-*/
-    public void ADDI(HashMap<String, String> instructionComponents) {
-        // Extract components from the HashMap
-        String rd = instructionComponents.get("rd"); //destination register
-        String rs1 = instructionComponents.get("rs1"); //source register 1
-        String imm = instructionComponents.get("imm"); //immediate register
-        // Print the whole hashmap
-        System.out.println(instructionComponents);
-        // Get values from registers
-        String valueRs1 = registers.getRegisterValue(rs1);
-        System.out.println("rs1: " + valueRs1);
-        System.out.println("valueRs1: " + valueRs1);
-        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
 
-        // Convert immediate value from binary string to integer
-        int immediate = Integer.parseInt(imm, 2);
+	public void BNE(HashMap<String, String> instructionComponents) {
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
 
-        // Perform addition operation
-        int result = valueIntRs1 + immediate;
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
 
-        // Convert result back to binary string representation
-        String resultBinary = Integer.toBinaryString(result);
+		int immediate = Integer.parseInt(imm, 2);
 
-        // Ensure resultBinary is 32-bit length
-        while (resultBinary.length() < 32) {
-            resultBinary = "0" + resultBinary;
-        }
+		if (!valueRs1.equals(valueRs2)) {
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			int targetAddress = currentProgramCounter + immediate;
 
-        // Update rd register value
-        registers.setRegisterValue(rd, resultBinary);
-        registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
-    }
-/*
-    public String BNE(HashMap<String, String> instructionComponents) {
-        // Extract components from the HashMap
-        String rs1 = instructionComponents.get("rs1"); // Source register 1
-        String rs2 = instructionComponents.get("rs2"); // Source register 2
-        String imm = instructionComponents.get("imm"); // Immediate value
+			String targetAddressBinary = Integer.toBinaryString(targetAddress);
 
-        // Get values from registers
-        String valueRs1 = registers.getRegisterValue(rs1);
-        String valueRs2 = registers.getRegisterValue(rs2);
+			while (targetAddressBinary.length() < 32) {
+				targetAddressBinary = "0" + targetAddressBinary;
+			}
 
-        // Convert immediate value from binary string to signed integer
-        int immediate = Integer.parseInt(imm, 2);
+			registers.setProgramCounter(targetAddressBinary);
+		} else {
+			registers.incrementProgramCounter();
+		}
+	}
 
-        // Check if the values in rs1 and rs2 are not equal
-        if (!valueRs1.equals(valueRs2)) {
-            // Calculate the new program counter
-            int newPC = registers.getProgramCounter() + immediate;
+	public void BGE(HashMap<String, String> instructionComponents) {
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
 
-            // Update the program counter register with the new address
-            registers.setProgramCounter(newPC);
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
 
-            return "BNE taken: Jumping to address " + newPC;
-        } else {
-            return "BNE not taken: rs1 and rs2 are equal";
-        }
-    }
- */
-/*
-    public String BLT(HashMap<String, String> instructionComponents) {
-        // Extract components from the HashMap
-        String rs1 = instructionComponents.get("rs1"); // Source register 1
-        String rs2 = instructionComponents.get("rs2"); // Source register 2
-        String imm = instructionComponents.get("imm"); // Immediate value
+		int immediate = Integer.parseInt(imm, 2);
 
-        // Get values from registers
-        String valueRs1 = registers.getRegisterValue(rs1);
-        String valueRs2 = registers.getRegisterValue(rs2);
+		if (!valueRs1.equals(valueRs2)) {
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			int targetAddress = currentProgramCounter + immediate;
 
-        // Convert immediate value from binary string to signed integer
-        int immediate = Integer.parseInt(imm, 2);
+			String targetAddressBinary = Integer.toBinaryString(targetAddress);
 
-        // Convert register values from binary strings to signed integers
-        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
-        int valueIntRs2 = Integer.parseInt(valueRs2, 2);
+			while (targetAddressBinary.length() < 32) {
+				targetAddressBinary = "0" + targetAddressBinary;
+			}
 
-        // Check if the value in rs1 is less than the value in rs2
-        if (valueIntRs1 < valueIntRs2) {
-            // Calculate the new program counter
-            int newPC = registers.getProgramCounter() + immediate;
+			registers.setProgramCounter(targetAddressBinary);
+		} else {
+			registers.incrementProgramCounter();
+		}
+	}
 
-            // Update the program counter register with the new address
-            registers.setProgramCounter(newPC);
+	public void BLTU(HashMap<String, String> instructionComponents) {
+		// Extracting instruction components
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
 
-            return "BLT taken: Jumping to address " + newPC;
-        } else {
-            return "BLT not taken: rs1 is not less than rs2";
-        }
-    }
+		// Getting register values
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
 
- */
-/*
-    public String BGE(HashMap<String, String> instructionComponents) {
-        // Extract components from the HashMap
-        String rs1 = instructionComponents.get("rs1"); // Source register 1
-        String rs2 = instructionComponents.get("rs2"); // Source register 2
-        String imm = instructionComponents.get("imm"); // Immediate value
+		// Parsing immediate value
+		int immediate = Integer.parseInt(imm, 2);
 
-        // Get values from registers
-        String valueRs1 = registers.getRegisterValue(rs1);
-        String valueRs2 = registers.getRegisterValue(rs2);
+		// Comparing rs1 and rs2
+		if (Integer.parseInt(valueRs1, 2) < Integer.parseInt(valueRs2, 2)) {
+			// Branch taken
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			int targetAddress = currentProgramCounter + immediate;
 
-        // Convert immediate value from binary string to signed integer
-        int immediate = Integer.parseInt(imm, 2);
+			// Ensure the target address is a 32-bit binary string
+			String targetAddressBinary = String.format("%32s", Integer.toBinaryString(targetAddress)).replace(' ', '0');
 
-        // Convert register values from binary strings to signed integers
-        int valueIntRs1 = Integer.parseInt(valueRs1, 2);
-        int valueIntRs2 = Integer.parseInt(valueRs2, 2);
+			// Set the program counter to the target address
+			registers.setProgramCounter(targetAddressBinary);
+		} else {
+			// Branch not taken, increment program counter
+			registers.incrementProgramCounter();
+		}
+	}
 
-        // Check if the value in rs1 is greater than or equal to the value in rs2
-        if (valueIntRs1 >= valueIntRs2) {
-            // Calculate the new program counter
-            int newPC = registers.getProgramCounter() + immediate;
+	public void BGEU(HashMap<String, String> instructionComponents) {
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
 
-            // Update the program counter register with the new address
-            registers.setProgramCounter(newPC);
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
 
-            return "BGE taken: Jumping to address " + newPC;
-        } else {
-            return "BGE not taken: rs1 is less than rs2";
-        }
-    }
+		int immediate = Integer.parseInt(imm, 2);
 
- */
-/*
-    public String BLTU(HashMap<String, String> instructionComponents) {
-        // Extract components from the HashMap
-        String rs1 = instructionComponents.get("rs1"); // Source register 1
-        String rs2 = instructionComponents.get("rs2"); // Source register 2
-        String imm = instructionComponents.get("imm"); // Immediate value
+		if (!valueRs1.equals(valueRs2)) {
+			int currentProgramCounter = Integer.parseInt(registers.getProgramCounter(), 2);
+			long targetAddress = (long) currentProgramCounter + immediate;
 
-        // Get values from registers
-        String valueRs1 = registers.getRegisterValue(rs1);
-        String valueRs2 = registers.getRegisterValue(rs2);
+			if (targetAddress > Integer.MAX_VALUE) {
+				throw new IllegalStateException("Target address overflow");
+			}
 
-        // Convert immediate value from binary string to signed integer
-        int immediate = Integer.parseInt(imm, 2);
+			String targetAddressBinary = Integer.toBinaryString((int) targetAddress);
+			targetAddressBinary = String.format("%32s", targetAddressBinary).replace(' ', '0');
 
-        // Convert register values from binary strings to unsigned integers
-        long valueUnsignedRs1 = Long.parseLong(valueRs1, 2) & 0xFFFFFFFFL;
-        long valueUnsignedRs2 = Long.parseLong(valueRs2, 2) & 0xFFFFFFFFL;
+			registers.setProgramCounter(targetAddressBinary);
+		} else {
+			registers.incrementProgramCounter();
+		}
+	}
 
-        // Check if the value in rs1 is less than the value in rs2 (unsigned comparison)
-        if (valueUnsignedRs1 < valueUnsignedRs2) {
-            // Calculate the new program counter
-            int newPC = registers.getProgramCounter() + immediate;
+	public String ADDI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate register
 
-            // Update the program counter register with the new address
-            registers.setProgramCounter(newPC);
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
 
-            return "BLTU taken: Jumping to address " + newPC;
-        } else {
-            return "BLTU not taken: rs1 is not less than rs2";
-        }
-    }
+		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		//int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+		// Convert immediate value from binary string to integer
+		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
 
- */
-/*
-    public String BGEU(HashMap<String, String> instructionComponents) {
-        // Extract components from the HashMap
-        String rs1 = instructionComponents.get("rs1"); // Source register 1
-        String rs2 = instructionComponents.get("rs2"); // Source register 2
-        String imm = instructionComponents.get("imm"); // Immediate value
+		// Perform addition operation
+		int result = valueIntRs1 + immediate;
 
-        // Get values from registers
-        String valueRs1 = registers.getRegisterValue(rs1);
-        String valueRs2 = registers.getRegisterValue(rs2);
+		// Convert result back to binary string representation
+		//String resultBinary = Integer.toBinaryString(result);
+		String resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
+		if (immediate < 0 ) {
+			resultBinary = Utility.leftPad("1" + Integer.toBinaryString(result));
+		}
+		//String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+		// Ensure resultBinary is 32-bit length
+		//while (resultBinary.length() < 32) {
+		//	resultBinary = "0" + resultBinary;
+		//}
 
-        // Convert immediate value from binary string to signed integer
-        int immediate = Integer.parseInt(imm, 2);
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.incrementProgramCounter();
+		return "return instruction here";
+	}
 
-        // Convert register values from binary strings to unsigned integers
-        long valueUnsignedRs1 = Long.parseLong(valueRs1, 2) & 0xFFFFFFFFL;
-        long valueUnsignedRs2 = Long.parseLong(valueRs2, 2) & 0xFFFFFFFFL;
+	public void SLTI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate register
 
-        // Check if the value in rs1 is greater than or equal to the value in rs2 (unsigned comparison)
-        if (valueUnsignedRs1 >= valueUnsignedRs2) {
-            // Calculate the new program counter
-            int newPC = registers.getProgramCounter() + immediate;
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
 
-            // Update the program counter register with the new address
-            registers.setProgramCounter(newPC);
+		// Convert values from binary string to integers
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+		int immediate = Integer.parseInt(imm, 2);
 
-            return "BGEU taken: Jumping to address " + newPC;
-        } else {
-            return "BGEU not taken: rs1 is less than rs2";
-        }
-    }
+		// Perform SLTI operation
+		int result = (valueIntRs1 < immediate) ? 1 : 0;
 
- */
+		// Convert result to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
+
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+
+		// Increment program counter
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	public void SRLI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate value
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
+
+		// Convert rs1 value from binary string to integer
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+		// Convert immediate value from binary string to integer
+		int shiftAmount = Integer.parseInt(imm, 2);
+
+		// Perform right shift operation
+		int result = valueIntRs1 >>> shiftAmount;
+
+		// Convert result back to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
+
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	public void SLTIU(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate register
+		// Print the whole hashmap
+		System.out.println(instructionComponents);
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
+		System.out.println("valueRs1: " + valueRs1);
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+
+		// Convert immediate value from binary string to integer
+		int immediate = Integer.parseInt(imm, 2);
+
+		// Perform addition operation
+		int result = valueIntRs1 + immediate;
+
+		// Convert result back to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
+
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	public void XORI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate value
+
+		// Print the whole hashmap
+		System.out.println(instructionComponents);
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
+
+		// Convert register values from binary string to integer
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+		int immediate = Integer.parseInt(imm, 2);
+
+		// Perform XOR operation
+		int result = valueIntRs1 ^ immediate;
+
+		// Convert result back to binary string representation
+		String resultBinary = Integer.toBinaryString(result);
+
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+		}
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	public void ORI(HashMap<String, String> instructionComponents) {
+	    // Extract components from the HashMap
+	    String rd = instructionComponents.get("rd"); // destination register
+	    String rs1 = instructionComponents.get("rs1"); // source register 1
+	    String imm = instructionComponents.get("imm"); // immediate register
+	    
+	    // Get values from registers
+	    String valueRs1 = registers.getRegisterValue(rs1);
+	    System.out.println("rs1: " + valueRs1);
+	    
+	    // Convert register values from binary string to integers
+	    int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+	    int immediate = Integer.parseInt(imm, 2);
+
+	    // Perform bitwise OR operation
+	    int result = valueIntRs1 | immediate;
+
+	    // Convert result back to 32-bit binary string representation
+	    String resultBinary = String.format("%32s", Integer.toBinaryString(result)).replace(' ', '0');
+
+	    // Update rd register value
+	    registers.setRegisterValue(rd, resultBinary);
+	    registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+
+	public void ANDI(HashMap<String, String> instructionComponents) {
+	    // Extract components from the HashMap
+	    String rd = instructionComponents.get("rd"); // destination register
+	    String rs1 = instructionComponents.get("rs1"); // source register 1
+	    String imm = instructionComponents.get("imm"); // immediate register
+
+	    // Get values from registers
+	    String valueRs1 = registers.getRegisterValue(rs1);
+	    System.out.println("rs1: " + valueRs1);
+	    
+	    // Convert register values from binary string to integers
+	    int valueIntRs1 = Integer.parseInt(valueRs1, 2);
+	    int immediate = Integer.parseInt(imm, 2);
+
+	    // Perform bitwise AND operation
+	    int result = valueIntRs1 & immediate;
+
+	    // Convert result back to binary string representation
+	    String resultBinary = Integer.toBinaryString(result);
+
+	    // Ensure resultBinary is 32-bit length
+	    while (resultBinary.length() < 32) {
+	        resultBinary = "0" + resultBinary;
+	    }
+
+	    // Update rd register value
+	    registers.setRegisterValue(rd, resultBinary);
+	    registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+	}
+
+	
 /*
     public String LB(HashMap<String, String> instructionComponents) {
         // Extract components from the HashMap

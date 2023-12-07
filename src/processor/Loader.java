@@ -23,6 +23,7 @@ public class Loader {
     
     // Read each line separately and store it into memory
     while (dis.available() > 0) {
+        //System.out.println(address);
         String line = dis.readLine(); // Read one line from the file
 
         // Set the line content into memory at the specified address

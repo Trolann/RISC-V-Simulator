@@ -87,4 +87,23 @@ public class Registers {
 
         registerMap.put("pc", localPcValue);
     }
+    
+    public void incrementProgramCounter() {
+        int currentProgramCounter = Integer.parseInt(registerMap.get("pc"), 2);
+        currentProgramCounter += 4;
+
+        // Convert back to binary string representation
+        String newProgramCounterBinary = Integer.toBinaryString(currentProgramCounter);
+
+        // Ensure newProgramCounterBinary is 32-bit length
+        while (newProgramCounterBinary.length() < 32) {
+            newProgramCounterBinary = "0" + newProgramCounterBinary;
+        }
+
+        System.out.println("old pc: " + registerMap.get("pc"));
+        System.out.println("new pc: " + newProgramCounterBinary);
+
+        // Update program counter to the new address
+        registerMap.put("pc", newProgramCounterBinary);
+    }
 }

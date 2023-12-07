@@ -126,13 +126,13 @@ public class SimulatorMain {
                     // Increment address by 1 each time
 
                     String address = allZeroes;
-                    String value = memory.getMemoryValue(address);
+                    String value = memory.getInstruction(address);
                     while(!value.equals(allZeroes)) {
                         // Address is binary string, convert to hex
                         System.out.println("0x" + Integer.toHexString(Integer.parseInt(address, 2)) + ": " + value);
                         System.out.println(pipeline.machineToAsm(value));
-                        address = Utility.StringCrement(address, 1);
-                        value = memory.getMemoryValue(address);
+                        address = Utility.StringCrement(address, 4);
+                        value = memory.getInstruction(address);
                     }
                     break;
                 case "r":
