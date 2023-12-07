@@ -240,6 +240,7 @@ public class Pipeline {
                 break;
             case "0110011":
                 switch (fc) {
+                    // Test
                     default:
                         instructionName += " fc: " + fc;
                         break;
