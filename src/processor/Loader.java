@@ -17,7 +17,6 @@ public class Loader {
     	FileInputStream fis1 = new FileInputStream(datafilename);
         DataInputStream dataDis = new DataInputStream(fis1);
     }
-    
 
     String address = Utility.ALLZEROS;    
     
