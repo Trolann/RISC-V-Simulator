@@ -5,9 +5,14 @@ import java.util.HashMap;
 public class Memory {
 
 	private HashMap<String, String> memoryMap;
+	private byte[] memoryArray;
 
 	public Memory() {
 		memoryMap = new HashMap<>();
+	}
+
+	public Memory(int size) {
+		memoryArray = new byte[size];
 	}
 
 	public void setMemoryValue(String address, String value) {
@@ -32,13 +37,6 @@ public class Memory {
 		return instruction;
 	}
 
-	private byte[] memoryArray; // Assuming memory is represented as an array of bytes
-
-	// Constructor to initialize the memory array
-	public Memory(int size) {
-		memoryArray = new byte[size];
-	}
-
 	public String loadByte(int address) {
 		byte loadedByte = memoryArray[address];
 		return Byte.toString(loadedByte);
@@ -55,13 +53,26 @@ public class Memory {
 		return Integer.toString(loadedWord);
 	}
 
-    public void storeByte(int address, String substring) {
-        // Convert the substring to a byte value
-        byte byteValue = (byte) Integer.parseInt(substring, 2);
+	public void storeByte(int address, String substring) {
+		// Convert the substring to a byte value
+		byte byteValue = (byte) Integer.parseInt(substring, 2);
 
-        // Store the byte in memory at the specified address
-        memoryArray[address] = byteValue;
-    }
+		// Store the byte in memory at the specified address
+		memoryArray[address] = byteValue;
+	}
 
+	public void storeWord(int address, int valueInt) {
+		// Store the word at the specified address
+		memoryArray[address] = (byte) (valueInt & 0xFF);
+		memoryArray[address + 1] = (byte) ((valueInt >> 8) & 0xFF);
+		memoryArray[address + 2] = (byte) ((valueInt >> 16) & 0xFF);
+		memoryArray[address + 3] = (byte) ((valueInt >> 24) & 0xFF);
+	}
+
+	public void storeHalfword(int address, int valueInt) {
+		// Store the halfword at the specified address
+		memoryArray[address] = (byte) (valueInt & 0xFF);
+		memoryArray[address + 1] = (byte) ((valueInt >> 8) & 0xFF);
+	}
 
 }
