@@ -12,6 +12,8 @@ public class Pipeline {
     private boolean hasReachedBreakpoint;
     private Map<String, InstructionFunction> functionMap;
     private Instructions instructions;
+    private final boolean RUN = true;
+    private final boolean STOP = false;
 
     public Pipeline(Memory memory, Registers registers) {
         this.memory = memory;
@@ -63,20 +65,20 @@ public class Pipeline {
     }
 
     // Run until a breakpoint or end
-    public void runUntilBreakpointOrEnd() {
+    public boolean runUntilBreakpointOrEnd() {
         while(!hasReachedBreakpoint && registers.getProgramCounter() != null) {
             runNextInstruction();
         }
+        return registers.getProgramCounter() != null;
     }
 
     // Execute a single instruction
-    public void runNextInstruction() {
+    public boolean runNextInstruction() {
         System.out.println("Running next instruction: " + registers.getProgramCounter());
         String instruction = memory.getInstruction(registers.getProgramCounter());
 
         if(instruction == null) {
-            // TODO Handle error: instruction at pcValue not found in memory
-            return;
+            return STOP;
         }
 
         // Convert machine instruction to assembly components (you'll need to implement this)
@@ -88,7 +90,8 @@ public class Pipeline {
             result = functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
             System.out.println("result: " + result);
         } else {
-            return;
+            System.out.println("Instruction not found: " + asmComponents);
+            return STOP;
         }
 
         // Check for breakpoints
@@ -97,8 +100,7 @@ public class Pipeline {
         if(breakpoints.contains(pcIntValue)) {
             hasReachedBreakpoint = true;
         }
-
-        // TODO: Handle program counter update logic (increment or branch) by updating pc register
+        return RUN;
     }
 
     // Continue execution until the next breakpoint or end
@@ -111,6 +113,8 @@ public class Pipeline {
     public void addBreakpoint(int address) {
         breakpoints.add(address);
     }
+
+
 
     // Convert a machine instruction to its assembly components
     // Return a HashMap with components as key-value pairs
@@ -127,18 +131,22 @@ public class Pipeline {
 
         switch (oc) {
             case "0110111":
+                // TODO: Extract immediate
                 instructionName = "lui";
                 break;
             case "0010111":
+                // TODO: Extract immediate
                 instructionName = "auipc";
                 break;
             case "1101111":
+                // TODO: Extract immediate
                 instructionName = "jal";
                 break;
             case "1100111":
                 instructionName = "jalr";
                 break;
             case "1100011":
+                // TODO: Extract immediate (branches)
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -164,6 +172,7 @@ public class Pipeline {
                 }
                 break;
             case "0000011":
+                // TODO: Extract immediate (loads)
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -186,6 +195,7 @@ public class Pipeline {
                 }
                 break;
             case "0100011":
+                // TODO: Extract immediate (stores)
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -202,6 +212,7 @@ public class Pipeline {
                 }
                 break;
             case "0010011":
+                imm = instruction.substring(0, 7);
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -228,7 +239,6 @@ public class Pipeline {
                         instructionName = "slli";
                         break;
                     case "101":
-                        imm = instruction.substring(0, 7);
                         instructionName += " case: 101 imm: " + imm;
                         if (imm.equals("0000000")) {
                             instructionName = "srli";
@@ -239,12 +249,12 @@ public class Pipeline {
                 }
                 break;
             case "0110011":
+                imm = instruction.substring(0, 7);
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
                         break;
                     case "000":
-                        imm = instruction.substring(0, 7);
                         if (imm.equals("0000000")) {
                             instructionName = "add";
                         } else if (imm.equals("0100000")) {
@@ -280,9 +290,11 @@ public class Pipeline {
                 }
                 break;
             case "0001111":
+                // TODO: Extract fm, pred, succ
                 instructionName = "fence";
                 break; // Assuming 'fence' for simplicity
             case "1110011":
+                imm = instruction.substring(0, 12);
                 if (instruction.substring(0, 20).equals("00000000000000000000")) {
                     instructionName = "ecall";
                 } else if (instruction.substring(0, 20).equals("00000000000100000000")) {
@@ -294,27 +306,17 @@ public class Pipeline {
                 instructionName = "unknown";
                 break;
         }
-        System.out.println("rd as String: " + registers.getRegisterString(Integer.parseInt(rd, 2)));
-        System.out.println("rs1 as String: " + registers.getRegisterString(Integer.parseInt(rs1, 2)));
-        System.out.println("rs2 as String: " + registers.getRegisterString(Integer.parseInt(rs2, 2)));
+        //System.out.println("rd as String: " + registers.getRegisterString(Integer.parseInt(rd, 2)));
+        //System.out.println("rs1 as String: " + registers.getRegisterString(Integer.parseInt(rs1, 2)));
+        //System.out.println("rs2 as String: " + registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("instructionName", instructionName);
         decodedInstruction.put("rd", registers.getRegisterString(Integer.parseInt(rd, 2)));
         decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
         decodedInstruction.put("rs2", registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("imm", imm);
+        System.out.println("decodedInstruction: " + decodedInstruction);
 
         return decodedInstruction;
-    }
-
-
-    // Fetch the next instruction in assembly for display purposes
-    public String getNextInstructionInAssembly() {
-        // Using the machineToAsm function to get components
-        HashMap<String, String> components = machineToAsm(memory.getMemoryValue(registers.getProgramCounter()));
-
-        // TODO: Convert components to human-readable assembly string
-
-        return ""; // Return the assembled instruction string
     }
 
 }

@@ -136,10 +136,10 @@ public class SimulatorMain {
                     }
                     break;
                 case "r":
-                    pipeline.runUntilBreakpointOrEnd();
+                    isRunning = pipeline.runUntilBreakpointOrEnd();
                     break;
                 case "s":
-                    pipeline.runNextInstruction();
+                    isRunning = pipeline.runNextInstruction();
                     break;
                 case "pc":
                     System.out.println(registers.getRegisterValue(input));
