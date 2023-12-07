@@ -15,7 +15,6 @@ public class SimulatorMain {
 
 
     public static void main(String[] args) {
-    	
     	Scanner scanner = new Scanner(System.in);
         //Loader loader = new Loader(new Memory()); // Assuming Memory class constructor requires no arguments
 
@@ -84,7 +83,7 @@ public class SimulatorMain {
                     }
                     break;
                 case "r":
-                    isRunning = pipeline.runUntilBreakpointOrEnd();
+                    isRunning = pipeline.runUntilEnd();
                     break;
                 case "s":
                     isRunning = pipeline.runNextInstruction();
@@ -97,7 +96,7 @@ public class SimulatorMain {
                     //System.out.println(pipeline.getNextInstructionInAssembly());
                     break;
                 case "c":
-                    pipeline.continueExecution();
+                    isRunning = pipeline.continueExecution();
                     break;
                 case "q":
                     isRunning = false;
@@ -105,7 +104,9 @@ public class SimulatorMain {
                 default:
                     if(input.startsWith("x")) {
                         System.out.println(registers.getRegisterValue(input));
-                    } else if(input.startsWith("b ")) {
+                    } else if(input.startsWith("b")) {
+                        // Insert a space after the b
+                        input = input.charAt(0) + " " + input.substring(1);
                         int pcValue = Integer.parseInt(input.split(" ")[1]);
                         pipeline.addBreakpoint(pcValue);
                     } else if(input.matches("^0x[0-9a-fA-F]{8}$")) {
