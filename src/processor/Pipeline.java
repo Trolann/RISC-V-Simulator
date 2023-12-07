@@ -65,16 +65,16 @@ public class Pipeline {
     }
 
     // Run until a breakpoint or end
-    public boolean runUntilBreakpointOrEnd() {
-        while(!hasReachedBreakpoint && registers.getProgramCounter() != null) {
+    public boolean runUntilEnd() {
+        while(!memory.getInstruction(registers.getProgramCounter()).equals(Utility.ALLZEROS)) {
             runNextInstruction();
         }
-        return registers.getProgramCounter() != null;
+        return STOP;
     }
 
     // Execute a single instruction
     public boolean runNextInstruction() {
-        System.out.println("Running next instruction: " + registers.getProgramCounter());
+        System.out.println("PIPELINE DEBUG: Running next instruction: " + registers.getProgramCounter());
         String instruction = memory.getInstruction(registers.getProgramCounter());
 
         if(instruction == null) {
@@ -83,20 +83,21 @@ public class Pipeline {
 
         // Convert machine instruction to assembly components (you'll need to implement this)
         HashMap<String, String> asmComponents = machineToAsm(instruction);
-        System.out.println("instructionName: " + asmComponents.get("instructionName"));
+        System.out.println("PIPELINE DEBUG: instructionName: " + asmComponents.get("instructionName"));
 
         if (functionMap.containsKey(asmComponents.get("instructionName"))) {
             String result;
             result = functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
-            System.out.println("result: " + result);
+            System.out.println("PIPELINE DEBUG: result: " + result);
         } else {
-            System.out.println("Instruction not found: " + asmComponents);
+            System.out.println("PIPELINE DEBUG: Instruction not found: " + asmComponents);
             return STOP;
         }
 
         // Check for breakpoints
         //int pcIntValue = Integer.parseInt(pcValue, 2); // Convert binary to int
         int pcIntValue = Integer.parseInt(registers.getProgramCounter(), 2); // Convert binary to int
+        System.out.println("PIPELINE DEBUG: Checking for breakpoint at: " + pcIntValue);
         if(breakpoints.contains(pcIntValue)) {
             hasReachedBreakpoint = true;
         }
@@ -104,14 +105,22 @@ public class Pipeline {
     }
 
     // Continue execution until the next breakpoint or end
-    public void continueExecution() {
+    public boolean continueExecution() {
+        boolean done;
         hasReachedBreakpoint = false; // Reset breakpoint flag
-        runUntilBreakpointOrEnd();
+        while(!hasReachedBreakpoint) {
+            done = runNextInstruction();
+            if(!done) {
+                return STOP;
+            }
+        }
+        return RUN;
     }
 
     // Add a breakpoint at a specific address
-    public void addBreakpoint(int address) {
+    public boolean addBreakpoint(int address) {
         breakpoints.add(address);
+        return true;
     }
 
 
@@ -321,7 +330,7 @@ public class Pipeline {
         decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
         decodedInstruction.put("rs2", registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("imm", imm);
-        System.out.println("decodedInstruction: " + decodedInstruction);
+        System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
 
         return decodedInstruction;
     }
