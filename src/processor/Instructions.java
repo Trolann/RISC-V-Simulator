@@ -120,31 +120,24 @@ public class Instructions {
 	}
 
 	public String BEQ(HashMap<String, String> instructionComponents) {
-		String rs1 = instructionComponents.get("rs1"); // source register 1
-		String rs2 = instructionComponents.get("rs2"); // source register 2
-		String imm = instructionComponents.get("imm"); // immediate value
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
 
-		// Convert immediate value from binary string to integer
 		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
 
-		// Get the values of the source registers
 		String rs1Value = registers.getRegisterValue(rs1);
 		String rs2Value = registers.getRegisterValue(rs2);
 
-		// Check if the values of rs1 and rs2 are equal
 		if (rs1Value.equals(rs2Value)) {
-			// Branch is taken, calculate the target address
 			int pcValue = Integer.parseInt(registers.getProgramCounter(), 2);
 			int targetAddress = pcValue + immediate;
 
-			// Update PC to the target address
 			registers.setProgramCounter(Utility.leftPad(Integer.toBinaryString(targetAddress)));
 		} else {
-			// Branch is not taken, increment PC as usual
 			registers.incrementProgramCounter();
 		}
 
-		// Build and return the instruction result string
 		return String.format("beq %s, %s, %d", rs1, rs2, immediate);
 	}
 
@@ -168,6 +161,31 @@ public class Instructions {
 		}
 
 		return String.format("bne %s, %s, %d", rs1, rs2, immediate);
+	}
+
+	public String BLT(HashMap<String, String> instructionComponents) {
+		String rs1 = instructionComponents.get("rs1");
+		String rs2 = instructionComponents.get("rs2");
+		String imm = instructionComponents.get("imm");
+
+		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+
+		String rs1Value = registers.getRegisterValue(rs1);
+		String rs2Value = registers.getRegisterValue(rs2);
+
+		int intRs1Value = Integer.parseInt(rs1Value, 2);
+		int intRs2Value = Integer.parseInt(rs2Value, 2);
+
+		if (intRs1Value < intRs2Value) {
+			int pcValue = Integer.parseInt(registers.getProgramCounter(), 2);
+			int targetAddress = pcValue + immediate;
+
+			registers.setProgramCounter(Utility.leftPad(Integer.toBinaryString(targetAddress)));
+		} else {
+			registers.incrementProgramCounter();
+		}
+
+		return String.format("blt %s, %s, %d", rs1, rs2, immediate);
 	}
 
 	public String BGE(HashMap<String, String> instructionComponents) {
@@ -587,121 +605,317 @@ public class Instructions {
 		return String.format("sb %s, %d(%s)", rs2, immediate, rs1);
 	}
 
-	/*
-	 * public String SLTI(HashMap<String, String> instructionComponents) { //
-	 * Extract components from the HashMap String rd =
-	 * instructionComponents.get("rd"); // Destination register String rs1 =
-	 * instructionComponents.get("rs1"); // Source register 1 String imm =
-	 * instructionComponents.get("imm"); // Immediate value
-	 * 
-	 * // Get values from registers String valueRs1 =
-	 * registers.getRegisterValue(rs1); int valueIntRs1 = Integer.parseInt(valueRs1,
-	 * 2); int immediate = Integer.parseInt(imm, 2);
-	 * 
-	 * // Perform SLTI operation: set rd to 1 if rs1 is less than immediate;
-	 * otherwise set to 0 String result = (valueIntRs1 < immediate) ?
-	 * "00000000000000000000000000000001" : "00000000000000000000000000000000";
-	 * 
-	 * // Update rd register value registers.setRegisterValue(rd, result);
-	 * 
-	 * return "SLTI assembly instruction executed"; }
-	 * 
-	 */
-	/*
-	 * public String SLTIU(HashMap<String, String> instructionComponents) { //
-	 * Extract components from the HashMap String rd =
-	 * instructionComponents.get("rd"); // Destination register String rs1 =
-	 * instructionComponents.get("rs1"); // Source register 1 String imm =
-	 * instructionComponents.get("imm"); // Immediate value
-	 * 
-	 * // Get values from registers String valueRs1 =
-	 * registers.getRegisterValue(rs1); int valueIntRs1 =
-	 * Integer.parseUnsignedInt(valueRs1, 2); int immediate =
-	 * Integer.parseUnsignedInt(imm, 2);
-	 * 
-	 * // Perform SLTIU operation: set rd to 1 if rs1 is less than unsigned
-	 * immediate; otherwise set to 0 String result = (valueIntRs1 < immediate) ?
-	 * "00000000000000000000000000000001" : "00000000000000000000000000000000";
-	 * 
-	 * // Update rd register value registers.setRegisterValue(rd, result);
-	 * 
-	 * return "SLTIU assembly instruction executed"; }
-	 * 
-	 */
-	/*
-	 * public String XORI(HashMap<String, String> instructionComponents) { //
-	 * Extract components from the HashMap String rd =
-	 * instructionComponents.get("rd"); // Destination register String rs1 =
-	 * instructionComponents.get("rs1"); // Source register 1 String imm =
-	 * instructionComponents.get("imm"); // Immediate value
-	 * 
-	 * // Get values from registers String valueRs1 =
-	 * registers.getRegisterValue(rs1); int valueIntRs1 = Integer.parseInt(valueRs1,
-	 * 2); int immediate = Integer.parseInt(imm, 2);
-	 * 
-	 * // Perform XOR operation: rd = rs1 ^ immediate int result = valueIntRs1 ^
-	 * immediate;
-	 * 
-	 * // Convert result back to binary string representation String resultBinary =
-	 * Integer.toBinaryString(result);
-	 * 
-	 * // Ensure resultBinary is 32-bit length while (resultBinary.length() < 32) {
-	 * resultBinary = "0" + resultBinary; }
-	 * 
-	 * // Update rd register value registers.setRegisterValue(rd, resultBinary);
-	 * 
-	 * return "XORI assembly instruction executed"; }
-	 * 
-	 */
-	/*
-	 * public String ORI(HashMap<String, String> instructionComponents) { // Extract
-	 * components from the HashMap String rd = instructionComponents.get("rd"); //
-	 * Destination register String rs1 = instructionComponents.get("rs1"); // Source
-	 * register 1 String imm = instructionComponents.get("imm"); // Immediate value
-	 * 
-	 * // Get values from registers String valueRs1 =
-	 * registers.getRegisterValue(rs1); int valueIntRs1 = Integer.parseInt(valueRs1,
-	 * 2); int immediate = Integer.parseInt(imm, 2);
-	 * 
-	 * // Perform OR operation: rd = rs1 | immediate int result = valueIntRs1 |
-	 * immediate;
-	 * 
-	 * // Convert result back to binary string representation String resultBinary =
-	 * Integer.toBinaryString(result);
-	 * 
-	 * // Ensure resultBinary is 32-bit length while (resultBinary.length() < 32) {
-	 * resultBinary = "0" + resultBinary; }
-	 * 
-	 * // Update rd register value registers.setRegisterValue(rd, resultBinary);
-	 * 
-	 * return "ORI assembly instruction executed"; }
-	 * 
-	 */
-	/*
-	 * public String ADDSUB(HashMap<String, String> instructionComponents) { //
-	 * Extract components from the HashMap String rd =
-	 * instructionComponents.get("rd"); // Destination register String rs1 =
-	 * instructionComponents.get("rs1"); // Source register 1 String rs2 =
-	 * instructionComponents.get("rs2"); // Source register 2
-	 * 
-	 * // Get values from registers String valueRs1 =
-	 * registers.getRegisterValue(rs1); String valueRs2 =
-	 * registers.getRegisterValue(rs2); int valueIntRs1 = Integer.parseInt(valueRs1,
-	 * 2); int valueIntRs2 = Integer.parseInt(valueRs2, 2);
-	 * 
-	 * // Perform ADDSUB operation: rd = rs1 + rs2 int result = valueIntRs1 +
-	 * valueIntRs2;
-	 * 
-	 * // Convert result back to binary string representation String resultBinary =
-	 * Integer.toBinaryString(result);
-	 * 
-	 * // Ensure resultBinary is 32-bit length while (resultBinary.length() < 32) {
-	 * resultBinary = "0" + resultBinary; }
-	 * 
-	 * // Update rd register value registers.setRegisterValue(rd, resultBinary);
-	 * 
-	 * return "ADDSUB assembly instruction executed"; }
-	 * 
-	 */
+	public String SLLI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate register
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+
+		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		// Convert immediate value from binary string to integer
+		int immediate = Integer.parseInt(Utility.leftPad(imm), 2);
+
+		// Perform SLLI operation
+		int result = valueIntRs1 << immediate;
+
+		// Convert result to 32-bit binary string
+		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("slli %s, %s, %d", rd, rs1, immediate);
+	}
+
+	public String SRAI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("imm"); // immediate register
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+
+		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		// Convert immediate value from binary string to integer
+		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+
+		// Perform SRAI operation (Arithmetic Right Shift)
+		int result = valueIntRs1 >> immediate;
+
+		// Convert result to 32-bit binary string
+		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("srai %s, %s, %d", rd, rs1, immediate);
+	}
+
+	public String SH(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rs1 = instructionComponents.get("rs1"); // base register
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+		String imm = instructionComponents.get("imm"); // offset
+
+		// Get values from registers
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		int valueIntRs2 = (int) Long.parseUnsignedLong(valueRs2, 2);
+		// Convert immediate value from binary string to integer
+		int offset = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+
+		// Calculate effective address
+		int effectiveAddress = valueIntRs2 + offset;
+
+		// Store the halfword at the effective address
+		memory.storeHalfword(effectiveAddress, valueIntRs2);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("sh %s, %d(%s)", rs2, offset, rs1);
+	}
+
+	public String SW(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rs1 = instructionComponents.get("rs1"); // base register
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+		String imm = instructionComponents.get("imm"); // offset
+
+		// Get values from registers
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		int valueIntRs2 = (int) Long.parseUnsignedLong(valueRs2, 2);
+		// Convert immediate value from binary string to integer
+		int offset = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+
+		// Calculate effective address
+		int effectiveAddress = valueIntRs2 + offset;
+
+		// Store the word at the effective address
+		memory.storeWord(effectiveAddress, valueIntRs2);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("sw %s, %d(%s)", rs2, offset, rs1);
+	}
+
+	public String ADD(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// Convert register values from binary string to integer
+		int intValueRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		int intValueRs2 = (int) Long.parseUnsignedLong(valueRs2, 2);
+
+		// Perform ADD operation
+		int result = intValueRs1 + intValueRs2;
+
+		// Store the result in the destination register
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("add %s, %s, %s", rd, rs1, rs2);
+	}
+
+	public String SUB(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// Convert register values from binary string to integer
+		int intValueRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		int intValueRs2 = (int) Long.parseUnsignedLong(valueRs2, 2);
+
+		// Perform SUB operation
+		int result = intValueRs1 - intValueRs2;
+
+		// Store the result in the destination register
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("sub %s, %s, %s", rd, rs1, rs2);
+	}
+
+	public String SLL(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String shamtStr = instructionComponents.get("shamt"); // shift amount
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+
+		// Convert register value and shift amount from binary string to integer
+		int intValueRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		int shamt = Integer.parseInt(shamtStr, 2);
+
+		// Perform SLL operation
+		int result = intValueRs1 << shamt;
+
+		// Store the result in the destination register
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("sll %s, %s, %d", rd, rs1, shamt);
+	}
+
+	public String SLT(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// Compare values and set the result in the destination register
+		int result = (Integer.parseInt(valueRs1) < Integer.parseInt(valueRs2)) ? 1 : 0;
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("slt %s, %s, %s", rd, rs1, rs2);
+	}
+
+	public String SLTU(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// Compare values and set the result in the destination register
+		long unsignedValueRs1 = Long.parseUnsignedLong(valueRs1);
+		long unsignedValueRs2 = Long.parseUnsignedLong(valueRs2);
+		int result = (unsignedValueRs1 < unsignedValueRs2) ? 1 : 0;
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("sltu %s, %s, %s", rd, rs1, rs2);
+	}
+
+	public String XOR(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// XOR values and set the result in the destination register
+		int result = Integer.parseInt(valueRs1) ^ Integer.parseInt(valueRs2);
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("xor %s, %s, %s", rd, rs1, rs2);
+	}
+
+	public String SRL(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// Perform SRL operation and set the result in the destination register
+		int result = Integer.parseInt(valueRs1) >>> Integer.parseInt(valueRs2);
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("srl %s, %s, %s", rd, rs1, rs2);
+	}
+
+	public String SRA(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// Perform SRA operation and set the result in the destination register
+		int result = Integer.parseInt(valueRs1) >> Integer.parseInt(valueRs2);
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("sra %s, %s, %s", rd, rs1, rs2);
+	}
+
+	public String OR(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// Perform OR operation and set the result in the destination register
+		int result = Integer.parseInt(valueRs1) | Integer.parseInt(valueRs2);
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("or %s, %s, %s", rd, rs1, rs2);
+	}
+
+	public String AND(HashMap<String, String> instructionComponents) {
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
+
+		// AND values and set the result in the destination register
+		int result = Integer.parseInt(valueRs1) & Integer.parseInt(valueRs2);
+		registers.setRegisterValue(result, rd);
+
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("and %s, %s, %s", rd, rs1, rs2);
+	}
 
 }
