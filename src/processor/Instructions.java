@@ -259,25 +259,30 @@ public class Instructions {
 		String rd = instructionComponents.get("rd"); // destination register
 		String rs1 = instructionComponents.get("rs1"); // source register 1
 		String imm = instructionComponents.get("imm"); // immediate register
-
+		
+		// Print the whole hashmap
+		System.out.println(instructionComponents);
+				
 		// Get values from registers
 		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("rs1: " + valueRs1);
+		System.out.println("valueRs1: " + valueRs1);
+		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
 
-		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
 		// Convert immediate value from binary string to integer
-		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+		int immediate = Integer.parseInt(imm, 2);
 
 		// Perform addition operation
 		int result = valueIntRs1 + immediate;
 
 		// Convert result to 32-bit binary string
-		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
-
-		// Update rd register value
-		registers.setRegisterValue(rd, resultBinary);
-		registers.incrementProgramCounter();
-
-		// Build and return the instruction result string
+		String resultBinary = Integer.toBinaryString(result);
+		
+		// Ensure resultBinary is 32-bit length
+		while (resultBinary.length() < 32) {
+			resultBinary = "0" + resultBinary;
+			registers.setProgramCounter(Utility.StringCrement(registers.getProgramCounter(), 1));
+		}
 		return String.format("addi %s, %s, %d", rd, rs1, immediate);
 	}
 
