@@ -1,5 +1,7 @@
 package processor;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,6 +14,7 @@ public class Pipeline {
     private boolean hasReachedBreakpoint;
     private Map<String, InstructionFunction> functionMap;
     private Instructions instructions;
+    private FileWriter outputFile;
     private final boolean RUN = true;
     private final boolean STOP = false;
 
@@ -89,6 +92,9 @@ public class Pipeline {
             String result;
             result = functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
             System.out.println("result: " + result);
+            
+            // Write the assembly instruction to a .asm file
+            writeInstructionToFile(result);
         } else {
             System.out.println("Instruction not found: " + asmComponents);
             return STOP;
@@ -103,7 +109,24 @@ public class Pipeline {
         return RUN;
     }
 
-    // Continue execution until the next breakpoint or end
+    private void writeInstructionToFile(String result) {
+		try {
+            if (outputFile == null) {
+                // Open the file for writing
+                outputFile = new FileWriter("output.asm");
+            }
+
+            // Write the instruction to the file
+            outputFile.write(result + "\n");
+            
+            // Flush the buffer to ensure data is written immediately
+            outputFile.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+
+	// Continue execution until the next breakpoint or end
     public void continueExecution() {
         hasReachedBreakpoint = false; // Reset breakpoint flag
         runUntilBreakpointOrEnd();
@@ -113,8 +136,6 @@ public class Pipeline {
     public void addBreakpoint(int address) {
         breakpoints.add(address);
     }
-
-
 
     // Convert a machine instruction to its assembly components
     // Return a HashMap with components as key-value pairs
@@ -316,6 +337,7 @@ public class Pipeline {
                 instructionName = "unknown";
                 break;
         }
+        
         decodedInstruction.put("instructionName", instructionName);
         decodedInstruction.put("rd", registers.getRegisterString(Integer.parseInt(rd, 2)));
         decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
