@@ -81,64 +81,24 @@ public class SimulatorMain {
                     System.out.println(testRegisters);
 
                     // Test SLTU instruction
-                    HashMap<String, String> sltuInstruction = new HashMap<>();
-                    sltuInstruction.put("rd", "x3");
-                    sltuInstruction.put("rs1", "x1");
-                    sltuInstruction.put("rs2", "x2");
+                    HashMap<String, String> testInstructionMap = new HashMap<>();
+                    testInstructionMap.put("rs1", "x1");
+                    testInstructionMap.put("rs2", "x2");
 
                     // Execute SLTU instruction
-                    testInstructions.SLTU(sltuInstruction);
-
-                    // Verify the result in register x3
+                    testInstructionMap.put("rd", "x3");
+                    testInstructions.SLTU(testInstructionMap);
                     String resultSLTU = testRegisters.getRegisterValue("x3");
                     System.out.println("\nResult of SLTU: " + resultSLTU);
+
+                    testInstructionMap.put("rd", "x4");
+                    testInstructions.SLT(testInstructionMap);
+                    String resultSLT = testRegisters.getRegisterValue("x4");
+                    System.out.println("\nResult of SLT: " + resultSLT);
 
                     System.out.println("Final Register Values:");
                     System.out.println(testRegisters);
 
-                    /*
-                    //INCORRECT
-                    // Test SLT instruction
-                    HashMap<String, String> sltInstruction = new HashMap<>();
-                    sltInstruction.put("rd", "x3");
-                    sltInstruction.put("rs1", "x1");
-                    sltInstruction.put("rs2", "x2");
-
-                    // Print initial register values
-                    System.out.println("Initial Register Values:");
-                    initialRegisters.forEach((register, value) -> {
-                        System.out.println(register + ": " + value);
-                    });
-
-                    // Execute SLT instruction
-                    SLT(sltInstruction);
-
-                    // Verify the result in register x3
-                    String resultSLT = registers.getRegisterValue("x3");
-                    System.out.println("\nResult of SLT: " + resultSLT);
-
-                    //INCORRECT
-                    */
-            /*
-                    // Test SLL instruction
-                    HashMap<String, String> sllInstruction = new HashMap<>();
-                    sllInstruction.put("rd", "x3");
-                    sllInstruction.put("rs1", "x1");
-                    sllInstruction.put("rs2", "x2");
-
-                    // Print initial register values
-                    System.out.println("Initial Register Values:");
-                    initialRegisters.forEach((register, value) -> {
-                        System.out.println(register + ": " + value);
-                    });
-
-                    // Execute SLL instruction
-                    SLL(sllInstruction);
-
-                    // Verify the result in register x3
-                    String resultSLL = registers.getRegisterValue("x3");
-                    System.out.println("\nResult of SLT: " + resultSLL);
-                    */
                     break;
                 case "reg":
                     System.out.println(registers.toString());
