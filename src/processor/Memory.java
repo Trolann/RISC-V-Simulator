@@ -61,12 +61,15 @@ public class Memory {
 		memoryArray[address] = byteValue;
 	}
 
-	public void storeWord(int address, int valueInt) {
-		// Store the word at the specified address
-		memoryArray[address] = (byte) (valueInt & 0xFF);
-		memoryArray[address + 1] = (byte) ((valueInt >> 8) & 0xFF);
-		memoryArray[address + 2] = (byte) ((valueInt >> 16) & 0xFF);
-		memoryArray[address + 3] = (byte) ((valueInt >> 24) & 0xFF);
+	public void storeWord(int address, String string) {
+	    // Convert the string to an integer
+	    int intValue = Integer.parseInt(string, 2);
+
+	    // Store the word at the specified address
+	    memoryArray[address] = (byte) (intValue & 0xFF);
+	    memoryArray[address + 1] = (byte) ((intValue >> 8) & 0xFF);
+	    memoryArray[address + 2] = (byte) ((intValue >> 16) & 0xFF);
+	    memoryArray[address + 3] = (byte) ((intValue >> 24) & 0xFF);
 	}
 
 	public void storeHalfword(int address, int valueInt) {
