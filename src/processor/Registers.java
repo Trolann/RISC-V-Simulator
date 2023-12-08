@@ -100,8 +100,8 @@ public class Registers {
             newProgramCounterBinary = "0" + newProgramCounterBinary;
         }
 
-        System.out.println("REGISTERS DEBUG: old pc: " + registerMap.get("pc"));
-        System.out.println("REGISTERS DEBUG: new pc: " + newProgramCounterBinary);
+        //System.out.println("REGISTERS DEBUG: old pc: " + registerMap.get("pc"));
+        //System.out.println("REGISTERS DEBUG: new pc: " + newProgramCounterBinary);
 
         // Update program counter to the new address
         registerMap.put("pc", newProgramCounterBinary);
