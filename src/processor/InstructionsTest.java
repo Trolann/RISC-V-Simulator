@@ -20,57 +20,86 @@ class InstructionsTest {
 
     @Test
     void SLT() {
-        // Set up initial values
-        String binaryValueX1 = "00000000000000000000000000001101";  // 13 in binary
-        String binaryValueX2 = "00000000000000000000000000001010";  // 10 in binary
+        // Set up initial register values
+        testRegisters.setRegisterValue("x1", "00000000000000000000000000000100"); // 4 in binary
+        testRegisters.setRegisterValue("x2", "00000000000000000000000000001000"); // 8 in binary
+        testRegisters.setRegisterValue("x3", "00000000000000000000000000000100"); // 4 in binary
+        testRegisters.setRegisterValue("x5", "11111111111111111111111111111100"); // -4 in two's complement
 
-        testRegisters.setRegisterValue("x1", binaryValueX1);
-        testRegisters.setRegisterValue("x2", binaryValueX2);
+        // Test where rs1 < rs2
+        HashMap<String, String> instructionMap1 = new HashMap<>();
+        instructionMap1.put("rs1", "x1");
+        instructionMap1.put("rs2", "x2");
+        instructionMap1.put("rd", "x10");
+        testInstructions.SLT(instructionMap1);
+        assertEquals("00000000000000000000000000000001", testRegisters.getRegisterValue("x10"));
 
-        // Execute SLT instruction
-        HashMap<String, String> instructionMap = new HashMap<>();
-        instructionMap.put("rs1", "x1");
-        instructionMap.put("rs2", "x2");
-        instructionMap.put("rd", "x3");
-        testInstructions.SLT(instructionMap);
+        // Test where rs1 > rs2
+        HashMap<String, String> instructionMap2 = new HashMap<>();
+        instructionMap2.put("rs1", "x2");
+        instructionMap2.put("rs2", "x1");
+        instructionMap2.put("rd", "x11");
+        testInstructions.SLT(instructionMap2);
+        assertEquals("00000000000000000000000000000000", testRegisters.getRegisterValue("x11"));
 
-        // Check results
-        String result = testRegisters.getRegisterValue("x3");
-        assertEquals("00000000000000000000000000000000", result); // Expected 0 since x1 > x2
+        // Test where rs1 == rs2
+        HashMap<String, String> instructionMap3 = new HashMap<>();
+        instructionMap3.put("rs1", "x1");
+        instructionMap3.put("rs2", "x3");
+        instructionMap3.put("rd", "x12");
+        testInstructions.SLT(instructionMap3);
+        assertEquals("00000000000000000000000000000000", testRegisters.getRegisterValue("x12"));
 
-        testRegisters.setRegisterValue("x1", binaryValueX2);
-        testRegisters.setRegisterValue("x2", binaryValueX1);
-        testInstructions.SLT(instructionMap);
-        result = testRegisters.getRegisterValue("x3");
-        assertEquals("00000000000000000000000000000001", result); // Expected 1 since x1 < x2
+        // Test with a negative value
+        HashMap<String, String> instructionMap4 = new HashMap<>();
+        instructionMap4.put("rs1", "x5");
+        instructionMap4.put("rs2", "x1");
+        instructionMap4.put("rd", "x13");
+        testInstructions.SLT(instructionMap4);
+        assertEquals("00000000000000000000000000000001", testRegisters.getRegisterValue("x13"));
+
+        // Verify that the program counter is incremented correctly
+        int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
+        assertEquals(16, programCounterValue); // Assuming each test increment is 4
     }
+
 
     @Test
     void SLTU() {
-        // Set up initial values
-        String binaryValueX1 = "00000000000000000000000000001101";  // 13 in binary
-        String binaryValueX2 = "00000000000000000000000000001010";  // 10 in binary
+        // Set up initial register values
+        testRegisters.setRegisterValue("x1", "00000000000000000000000000000100"); // 4 in binary
+        testRegisters.setRegisterValue("x2", "00000000000000000000000000001000"); // 8 in binary
+        testRegisters.setRegisterValue("x3", "00000000000000000000000000000100"); // 4 in binary
 
-        testRegisters.setRegisterValue("x1", binaryValueX1);
-        testRegisters.setRegisterValue("x2", binaryValueX2);
+        // Test where rs1 < rs2
+        HashMap<String, String> instructionMap1 = new HashMap<>();
+        instructionMap1.put("rs1", "x1");
+        instructionMap1.put("rs2", "x2");
+        instructionMap1.put("rd", "x10");
+        testInstructions.SLTU(instructionMap1);
+        assertEquals("00000000000000000000000000000001", testRegisters.getRegisterValue("x10"));
 
-        // Execute SLTU instruction
-        HashMap<String, String> instructionMap = new HashMap<>();
-        instructionMap.put("rs1", "x1");
-        instructionMap.put("rs2", "x2");
-        instructionMap.put("rd", "x3");
-        testInstructions.SLTU(instructionMap);
+        // Test where rs1 > rs2
+        HashMap<String, String> instructionMap2 = new HashMap<>();
+        instructionMap2.put("rs1", "x2");
+        instructionMap2.put("rs2", "x1");
+        instructionMap2.put("rd", "x11");
+        testInstructions.SLTU(instructionMap2);
+        assertEquals("00000000000000000000000000000000", testRegisters.getRegisterValue("x11"));
 
-        // Check results
-        String result = testRegisters.getRegisterValue("x3");
-        assertEquals("00000000000000000000000000000000", result); // Expected 0 since x1 > x2
+        // Test where rs1 == rs2
+        HashMap<String, String> instructionMap3 = new HashMap<>();
+        instructionMap3.put("rs1", "x1");
+        instructionMap3.put("rs2", "x3");
+        instructionMap3.put("rd", "x12");
+        testInstructions.SLTU(instructionMap3);
+        assertEquals("00000000000000000000000000000000", testRegisters.getRegisterValue("x12"));
 
-        testRegisters.setRegisterValue("x1", binaryValueX2);
-        testRegisters.setRegisterValue("x2", binaryValueX1);
-        testInstructions.SLTU(instructionMap);
-        result = testRegisters.getRegisterValue("x3");
-        assertEquals("00000000000000000000000000000001", result); // Expected 1 since x1 < x2
+        // Verify that the program counter is incremented correctly
+        int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
+        assertEquals(12, programCounterValue); // Assuming each test increment is 4
     }
+
     @Test
     void ADDI() {
         // Set up initial values
