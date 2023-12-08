@@ -2,6 +2,7 @@ package processor;
 
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.HashMap; // TODO: Remove, this is for testing only
 
 public class SimulatorMain {
 
@@ -16,7 +17,6 @@ public class SimulatorMain {
 
     public static void main(String[] args) {
     	Scanner scanner = new Scanner(System.in);
-        //Loader loader = new Loader(new Memory()); // Assuming Memory class constructor requires no arguments
 
         String inputFile = "";
         String dataFile = "";
@@ -66,6 +66,80 @@ public class SimulatorMain {
             String input = scanner.nextLine();
 
             switch(input) {
+                case "t":
+                    // Set up initial register values for testing
+                    String binaryValueX1 = "00000000000000000000000000001101";  // Value 13 in binary
+                    String binaryValueX2 = "00000000000000000000000000001010";  // Value 10 in binary
+
+                    Memory testMemory = new Memory();
+                    Registers testRegisters = new Registers();
+                    Instructions testInstructions = new Instructions(testMemory, testRegisters);
+
+                    testRegisters.setRegisterValue("x2", binaryValueX1);
+                    testRegisters.setRegisterValue("x1", binaryValueX2);
+                    System.out.println("Initial Register Values:");
+                    System.out.println(testRegisters);
+
+                    // Test SLTU instruction
+                    HashMap<String, String> sltuInstruction = new HashMap<>();
+                    sltuInstruction.put("rd", "x3");
+                    sltuInstruction.put("rs1", "x1");
+                    sltuInstruction.put("rs2", "x2");
+
+                    // Execute SLTU instruction
+                    testInstructions.SLTU(sltuInstruction);
+
+                    // Verify the result in register x3
+                    String resultSLTU = testRegisters.getRegisterValue("x3");
+                    System.out.println("\nResult of SLTU: " + resultSLTU);
+
+                    System.out.println("Final Register Values:");
+                    System.out.println(testRegisters);
+
+                    /*
+                    //INCORRECT
+                    // Test SLT instruction
+                    HashMap<String, String> sltInstruction = new HashMap<>();
+                    sltInstruction.put("rd", "x3");
+                    sltInstruction.put("rs1", "x1");
+                    sltInstruction.put("rs2", "x2");
+
+                    // Print initial register values
+                    System.out.println("Initial Register Values:");
+                    initialRegisters.forEach((register, value) -> {
+                        System.out.println(register + ": " + value);
+                    });
+
+                    // Execute SLT instruction
+                    SLT(sltInstruction);
+
+                    // Verify the result in register x3
+                    String resultSLT = registers.getRegisterValue("x3");
+                    System.out.println("\nResult of SLT: " + resultSLT);
+
+                    //INCORRECT
+                    */
+            /*
+                    // Test SLL instruction
+                    HashMap<String, String> sllInstruction = new HashMap<>();
+                    sllInstruction.put("rd", "x3");
+                    sllInstruction.put("rs1", "x1");
+                    sllInstruction.put("rs2", "x2");
+
+                    // Print initial register values
+                    System.out.println("Initial Register Values:");
+                    initialRegisters.forEach((register, value) -> {
+                        System.out.println(register + ": " + value);
+                    });
+
+                    // Execute SLL instruction
+                    SLL(sllInstruction);
+
+                    // Verify the result in register x3
+                    String resultSLL = registers.getRegisterValue("x3");
+                    System.out.println("\nResult of SLT: " + resultSLL);
+                    */
+                    break;
                 case "reg":
                     System.out.println(registers.toString());
                     break;
@@ -83,7 +157,8 @@ public class SimulatorMain {
                     }
                     break;
                 case "r":
-                    isRunning = pipeline.runUntilEnd();
+                    // TODO: Dong needs to fix this
+                    //isRunning = pipeline.runUntilEnd();
                     break;
                 case "s":
                     isRunning = pipeline.runNextInstruction();
@@ -96,7 +171,8 @@ public class SimulatorMain {
                     //System.out.println(pipeline.getNextInstructionInAssembly());
                     break;
                 case "c":
-                    isRunning = pipeline.continueExecution();
+                    // TODO: Dong needs to fix this
+                    //isRunning = pipeline.continueExecution();
                     break;
                 case "q":
                     isRunning = false;
