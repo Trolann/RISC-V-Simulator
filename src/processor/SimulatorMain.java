@@ -116,9 +116,8 @@ public class SimulatorMain {
                         values++;
                     }
                     break;
-                case "r":
-                    // TODO: Dong needs to fix this
-                    //isRunning = pipeline.runUntilEnd();
+                case "r":          
+                    isRunning = pipeline.runUntilEnd();
                     break;
                 case "s":
                     isRunning = pipeline.runNextInstruction();
@@ -131,8 +130,7 @@ public class SimulatorMain {
                     //System.out.println(pipeline.getNextInstructionInAssembly());
                     break;
                 case "c":
-                    // TODO: Dong needs to fix this
-                    //isRunning = pipeline.continueExecution();
+                    isRunning = pipeline.continueExecution();
                     break;
                 case "q":
                     isRunning = false;
