@@ -42,7 +42,6 @@ public class Utility {
 
     public static String leftPad(String binaryString) {
         return String.format("%32s", binaryString).replace(' ', '0');
-
     }
 
 
