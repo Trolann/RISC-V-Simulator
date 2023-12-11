@@ -24,7 +24,9 @@ public class Memory {
 		if (memoryMap.containsKey(address)) {
 			return memoryMap.get(address);
 		} else {
-			return Utility.ALLZEROS; // default to 0
+			//return Utility.ALLZEROS; // default to 0
+			// Return 8 bit 0's for unset memory
+			return Utility.ALLZEROS.substring(0, 8); // default to 0
 		}
 	}
 
