@@ -731,7 +731,7 @@ public class Instructions {
 		// Store the result in the destination register
 		registers.setRegisterValue(result, rd);
 
-		registers.incrementProgramCounter();
+		registers.incrementProgramCounter(); // test
 
 		// Build and return the instruction result string
 		return String.format("add %s, %s, %s", rd, rs1, rs2);
