@@ -752,9 +752,12 @@ public class Instructions {
 
 		// Perform SUB operation
 		int result = intValueRs1 - intValueRs2;
+		System.out.println("SUB DEBUG: valueRs1: " + valueRs1 + " valueRs2: " + valueRs2 + " result: " + result);
 
+		String resultBinary = Utility.leftPadSigned(result);
+		System.out.println("SUB DEBUG: resultBinary: " + resultBinary);
 		// Store the result in the destination register
-		registers.setRegisterValue(result, rd);
+		registers.setRegisterValue(rd, resultBinary);
 
 		registers.incrementProgramCounter();
 
