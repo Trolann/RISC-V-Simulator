@@ -96,6 +96,9 @@ public class Registers {
         for (int i = 0; i <= 31; i++) {
             String key = "x" + i;
             String alias = aliasMap.get(key);
+            if (registerMap.get(key).equals(Utility.ALLZEROS)) {
+                continue;
+            }
             returnString.append(key).append("(").append(alias).append("): ").append(registerMap.get(key)).append("\n");
         }
         return returnString.toString();

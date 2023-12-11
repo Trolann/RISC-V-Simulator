@@ -4,54 +4,45 @@ import java.io.*;
 public class Loader {
   private Memory memory;
 
+
   public Loader(Memory memory) {
-    this.memory = memory;
+    this.memory = memory; // Use given memory
   }
 
-  public void load(String filename, String datafilename) throws IOException {
+  public void load(String instructionfilename, String datafilename) throws IOException {
 
-    FileInputStream fis = new FileInputStream(filename);
-    DataInputStream dis = new DataInputStream(fis);
-    
-    if(datafilename.length()!=0) {
-    	FileInputStream fis1 = new FileInputStream(datafilename);
-        DataInputStream dataDis = new DataInputStream(fis1);
-    }
+    FileInputStream insFis = new FileInputStream(instructionfilename);
+    DataInputStream insDis = new DataInputStream(insFis);
 
-    String address = Utility.ALLZEROS;    
-    
+    String address = Utility.ALLZEROS; // Start address for instruction memory
     // Read each line separately and store it into memory
-    while (dis.available() > 0) {
-        //System.out.println(address);
-        String line = dis.readLine(); // Read one line from the file
-
+    while (insDis.available() > 0) {
+        String line = insDis.readLine(); // Read one line from the file
         // Set the line content into memory at the specified address
         memory.setMemoryValue(address, line);
-
         // Increment the address for the next memory location
         address = Utility.StringCrement(address, 1);
     }
-       
+    insFis.close();
+    insDis.close();
+
     // Check if dataAddress is provided
-    if (datafilename.length() != 0) {
+    if (!datafilename.isEmpty()) {
         FileInputStream dataFis = new FileInputStream(datafilename);
         DataInputStream dataDis = new DataInputStream(dataFis);
 
-        String dataMemAddress = "1000"; // Start address for data memory
+        String dataMemAddress = Utility.DATA_MEMORY_ADDRESS; // Start address for data memory
 
         // Read data from dataAddress file and store it in memory at address 1000 onwards
         while (dataDis.available() > 0) {
+            System.out.println("LOADER DEBUG: dataMemAddress: " + dataMemAddress);
             String dataLine = dataDis.readLine();
+            System.out.println("LOADER DEBUG: dataLine: " + dataLine);
             memory.setMemoryValue(dataMemAddress, dataLine);
             dataMemAddress = Utility.StringCrement(dataMemAddress, 1); // Increment data memory address
         }
-
-        dataDis.close();
         dataFis.close();
+        dataDis.close();
     }
-        
-
-    dis.close();
-    fis.close();
   }
 }

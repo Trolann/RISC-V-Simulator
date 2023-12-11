@@ -1,5 +1,7 @@
 package processor;
 
+import jdk.jshell.execution.Util;
+
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.HashMap; // TODO: Remove, this is for testing only
@@ -30,17 +32,25 @@ public class SimulatorMain {
             inputFile = args[0];
         }
 
-        // Ask if the user wants to provide a data file
-        System.out.println("Do you want to provide a data file? (Y/N)");
-        String provideDataFile = scanner.nextLine().trim().toLowerCase();
-
-        if (provideDataFile.equals("y")) {
-            System.out.println("Please enter the data file name:");
-            dataFile = scanner.nextLine();
-            dataFile = "src/processor/input_files/" + dataFile;
+        if (args.length == 2) {
+            if (!args[1].equals("n"))
+                dataFile = args[1];
+            else
+                dataFile = "";
         } else {
-            dataFile = ""; // Make it an empty string
+            // Ask if the user wants to provide a data file
+            System.out.println("Do you want to provide a data file? (Y/N)");
+            String provideDataFile = scanner.nextLine().trim().toLowerCase();
+
+            if (provideDataFile.equals("y")) {
+                System.out.println("Please enter the data file name:");
+                dataFile = scanner.nextLine();
+                dataFile = "src/processor/input_files/" + dataFile;
+            } else {
+                dataFile = ""; // Make it an empty string
+            }
         }
+
 
         // Load the .dat file into memory using Loader
         try {
@@ -50,23 +60,16 @@ public class SimulatorMain {
         }
         
         boolean isRunning = true;
-
+        printMenu();
         while(isRunning) {
-            System.out.println("Choose an option:");
-            System.out.println("      r: Run the program");
-            System.out.println("      s: Run next instruction");
-            System.out.println("      x[0-31]: View register content");
-            System.out.println("      0x######## (8 hex digits): View memory content at address");
-            System.out.println("      pc: View PC value");
-            System.out.println("      insn: View next assembly instruction");
-            System.out.println("      b [pc]: Set a breakpoint at [pc] where pc is a hex value");
-            System.out.println("      c: Continue execution till next breakpoint or exit");
-            System.out.println("      q: Quit simulator");
-
+                        System.out.println("Please enter a command, m for menu, or q to quit: ");
             String input = scanner.nextLine();
 
             switch(input) {
-                case "t":
+                case "m":
+                    printMenu();
+                    break;
+                case "t": // Run special testing code
                     // Set up initial register values for testing
                     String binaryValueX1 = "00000000000000000000000000001101";  // Value 13 in binary
                     String binaryValueX2 = "00000000000000000000000000001010";  // Value 10 in binary
@@ -100,10 +103,10 @@ public class SimulatorMain {
                     System.out.println(testRegisters);
 
                     break;
-                case "reg":
+                case "reg": // Print all register values
                     System.out.println(registers.toString());
                     break;
-                case "m":
+                case "mem": // Dump memory
                     String address = allZeroes;
                     String value = memory.getInstruction(address);
                     int values = 0;
@@ -152,7 +155,41 @@ public class SimulatorMain {
                     break;
             }
         }
+        System.out.print("Final register states (0's are omitted): \n" + registers.toString());
 
+        System.out.println(memory.getMemoryValue(Utility.DATA_MEMORY_ADDRESS));
+        System.out.println(Utility.ALLZEROS);
+        System.out.println(memory.getMemoryValue(Utility.DATA_MEMORY_ADDRESS).equals(Utility.ALLZEROS));
+        if (!memory.getMemoryValue(Utility.DATA_MEMORY_ADDRESS).equals(Utility.ALLZEROS)) {
+            System.out.println("Final data memory states: ");
+            String address = Utility.DATA_MEMORY_ADDRESS;
+            String value = memory.getMemoryValue(address);
+            int values = 0;
+            while(!value.equals(Utility.ALLZEROS.substring(0,8)) && values < 100) {
+                // Address is binary string, convert to hex
+                System.out.println("0x" + Integer.toHexString(Integer.parseInt(address, 2)) + ": " + value);
+                address = Utility.StringCrement(address, 4);
+                value = memory.getMemoryValue(address);
+                System.out.println("value: " + value);
+                values++;
+            }
+        }
         scanner.close();
+    }
+
+    public static void printMenu() {
+        System.out.println("Choose an option:");
+        System.out.println("      m: Print this menu");
+        System.out.println("      r: Run the program");
+        System.out.println("      s: Run next instruction");
+        System.out.println("      x[0-31]: View register content");
+        System.out.println("      0x######## (8 hex digits): View memory content at address");
+        System.out.println("      pc: View PC value");
+        System.out.println("      insn: View next assembly instruction");
+        System.out.println("      b [pc]: Set a breakpoint at [pc] where pc is a hex value");
+        System.out.println("      c: Continue execution till next breakpoint or exit");
+        System.out.println("      reg: View all register values");
+        System.out.println("      mem: Dump instruction memory");
+        System.out.println("      q: Quit simulator");
     }
 }
