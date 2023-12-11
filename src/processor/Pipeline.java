@@ -344,6 +344,7 @@ public class Pipeline {
                         instructionName = "slli";
                         break;
                     case "101":
+                        decodedInstruction.put("shamt", rs2);
                         imm = instruction.substring(0, 7);
                         instructionName = imm.contains("1") ? "srai" : "srli";
                         break;

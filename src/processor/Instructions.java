@@ -309,32 +309,7 @@ public class Instructions {
 		return String.format("slti %s, %s, %d", rd, rs1, immediate);
 	}
 
-	public String SRLI(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
-		String rd = instructionComponents.get("rd"); // destination register
-		String rs1 = instructionComponents.get("rs1"); // source register 1
-		String imm = instructionComponents.get("imm"); // immediate register
 
-		// Get values from registers
-		String valueRs1 = registers.getRegisterValue(rs1);
-
-		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
-		// Convert immediate value from binary string to integer
-		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
-
-		// Perform logical right shift operation
-		int result = valueIntRs1 >>> immediate;
-
-		// Convert result to 32-bit binary string
-		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
-
-		// Update rd register value
-		registers.setRegisterValue(rd, resultBinary);
-		registers.incrementProgramCounter();
-
-		// Build and return the instruction result string
-		return String.format("srli %s, %s, %d", rd, rs1, immediate);
-	}
 
 	public String SLTIU(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
@@ -606,6 +581,38 @@ public class Instructions {
 		// Build and return the instruction result string
 		return String.format("sb %s, %d(%s)", rs2, immediate, rs1);
 	}
+	public String SRLI(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("shamt"); // immediate register
+
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+
+		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		// Convert immediate value from binary string to integer
+		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+
+		// Perform logical right shift operation
+		int result = valueIntRs1 >>> immediate;
+		System.out.println("SRLI DEBUG: valueIntRs1: " + valueIntRs1 + ", immediate: " + immediate + ", result: " + result);
+
+		// Convert result to 32-bit binary string
+		String resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
+		if (result < 0 ) {
+			resultBinary = Utility.leftPad("1" + Integer.toBinaryString(result));
+		}
+		System.out.println("SRLI DEBUG: Integer.toBinaryString(result): " + Integer.toBinaryString(result));
+		System.out.println("SRLI DEBUG: resultBinary: " + resultBinary);
+
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.incrementProgramCounter();
+
+		// Build and return the instruction result string
+		return String.format("srli %s, %s, %d", rd, rs1, immediate);
+	}
 
 	public String SLLI(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
@@ -640,7 +647,7 @@ public class Instructions {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd"); // destination register
 		String rs1 = instructionComponents.get("rs1"); // source register 1
-		String imm = instructionComponents.get("imm"); // immediate register
+		String imm = instructionComponents.get("shamt"); // immediate register
 
 		// Get values from registers
 		String valueRs1 = registers.getRegisterValue(rs1);
