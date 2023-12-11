@@ -3,15 +3,12 @@ package processor;
 import java.util.HashMap;
 
 public class Memory {
-
 	private HashMap<String, String> memoryMap;
 	private byte[] memoryArray;
+	private int size = 268500992 * 2;
 
 	public Memory() {
 		memoryMap = new HashMap<>();
-	}
-
-	public Memory(int size) {
 		memoryArray = new byte[size];
 	}
 

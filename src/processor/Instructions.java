@@ -296,7 +296,7 @@ public class Instructions {
 		int result = (valueIntRs1 < immediate) ? 1 : 0;
 
 		// Convert result to 32-bit binary string
-		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+		String resultBinary = Utility.leftPadSigned(result);
 
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
@@ -380,7 +380,7 @@ public class Instructions {
 		int result = valueIntRs1 | immediate;
 
 		// Convert result to 32-bit binary string
-		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+		String resultBinary = Utility.leftPadSigned(result);
 
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
