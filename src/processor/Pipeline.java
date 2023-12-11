@@ -340,7 +340,7 @@ public class Pipeline {
                         instructionName = "andi";
                         break;
                     case "001":
-                        imm = instruction.substring(0, 7);
+                        decodedInstruction.put("shamt", rs2);
                         instructionName = "slli";
                         break;
                     case "101":

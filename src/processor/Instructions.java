@@ -611,7 +611,7 @@ public class Instructions {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd"); // destination register
 		String rs1 = instructionComponents.get("rs1"); // source register 1
-		String imm = instructionComponents.get("imm"); // immediate register
+		String imm = instructionComponents.get("shamt"); // immediate register
 
 		// Get values from registers
 		String valueRs1 = registers.getRegisterValue(rs1);
@@ -627,7 +627,6 @@ public class Instructions {
 		String resultBinary = Integer.toBinaryString(result);
 		// Pad result to 32 bits
 		resultBinary = String.format("%32s", resultBinary).replace(' ', '0');
-
 
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);

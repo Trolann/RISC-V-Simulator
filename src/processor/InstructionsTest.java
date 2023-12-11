@@ -147,7 +147,7 @@ class InstructionsTest {
         HashMap<String, String> instructionMapSmall = new HashMap<>();
         instructionMapSmall.put("rs1", "x1");
         instructionMapSmall.put("rd", "x10");
-        instructionMapSmall.put("imm", "00000000000000000000000000000101"); // 5 in binary
+        instructionMapSmall.put("shamt", "00000000000000000000000000000101"); // 5 in binary
         testInstructions.SLLI(instructionMapSmall);
 
         String resultSmall = testRegisters.getRegisterValue("x10");
@@ -157,7 +157,7 @@ class InstructionsTest {
         HashMap<String, String> instructionMapZero = new HashMap<>();
         instructionMapZero.put("rs1", "x1");
         instructionMapZero.put("rd", "x11");
-        instructionMapZero.put("imm", "00000000000000000000000000000000"); // 0 in binary
+        instructionMapZero.put("shamt", "00000000000000000000000000000000"); // 0 in binary
         testInstructions.SLLI(instructionMapZero);
 
         String resultZero = testRegisters.getRegisterValue("x11");
@@ -169,7 +169,7 @@ class InstructionsTest {
         testRegisters.setRegisterValue("x2", binaryValueX2);
         instructionMapMax.put("rs1", "x2");
         instructionMapMax.put("rd", "x12");
-        instructionMapMax.put("imm", "00000000000000000000000000011111"); // 31 in binary
+        instructionMapMax.put("shamt", "00000000000000000000000000011111"); // 31 in binary
         testInstructions.SLLI(instructionMapMax);
 
         String resultMax = testRegisters.getRegisterValue("x12");
