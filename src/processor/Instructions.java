@@ -270,9 +270,9 @@ public class Instructions {
 		// Perform addition operation
 		int result = valueIntRs1 + immediate;
 		// Convert result to 32-bit binary string
-		String resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
-		if (result < 0 ) {
-			resultBinary = Utility.leftPad("1" + Integer.toBinaryString(result));
+		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+		if (result >= 0 ) {
+			resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
 		}
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
@@ -355,7 +355,11 @@ public class Instructions {
 		int result = valueIntRs1 ^ immediate;
 
 		// Convert result to 32-bit binary string
+		//String resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
 		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+		if (result >= 0 ) {
+			resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
+		}
 
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
@@ -598,9 +602,9 @@ public class Instructions {
 		int result = valueIntRs1 >>> immediate;
 
 		// Convert result to 32-bit binary string
-		String resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
-		if (result < 0 ) {
-			resultBinary = Utility.leftPad("1" + Integer.toBinaryString(result));
+		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+		if (result >= 0 ) {
+			resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
 		}
 
 		// Update rd register value
