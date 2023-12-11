@@ -9,7 +9,7 @@ public class Loader {
     this.memory = memory; // Use given memory
   }
 
-  public void load(String instructionfilename, String datafilename) throws IOException {
+  public int load(String instructionfilename, String datafilename) throws IOException {
 
     FileInputStream insFis = new FileInputStream(instructionfilename);
     DataInputStream insDis = new DataInputStream(insFis);
@@ -25,7 +25,7 @@ public class Loader {
     }
     insFis.close();
     insDis.close();
-
+    int dataLinesLoaded = 0;
     // Check if dataAddress is provided
     if (!datafilename.isEmpty()) {
         FileInputStream dataFis = new FileInputStream(datafilename);
@@ -40,9 +40,11 @@ public class Loader {
             System.out.println("LOADER DEBUG: dataLine: " + dataLine);
             memory.setMemoryValue(dataMemAddress, dataLine);
             dataMemAddress = Utility.StringCrement(dataMemAddress, 1); // Increment data memory address
+            dataLinesLoaded++;
         }
         dataFis.close();
         dataDis.close();
     }
+    return dataLinesLoaded;
   }
 }

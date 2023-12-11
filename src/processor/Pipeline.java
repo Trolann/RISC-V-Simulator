@@ -86,12 +86,12 @@ public class Pipeline {
 
         // Convert machine instruction to assembly components (you'll need to implement this)
         HashMap<String, String> asmComponents = machineToAsm(instruction);
-        System.out.println("PIPELINE DEBUG: instructionName: " + asmComponents.get("instructionName"));
+        //System.out.println("PIPELINE DEBUG: instructionName: " + asmComponents.get("instructionName"));
 
         if (functionMap.containsKey(asmComponents.get("instructionName"))) {
             String result;
             result = functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
-            System.out.println("PIPELINE DEBUG: result: " + result);
+            //System.out.println("PIPELINE DEBUG: result: " + result);
             
             // Write the assembly instruction to a .asm file
             writeInstructionToFile(result);
@@ -103,7 +103,7 @@ public class Pipeline {
         // Check for breakpoints
         //int pcIntValue = Integer.parseInt(pcValue, 2); // Convert binary to int
         int pcIntValue = Integer.parseInt(registers.getProgramCounter(), 2); // Convert binary to int
-        System.out.println("PIPELINE DEBUG: Checking for breakpoint at: " + pcIntValue);
+        //System.out.println("PIPELINE DEBUG: Checking for breakpoint at: " + pcIntValue);
         if(breakpoints.contains(pcIntValue)) {
             hasReachedBreakpoint = true;
         }
@@ -111,6 +111,7 @@ public class Pipeline {
     }
 
     public String printNextAsmInstruction() {
+        // test
         // create a bogus instructions so that it does not affect the actual program
         // and use return (execute) value to return the asm.
         Instructions bogusInstructions = new Instructions(new Memory(), new Registers());
