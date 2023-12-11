@@ -15,7 +15,8 @@ public class Utility {
      * @return The resulting 32-bit binary string.
      */
 
-    public static String ALLZEROS = "00000000000000000000000000000000";
+    public static final String ALLZEROS = "00000000000000000000000000000000";
+    public static final String DATA_MEMORY_ADDRESS = "00010000000000010000000000000000";
 
     public static String StringCrement(String binaryString, int value) {
         // Convert the binary string to an integer
