@@ -23,38 +23,38 @@ public class Registers {
 
     private void initializeRegistersAndAliases() {
         String[] aliases = {
-                "zero", // x0
-                "ra", // x1
-                "sp", // x2
-                "gp", // x3
-                "tp", // x4
-                "t0", // x5
-                "t1", // x6
-                "t2", // x7
-                "s0/fp", // x8
-                "s1", // x9
-                "a0", // x10
-                "a1", // x11
-                "a2", // x12
-                "a3", // x13
-                "a4", // x14
-                "a5", // x15
-                "a6", // x16
-                "a7", // x17
-                "s2", // x18
-                "s3", // x19
-                "s4", // x20
-                "s5", // x21
-                "s6", // x22
-                "s7", // x23
-                "s8", // x24
-                "s9", // x25
-                "s10", // x26
-                "s11", // x27
-                "t3", // x28
-                "t4", // x29
-                "t5", // x30
-                "t6" // x31
+                "x0", // x0 (zero)
+                "x1", // x1 (ra) Return address
+                "x2", // x2 (sp) Stack pointer
+                "x3", // x3 (gp) Global pointer
+                "x4", // x4 (tp) Thread pointer
+                "t0", // x5 (t0) Temporary
+                "t1", // x6 (t1) Temporary
+                "t2", // x7 (t2) Temporary
+                "x8", // x8 (s0/fp) Saved register/frame pointer
+                "x9", // x9 (s1) Saved register
+                "x10", // x10 (a0) Function argument/return value
+                "x11", // x11 (a1) Function argument/return value
+                "x12", // x12 (a2) Function argument
+                "x13", // x13 (a3) Function argument
+                "x14", // x14 (a4) Function argument
+                "x15", // x15 (a5) Function argument
+                "x16", // x16 (a6) Function argument
+                "x17", // x17 (a7) Function argument
+                "x18", // x18 (s2) Saved register
+                "x19", // x19 (s3) Saved register
+                "x20", // x20 (s4) Saved register
+                "x21", // x21 (s5) Saved register
+                "x22", // x22 (s6) Saved register
+                "x23", // x23 (s7) Saved register
+                "x24", // x24 (s8) Saved register
+                "x25", // x25 (s9) Saved register
+                "x26", // x26 (s10) Saved register
+                "x27", // x27 (s11) Saved register
+                "t3", // x28 (t3) Temporary
+                "t4", // x29 (t4) Temporary
+                "t5", // x30 (t5) Temporary
+                "t6" // x31 (t6) Temporary
         };
         for (int i = 0; i <= 31; i++) {
             String registerKey = "x" + i;
