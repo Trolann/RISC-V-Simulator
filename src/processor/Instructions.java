@@ -605,7 +605,6 @@ public class Instructions {
 		return String.format("sb %s, %d(%s)", rs2, immediate, rs1);
 	}
 
-
 	public String SLLI(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd"); // destination register
