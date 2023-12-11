@@ -596,15 +596,12 @@ public class Instructions {
 
 		// Perform logical right shift operation
 		int result = valueIntRs1 >>> immediate;
-		System.out.println("SRLI DEBUG: valueIntRs1: " + valueIntRs1 + ", immediate: " + immediate + ", result: " + result);
 
 		// Convert result to 32-bit binary string
 		String resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
 		if (result < 0 ) {
 			resultBinary = Utility.leftPad("1" + Integer.toBinaryString(result));
 		}
-		System.out.println("SRLI DEBUG: Integer.toBinaryString(result): " + Integer.toBinaryString(result));
-		System.out.println("SRLI DEBUG: resultBinary: " + resultBinary);
 
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
