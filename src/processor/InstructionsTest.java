@@ -62,8 +62,6 @@ class InstructionsTest {
         int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
         assertEquals(16, programCounterValue); // Assuming each test increment is 4
     }
-
-
     @Test
     void SLTU() {
         // Set up initial register values
@@ -99,7 +97,6 @@ class InstructionsTest {
         int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
         assertEquals(12, programCounterValue); // Assuming each test increment is 4
     }
-
     @Test
     void ADDI() {
         // Set up initial values
@@ -135,6 +132,48 @@ class InstructionsTest {
 
         String resultZero = testRegisters.getRegisterValue("x12");
         assertEquals(binaryValueX1, resultZero); // Expected 10 (10 + 0)
+
+        // Verify that the program counter is incremented
+        int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
+        assertEquals(12, programCounterValue); // Assuming each test increment is 4
+    }
+    @Test
+    void SLLI() {
+        // Set up initial values
+        String binaryValueX1 = "00000000000000000000000000001010"; // 10 in binary
+        testRegisters.setRegisterValue("x1", binaryValueX1);
+
+        // Test SLLI with small immediate value
+        HashMap<String, String> instructionMapSmall = new HashMap<>();
+        instructionMapSmall.put("rs1", "x1");
+        instructionMapSmall.put("rd", "x10");
+        instructionMapSmall.put("imm", "00000000000000000000000000000101"); // 5 in binary
+        testInstructions.SLLI(instructionMapSmall);
+
+        String resultSmall = testRegisters.getRegisterValue("x10");
+        assertEquals("00000000000000000000000101000000", resultSmall); // Expected 10 << 5
+
+        // Test SLLI with zero immediate value
+        HashMap<String, String> instructionMapZero = new HashMap<>();
+        instructionMapZero.put("rs1", "x1");
+        instructionMapZero.put("rd", "x11");
+        instructionMapZero.put("imm", "00000000000000000000000000000000"); // 0 in binary
+        testInstructions.SLLI(instructionMapZero);
+
+        String resultZero = testRegisters.getRegisterValue("x11");
+        assertEquals(binaryValueX1, resultZero); // Expected 10 (10 << 0)
+
+        // Test SLLI with maximum immediate value (31)
+        HashMap<String, String> instructionMapMax = new HashMap<>();
+        String binaryValueX2 = "00000000000000000000000000000001"; // 10 in binary
+        testRegisters.setRegisterValue("x2", binaryValueX2);
+        instructionMapMax.put("rs1", "x2");
+        instructionMapMax.put("rd", "x12");
+        instructionMapMax.put("imm", "00000000000000000000000000011111"); // 31 in binary
+        testInstructions.SLLI(instructionMapMax);
+
+        String resultMax = testRegisters.getRegisterValue("x12");
+        assertEquals("10000000000000000000000000000000", resultMax); // Expected 10 << 31
 
         // Verify that the program counter is incremented
         int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
