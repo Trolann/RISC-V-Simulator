@@ -157,10 +157,7 @@ public class SimulatorMain {
         }
         System.out.print("Final register states (0's are omitted): \n" + registers.toString());
 
-        System.out.println(memory.getMemoryValue(Utility.DATA_MEMORY_ADDRESS));
-        System.out.println(Utility.ALLZEROS);
-        System.out.println(memory.getMemoryValue(Utility.DATA_MEMORY_ADDRESS).equals(Utility.ALLZEROS));
-        if (!memory.getMemoryValue(Utility.DATA_MEMORY_ADDRESS).equals(Utility.ALLZEROS)) {
+        if (!memory.getMemoryValue(Utility.DATA_MEMORY_ADDRESS).equals(Utility.ALLZEROS.substring(0,8))) {
             System.out.println("Final data memory states: ");
             String address = Utility.DATA_MEMORY_ADDRESS;
             String value = memory.getMemoryValue(address);

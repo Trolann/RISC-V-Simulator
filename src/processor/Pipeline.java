@@ -78,6 +78,7 @@ public class Pipeline {
     public boolean runNextInstruction() {
     	System.out.println("PIPELINE DEBUG: Running next instruction: " + registers.getProgramCounter());
         String instruction = memory.getInstruction(registers.getProgramCounter());
+        System.out.println("PIPELINE DEBUG: raw instruction: " + instruction);
 
         if(instruction == null) {
             return STOP;
