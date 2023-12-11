@@ -110,6 +110,64 @@ public class Pipeline {
         return RUN;
     }
 
+    public String printNextAsmInstruction() {
+        // create a bogus instructions so that it does not affect the actual program
+        // and use return (execute) value to return the asm.
+        Instructions bogusInstructions = new Instructions(new Memory(), new Registers());
+        Map<String, InstructionFunction> bogusMap = new HashMap<String, InstructionFunction>();
+        bogusMap.put("lui", bogusInstructions::LUI); // 1
+        bogusMap.put("auipc", bogusInstructions::AUIPC); // 2
+        bogusMap.put("jal", bogusInstructions::JAL); // 3
+        bogusMap.put("jalr", bogusInstructions::JALR); // 4
+        bogusMap.put("beq", bogusInstructions::BEQ); // 5
+        bogusMap.put("bne", bogusInstructions::BNE); // 6
+        bogusMap.put("blt", bogusInstructions::BLT); // 7
+        bogusMap.put("bge", bogusInstructions::BGE); // 8
+        bogusMap.put("bltu", bogusInstructions::BLTU); // 9
+        bogusMap.put("bgeu", bogusInstructions::BGEU); // 10
+        bogusMap.put("lb", bogusInstructions::LB); // 11
+        bogusMap.put("lh", bogusInstructions::LH); // 12
+        bogusMap.put("lw", bogusInstructions::LW); // 13
+        bogusMap.put("lbu", bogusInstructions::LBU); // 14
+        bogusMap.put("lhu", bogusInstructions::LHU); // 15
+        bogusMap.put("sb", bogusInstructions::SB); // 16
+        bogusMap.put("sh", bogusInstructions::SH); // 17
+        bogusMap.put("sw", bogusInstructions::SW); // 18
+        bogusMap.put("addi", bogusInstructions::ADDI); // 19
+        bogusMap.put("slti", bogusInstructions::SLTI); // 20
+        bogusMap.put("sltiu", bogusInstructions::SLTIU); // 21
+        bogusMap.put("xori", bogusInstructions::XORI); // 22
+        bogusMap.put("ori", bogusInstructions::ORI); // 23
+        bogusMap.put("andi", bogusInstructions::ANDI); // 24
+        bogusMap.put("slli", bogusInstructions::SLLI); // 25
+        bogusMap.put("srli", bogusInstructions::SRLI); // 26
+        bogusMap.put("srai", bogusInstructions::SRAI); // 27
+        bogusMap.put("add", bogusInstructions::ADD); // 28
+        bogusMap.put("sub", bogusInstructions::SUB); // 29
+        bogusMap.put("sll", bogusInstructions::SLL); // 30
+        bogusMap.put("slt", bogusInstructions::SLT); // 31
+        bogusMap.put("sltu", bogusInstructions::SLTU); // 32
+        bogusMap.put("xor", bogusInstructions::XOR); // 33
+        bogusMap.put("srl", bogusInstructions::SRL); // 34
+        bogusMap.put("sra", bogusInstructions::SRA); // 35
+        bogusMap.put("or", bogusInstructions::OR); // 36
+        bogusMap.put("and", bogusInstructions::AND); // 37
+        //bogusMap.put("fence", bogusInstructions::FENCE); // 38
+        //bogusMap.put("ecall", bogusInstructions::ECALL); // 39
+        //bogusMap.put("ebreak", bogusInstructions::ERBEAK); // 40
+        String instruction = memory.getInstruction(registers.getProgramCounter());
+        HashMap<String, String> asmComponents = machineToAsm(instruction);
+
+        if (functionMap.containsKey(asmComponents.get("instructionName"))) {
+            String asmInstruction;
+            asmInstruction = bogusMap.get(asmComponents.get("instructionName")).execute(asmComponents);
+            return "Next assembly instruction: " + asmInstruction;
+
+        } else {
+            return "Instruction not found: " + asmComponents;
+        }
+    }
+
     private void writeInstructionToFile(String result) {
 		try {
             if (outputFile == null) {

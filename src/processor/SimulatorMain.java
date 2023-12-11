@@ -130,7 +130,7 @@ public class SimulatorMain {
                     break;
                 case "insn":
                     // Assuming a method in Pipeline class fetches the next instruction.
-                    //System.out.println(pipeline.getNextInstructionInAssembly());
+                    System.out.println(pipeline.printNextAsmInstruction());
                     break;
                 case "c":
                     isRunning = pipeline.continueExecution();
