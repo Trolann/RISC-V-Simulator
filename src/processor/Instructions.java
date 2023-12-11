@@ -28,7 +28,7 @@ public class Instructions {
 		int result = immediate << 12;
 
 		// Convert result to 32-bit binary string
-		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+		String resultBinary = Utility.leftPadSigned(result);
 
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
@@ -407,7 +407,7 @@ public class Instructions {
 		int result = valueIntRs1 & immediate;
 
 		// Convert result to 32-bit binary string
-		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+		String resultBinary = Utility.leftPadSigned(result);
 
 		// Update rd register value
 		registers.setRegisterValue(rd, resultBinary);
@@ -475,7 +475,7 @@ public class Instructions {
 	    // Extract components from the HashMap
 	    String rd = instructionComponents.get("rd"); // destination register
 	    String rs1 = instructionComponents.get("rs1"); // base register
-	    String offset = instructionComponents.get("offset"); // offset
+	    String offset = instructionComponents.get("imm"); // offset
 
 	    // Get values from registers
 	    String valueRs1 = registers.getRegisterValue(rs1);
