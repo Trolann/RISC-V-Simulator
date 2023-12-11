@@ -40,6 +40,14 @@ public class Utility {
         return result;
     }
 
+    public static String leftPadSigned(int result) {
+        String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+        if (result >= 0 ) {
+            resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
+        }
+        return resultBinary;
+    }
+
     public static String leftPad(String binaryString) {
         int firstChar = Integer.parseInt(binaryString.substring(0, 1));
         while (binaryString.length() < 32) {
