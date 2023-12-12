@@ -4,15 +4,17 @@ import java.util.HashMap;
 
 public class Memory {
 	private HashMap<String, String> memoryMap;
-	private byte[] memoryArray;
-	private int size = 268500992 * 2;
+    public int dataLines;
 
 	public Memory() {
 		memoryMap = new HashMap<>();
+        this.dataLines = 0;
 	}
 
 	public void setMemoryValue(String address, String value) {
-		// TODO: error handling for memory? ie. check if value is valid?
+		if(Long.parseLong(address, 2) >= Long.parseLong(Utility.DATA_MEMORY_ADDRESS, 2)) {
+            this.dataLines++;
+        }
 		memoryMap.put(address, value);
 	}
 

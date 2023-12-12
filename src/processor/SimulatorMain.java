@@ -78,10 +78,9 @@ public class SimulatorMain {
             }
         }
 
-        int dataLinesInMemory = 0;
         // Load the .dat file into memory using Loader
         try {
-            dataLinesInMemory = loader.load(inputFile, dataFile);
+            loader.load(inputFile, dataFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -236,18 +235,20 @@ public class SimulatorMain {
         System.out.println("Execution complete!");
         printTime();
         System.out.print("Final register states (0's are omitted): \n" + registers.toString());
-
-        if (dataLinesInMemory > 0) {
+        if (memory.dataLines > 0) {
             System.out.println("Final data memory states: ");
             String address = Utility.DATA_MEMORY_ADDRESS;
             String value = memory.getMemoryValue(address);
 
-            for (int i = 0; i < dataLinesInMemory; i++) {
+            for (int i = 0; i < memory.dataLines; i++) {
                 // Address is binary string, convert to hex
                 System.out.println("0x" + Integer.toHexString(Integer.parseInt(address, 2)) + ": " + value);
                 address = Utility.StringCrement(address, 1);
                 value = memory.getMemoryValue(address);
             }
+        }
+        else {
+            System.out.println("No data memory lines to display.");
         }
         scanner.close();
     }
