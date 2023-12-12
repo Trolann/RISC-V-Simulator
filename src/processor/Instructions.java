@@ -679,7 +679,7 @@ public class Instructions {
 	    System.out.println("SH DEBUG: StoreHalfWord " + valueIntRs2 + " offset " + offset + " to get " + effectiveAddress);
 	    
 	    // Store the word to memory
-	    memory.storeHalfword(effectiveAddress, valueIntRs2);
+	    memory.storeHalfword(effectiveAddress, valueRs2);
 	    registers.incrementProgramCounter();
 
 	    // Build and return the instruction result string
