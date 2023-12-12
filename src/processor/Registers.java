@@ -69,6 +69,18 @@ public class Registers {
         }
     }
 
+    public String xToT(String xRegister) {
+        Map<String, String> xToTMap = new HashMap<>();
+        xToTMap.put("x5", "t0");
+        xToTMap.put("x6", "t1");
+        xToTMap.put("x7", "t2");
+        xToTMap.put("x28", "t3");
+        xToTMap.put("x29", "t4");
+        xToTMap.put("x30", "t5");
+        xToTMap.put("x31", "t6");
+        return xToTMap.getOrDefault(xRegister, xRegister);
+    }
+
     public String tToX(String tRegister) {
         Map<String, String> tToXMap = new HashMap<>();
         tToXMap.put("t0", "x5");
@@ -101,6 +113,7 @@ public class Registers {
     public void setRegisterValue(String registerKey, String value) {
         if (registerMap.containsKey(registerKey) && !registerKey.equals("x0") && value.length() == 32) {
             registerMap.put(registerKey, value);
+            System.out.println("REGISTER DEBUG: Set " + registerKey + "(" + xToT(registerKey) +") to " + value);
         }
     }
 
