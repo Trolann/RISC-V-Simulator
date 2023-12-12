@@ -86,7 +86,7 @@ public class Pipeline {
     public boolean runNextInstruction() throws IOException {
     	System.out.println("PIPELINE DEBUG: Running next instruction: " + registers.getProgramCounter());
         String instruction = memory.getInstruction(registers.getProgramCounter());
-        System.out.println("PIPELINE DEBUG: raw instruction: " + instruction);
+        //System.out.println("PIPELINE DEBUG: raw instruction: " + instruction);
 
         if(instruction.equals(Utility.ALLZEROS)) {
             outputFile.close();
@@ -111,7 +111,7 @@ public class Pipeline {
             oldPC = "0x" + oldPC;
             // Parse instruction as an unsigned binary string, then convert to hex
             String machineCode = Integer.toHexString((int) Long.parseLong(instruction, 2));
-            System.out.println("PIPELINE DEBUG: machineCode: " + machineCode);
+            //System.out.println("PIPELINE DEBUG: machineCode: " + machineCode);
             digits = machineCode.length();
             for (int i = 0; i < 8 - digits; i++) {
                 machineCode = "0" + machineCode;
@@ -219,6 +219,7 @@ public class Pipeline {
         hasReachedBreakpoint = false; // Reset breakpoint flag
     	while(!hasReachedBreakpoint) {
             done = runNextInstruction();
+            System.out.println("PIPELINE DEBUG: done: " + done);
             if(!done) {
                 outputFile.close();
                 return STOP;
@@ -439,7 +440,7 @@ public class Pipeline {
         decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
         decodedInstruction.put("rs2", registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("imm", imm);
-        //System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
+        System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
 
         return decodedInstruction;
     }

@@ -13,6 +13,7 @@ public class Memory {
 
 	public void setMemoryValue(String address, String value) {
 		if(Long.parseLong(address, 2) >= Long.parseLong(Utility.DATA_MEMORY_ADDRESS, 2)) {
+            System.out.println("MEMORY DEBUG: Putting data " + value + " at address " + address);
             this.dataLines++;
         }
 		memoryMap.put(address, value);
@@ -69,13 +70,13 @@ public class Memory {
     
     public String loadByte(int address) {
         // Assuming that the address is an integer for simplicity
-        String byteValue = getMemoryValue(Integer.toString(address));
+        String byteValue = getMemoryValue(Utility.leftPadSigned(address));
         return byteValue;
     }
     
     public void storeByte(int memoryAddress, String byteValue) {
         // Store the byte at the specified memory address
-        String address = Utility.leftPad(Integer.toBinaryString(memoryAddress));
+        String address = Utility.leftPadSigned(memoryAddress);
         setMemoryValue(address, byteValue);
     }
     
@@ -87,7 +88,7 @@ public class Memory {
         }
         // Store each byte at the corresponding memory address
         for (int i = 0; i < 2; i++) {
-            String address = Utility.leftPad(Integer.toBinaryString(memoryAddress + i));
+            String address = Utility.leftPadSigned(memoryAddress + i);
             setMemoryValue(address, bytes[i]);
         }
     }
@@ -101,7 +102,7 @@ public class Memory {
         }
         // Store each byte at the consecutive memory addresses
         for (int i = 0; i < 4; i++) {
-            String address = Utility.leftPad(Integer.toBinaryString(memoryAddress + i));
+            String address = Utility.leftPadSigned(memoryAddress + i);
             setMemoryValue(address, bytes[i]);
         }
     }

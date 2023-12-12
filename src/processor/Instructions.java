@@ -700,7 +700,7 @@ public class Instructions {
 	    int offset = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
 
 	    // Calculate effective address
-	    int effectiveAddress = valueIntRs2 + offset;
+	    int effectiveAddress = Integer.parseInt(Utility.DATA_MEMORY_ADDRESS, 2) + offset;
 	    System.out.println("SW DEBUG: StoreWord " + valueIntRs2 + " offset " + offset + " to get " + effectiveAddress);
 	    
 	    // Store the word to memory
