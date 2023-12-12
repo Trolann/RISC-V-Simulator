@@ -522,56 +522,65 @@ public class Instructions {
 
 	public String LBU(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
-		String rd = instructionComponents.get("rd"); // destination register
-		String rs1 = instructionComponents.get("rs1"); // base register
-		String imm = instructionComponents.get("imm"); // immediate offset
+	    String rd = instructionComponents.get("rd"); // destination register
+	    String rs1 = instructionComponents.get("rs1"); // base register
+	    String imm = instructionComponents.get("imm"); // immediate value
 
-		// Get values from registers
-		String valueRs1 = registers.getRegisterValue(rs1);
+	    // Get values from registers
+	    String valueRs1 = registers.getRegisterValue(rs1);
 
-		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
-		// Convert immediate value from binary string to integer
-		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+	    // Calculate the effective memory address by adding the immediate value to the base register value
+	    int address = (int) Long.parseUnsignedLong(valueRs1, 2) + (int) Long.parseUnsignedLong(imm, 2);
+		System.out.println("LBU DEBUG: address: " + address);
+	    
+		// Load the 8-bit value from memory at the calculated address
+	    String result = memory.loadByte(address);
+		System.out.println("LBU DEBUG: result: " + result);
+	    //System.out.println("Address should be ____: " + Integer.toBinaryString(address));
+	    //System.out.println("Loaded value should be ________: " + result);
+	    
+	    // Sign-extend the 8-bit value to 32 bits
+	    String resultBinary = Utility.leftPad(0 + result);
+		System.out.println("LBU DEBUG: resultBinary: " + resultBinary);
+	    // Update rd register value
+	    registers.setRegisterValue(rd, resultBinary);
 
-		// Calculate memory address
-		int address = valueIntRs1 + immediate;
+	    // Increment the program counter
+	    registers.incrementProgramCounter();
 
-		// Load byte from memory
-		String loadedByte = memory.loadByte(address);
-
-		// Update rd register value
-		registers.setRegisterValue(rd, loadedByte);
-		registers.incrementProgramCounter();
-
-		// Build and return the instruction result string
-		return String.format("lbu %s, %d(%s)", rd, immediate, rs1);
+	    // Return the executed instruction in string format
+	    return String.format("lbu %s, %s(%s)", rd, imm, rs1);
 	}
 
 	public String LHU(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
-		String rd = instructionComponents.get("rd"); // destination register
-		String rs1 = instructionComponents.get("rs1"); // base register
-		String imm = instructionComponents.get("imm"); // immediate offset
+	    String rd = instructionComponents.get("rd"); // destination register
+	    String rs1 = instructionComponents.get("rs1"); // base register
+	    String imm = instructionComponents.get("imm"); // immediate value
 
-		// Get values from registers
-		String valueRs1 = registers.getRegisterValue(rs1);
-
-		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
-		// Convert immediate value from binary string to integer
-		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
-
-		// Calculate memory address
-		int address = valueIntRs1 + immediate;
-
-		// Load halfword from memory
-		String loadedHalfword = memory.loadHalfword(address);
-
+	    // Get values from registers
+	    String valueRs1 = registers.getRegisterValue(rs1);
+	    
+	    // Calculate the effective memory address by adding the immediate value to the base register value
+	    int address = (int) Long.parseUnsignedLong(valueRs1, 2) + (int) Long.parseUnsignedLong(imm, 2);
+		System.out.println("LH DEBUG: address: " + address);
+	    
+		// Load the 16-bit value from memory at the calculated address
+	    String result = memory.loadHalfword2(address);
+		System.out.println("LH DEBUG: result: " + result);
+	    
+	    // Sign-extend the 16-bit value to 32 bits
+	    String resultBinary = Utility.leftPad(0 + result);
+		System.out.println("LH DEBUG: resultBinary: " + resultBinary);
+	    
 		// Update rd register value
-		registers.setRegisterValue(rd, loadedHalfword);
-		registers.incrementProgramCounter();
+	    registers.setRegisterValue(rd, resultBinary);
 
-		// Build and return the instruction result string
-		return String.format("lhu %s, %d(%s)", rd, immediate, rs1);
+	    // Increment the program counter
+	    registers.incrementProgramCounter();
+
+	    // Return the executed instruction in string format
+	    return String.format("lh %s, %s(%s)", rd, imm, rs1);
 	}
 
 	public String SB(HashMap<String, String> instructionComponents) {
