@@ -13,6 +13,7 @@ public class Memory {
 
 	public void setMemoryValue(String address, String value) {
 		// TODO: error handling for memory? ie. check if value is valid?
+		System.out.println("Address: " + address + ", Value: " + value);
 		memoryMap.put(address, value);
 	}
 
@@ -67,7 +68,7 @@ public class Memory {
     
     public String loadByte(int address) {
         // Assuming that the address is an integer for simplicity
-        String byteValue = getMemoryValue(Integer.toString(address));
+        String byteValue = getMemoryValue(Utility.leftPadSigned(address));
         return byteValue;
     }
     
@@ -78,7 +79,7 @@ public class Memory {
         }
 
         // Store the byte at the specified memory address
-        String address = Utility.leftPad(Integer.toBinaryString(memoryAddress));
+        String address = Utility.leftPadSigned(memoryAddress);
         setMemoryValue(address, byteValue);
     }
     

@@ -417,31 +417,39 @@ public class Instructions {
 		return String.format("andi %s, %s, %d", rd, rs1, immediate);
 	}
 
+	/**
+	 * Loads a 8-bit value from memory, then sign-extends to 32-bits before storing in rd
+	 * @param instructionComponents
+	 * @return
+	 */
 	public String LB(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
-		String rd = instructionComponents.get("rd"); // destination register
-		String rs1 = instructionComponents.get("rs1"); // base register
-		String imm = instructionComponents.get("imm"); // immediate offset
+	    String rd = instructionComponents.get("rd"); // destination register
+	    String rs1 = instructionComponents.get("rs1"); // base register
+	    String imm = instructionComponents.get("imm"); // immediate value
 
-		// Get values from registers
-		String valueRs1 = registers.getRegisterValue(rs1);
+	    // Get values from registers
+	    String valueRs1 = registers.getRegisterValue(rs1);
 
-		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
-		// Convert immediate value from binary string to integer
-		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+	    // Calculate the effective memory address by adding the immediate value to the base register value
+	    int address = (int) Long.parseUnsignedLong(valueRs1, 2) + (int) Long.parseUnsignedLong(imm, 2);
 
-		// Calculate memory address
-		int address = valueIntRs1 + immediate;
+	    // Load the 8-bit value from memory at the calculated address
+	    String result = memory.loadByte(address);
+	    System.out.println("Address should be 0101: " + Integer.toBinaryString(address));
+	    System.out.println("Loaded value should be 00100101: " + result);
+	    
+	    // Sign-extend the 8-bit value to 32 bits
+	    String resultBinary = Utility.leftPadSigned(Integer.parseInt(result));
 
-		// Load byte from memory
-		String loadedByte = memory.loadByte(address);
+	    // Update rd register value
+	    registers.setRegisterValue(rd, resultBinary);
 
-		// Update rd register value
-		registers.setRegisterValue(rd, loadedByte);
-		registers.incrementProgramCounter();
+	    // Increment the program counter
+	    registers.incrementProgramCounter();
 
-		// Build and return the instruction result string
-		return String.format("lb %s, %d(%s)", rd, immediate, rs1);
+	    // Return the executed instruction in string format
+	    return String.format("lb %s, %s(%s)", rd, imm, rs1);
 	}
 
 	public String LH(HashMap<String, String> instructionComponents) {
@@ -996,8 +1004,4 @@ public class Instructions {
 	    // Build and return the instruction result string
 	    return String.format("and %s, %s, %s", rd, rs1, rs2);
 	}
-
-
-
-
 }

@@ -53,7 +53,7 @@ public class Utility {
         while (binaryString.length() < 32) {
             binaryString = firstChar + binaryString;
         }
-        //return binaryString;
+        
         // Return the last 32 bits
         return binaryString.substring(binaryString.length() - 32);
     }
