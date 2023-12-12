@@ -21,6 +21,12 @@ public class Registers {
         registerMap.put("pc", Utility.ALLZEROS);
     }
 
+    public Registers(Registers oldRegisters) {
+        this.registerMap = new HashMap<>();
+        this.aliasMap = new HashMap<>(oldRegisters.aliasMap);
+        this.registerMap.putAll(oldRegisters.registerMap);
+    }
+
     private void initializeRegistersAndAliases() {
         String[] aliases = {
                 "x0", // x0 (zero)

@@ -140,7 +140,7 @@ public class Pipeline {
         // test
         // create a bogus instructions so that it does not affect the actual program
         // and use return (execute) value to return the asm.
-        Instructions bogusInstructions = new Instructions(new Memory(), new Registers());
+        Instructions bogusInstructions = new Instructions(new Memory(), new Registers(registers));
         Map<String, InstructionFunction> bogusMap = new HashMap<String, InstructionFunction>();
         bogusMap.put("lui", bogusInstructions::LUI); // 1
         bogusMap.put("auipc", bogusInstructions::AUIPC); // 2
@@ -215,12 +215,12 @@ public class Pipeline {
 
 	// Continue execution until the next breakpoint or end
     public boolean continueExecution() throws IOException {
-    	boolean done;
+    	boolean continueRunning;
         hasReachedBreakpoint = false; // Reset breakpoint flag
     	while(!hasReachedBreakpoint) {
-            done = runNextInstruction();
-            System.out.println("PIPELINE DEBUG: done: " + done);
-            if(!done) {
+            continueRunning = runNextInstruction();
+            //System.out.println("PIPELINE DEBUG: continueRunning: " + continueRunning);
+            if(!continueRunning) {
                 outputFile.close();
                 return STOP;
             }
