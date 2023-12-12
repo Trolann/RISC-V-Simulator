@@ -439,7 +439,7 @@ public class Pipeline {
         decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
         decodedInstruction.put("rs2", registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("imm", imm);
-        System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
+        //System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
 
         return decodedInstruction;
     }
