@@ -12,7 +12,7 @@ public class SimulatorMain {
     private static Memory memory = new Memory();
     private static Registers registers = new Registers();
     private static Loader loader = new Loader(memory);
-    private static Pipeline pipeline = new Pipeline(memory, registers);
+    private static Pipeline pipeline;
     // Define a constant for all zeroes
     private static final String allZeroes = Utility.ALLZEROS;
     private static long startTime = 0;
@@ -42,7 +42,7 @@ public class SimulatorMain {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
     	Scanner scanner = new Scanner(System.in);
 
         String inputFile = "";
@@ -56,6 +56,8 @@ public class SimulatorMain {
         } else {
             inputFile = args[0];
         }
+
+        pipeline = new Pipeline(memory, registers, inputFile);
 
         if (args.length == 2) {
             if (!args[1].equals("n"))
