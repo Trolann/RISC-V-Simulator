@@ -173,8 +173,9 @@ public class SimulatorMain {
                     isRunning = false;
                     break;
                 default:
-                    if(input.startsWith("x")) {
-                        System.out.println(registers.getRegisterValue(input));
+                    if(input.startsWith("x") || input.startsWith("t")) {
+                        System.out.print("Register " + input + " contains: ");
+                        System.out.println(registers.getRegisterValue(registers.tToX(input)));
                     } else if(input.startsWith("b")) {
                         // Insert a space after the b
                         input = input.charAt(0) + " " + input.substring(1);

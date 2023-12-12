@@ -69,6 +69,18 @@ public class Registers {
         }
     }
 
+    public String tToX(String tRegister) {
+        Map<String, String> tToXMap = new HashMap<>();
+        tToXMap.put("t0", "x5");
+        tToXMap.put("t1", "x6");
+        tToXMap.put("t2", "x7");
+        tToXMap.put("t3", "x28");
+        tToXMap.put("t4", "x29");
+        tToXMap.put("t5", "x30");
+        tToXMap.put("t6", "x31");
+        return tToXMap.getOrDefault(tRegister, tRegister);
+    }
+
     // Get register string based on integer
     public String getRegisterString(int registerInt) {
         return "x" + registerInt;
