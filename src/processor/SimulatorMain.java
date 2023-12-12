@@ -209,7 +209,7 @@ public class SimulatorMain {
                         int pcValue = Integer.parseInt(input.split(" ")[1]);
                         pipeline.addBreakpoint(pcValue);
                     } 
-                    else if(input.matches("^0x[0-9a-fA-F]{8}$")) {
+                    else if(input.matches("^0x[0-9a-fA-F]{0,8}$")) {
 //                    	String content = memory.getMemoryValue(input);
                     	// Remove the "0x" prefix if it exists
                     	if (input.startsWith("0x")) {
