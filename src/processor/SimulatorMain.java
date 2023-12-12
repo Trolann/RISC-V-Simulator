@@ -1,7 +1,5 @@
 package processor;
 
-import jdk.jshell.execution.Util;
-
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.HashMap; // TODO: Remove, this is for testing only
@@ -41,10 +39,8 @@ public class SimulatorMain {
         System.out.println("Execution time: " + min + "m " + sec + "s " + ms + "ms " + us + "us " + ns + "ns");
     }
 
-
     public static void main(String[] args) throws IOException {
     	Scanner scanner = new Scanner(System.in);
-
         String inputFile = "";
         String dataFile = "";
 
@@ -57,8 +53,11 @@ public class SimulatorMain {
             inputFile = args[0];
         }
 
+        // Pipeline needs main's memory and registers to send to instructions
+        // and the inputfilename to write the .asm file
         pipeline = new Pipeline(memory, registers, inputFile);
 
+        // Load data memory as needed, starting at Utility.DATA_MEMORY_ADDRESS
         if (args.length == 2) {
             if (!args[1].equals("n"))
                 dataFile = args[1];
@@ -78,56 +77,25 @@ public class SimulatorMain {
             }
         }
 
-        // Load the .dat file into memory using Loader
+        // Load the .dat file(s) into memory using Loader
         try {
             loader.load(inputFile, dataFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("ERROR: Could not load file(s)! Place files in input_files/ directory and try again.");
+            System.out.println("Exiting...");
+            System.exit(1);
         }
         
-        boolean isRunning = true;
+        boolean isRunning = true; // Flag to determine if there are still instructions to execute
         printMenu();
         while(isRunning) {
-                        System.out.println("Please enter a command, m for menu, or q to quit: ");
+            System.out.println("Please enter a command, m for menu, or q to quit: ");
             String input = scanner.nextLine();
 
             switch(input) {
                 case "m":
                     printMenu();
-                    break;
-                case "t": // Run special testing code
-                    // Set up initial register values for testing
-                    String binaryValueX1 = "00000000000000000000000000001101";  // Value 13 in binary
-                    String binaryValueX2 = "00000000000000000000000000001010";  // Value 10 in binary
-
-                    Memory testMemory = new Memory();
-                    Registers testRegisters = new Registers();
-                    Instructions testInstructions = new Instructions(testMemory, testRegisters);
-
-                    testRegisters.setRegisterValue("x2", binaryValueX1);
-                    testRegisters.setRegisterValue("x1", binaryValueX2);
-                    System.out.println("Initial Register Values:");
-                    System.out.println(testRegisters);
-
-                    // Test SLTU instruction
-                    HashMap<String, String> testInstructionMap = new HashMap<>();
-                    testInstructionMap.put("rs1", "x1");
-                    testInstructionMap.put("rs2", "x2");
-
-                    // Execute SLTU instruction
-                    testInstructionMap.put("rd", "x3");
-                    testInstructions.SLTU(testInstructionMap);
-                    String resultSLTU = testRegisters.getRegisterValue("x3");
-                    System.out.println("\nResult of SLTU: " + resultSLTU);
-
-                    testInstructionMap.put("rd", "x4");
-                    testInstructions.SLT(testInstructionMap);
-                    String resultSLT = testRegisters.getRegisterValue("x4");
-                    System.out.println("\nResult of SLT: " + resultSLT);
-
-                    System.out.println("Final Register Values:");
-                    System.out.println(testRegisters);
-
                     break;
                 case "reg": // Print all register values
                     System.out.println(registers.toString());
@@ -147,58 +115,53 @@ public class SimulatorMain {
                     System.out.println("\nData memory:");
                     dumpDMem();
                     break;
-                case "r":          
+                case "r": // Run the program in one go, ignoring breakpoints
                     startTimer();
                     isRunning = pipeline.runUntilEnd();
                     stopTimer();
                     break;
-                case "s":
+                case "s": // Step through the program one instruction at a time
                     startTimer();
                     isRunning = pipeline.runNextInstruction();
                     stopTimer();
                     break;
-                case "pc":
+                case "pc": // Print the program counter
                     System.out.println(registers.getRegisterValue(input));
                     break;
-                case "insn":
-                    // Assuming a method in Pipeline class fetches the next instruction.
+                case "insn": // Print the next instruction using current register values and bogus memory
                     System.out.println(pipeline.printNextAsmInstruction());
                     break;
-                case "c":
+                case "c": // Continue execution until next breakpoint or end of program
                     startTimer();
                     isRunning = pipeline.continueExecution();
                     stopTimer();
                     break;
-                case "q":
+                case "q": // Quit the simulator, execute no more instructions
                     isRunning = false;
                     break;
-                default:
-                    if(input.startsWith("x") || input.startsWith("t")) {
+                default: // If the switch case doesn't match, check for other commands
+                    if(input.startsWith("x") || input.startsWith("t")) { // Get register values
                         System.out.print("Register " + input + " contains: ");
                         System.out.println(registers.getRegisterValue(registers.tToX(input)));
-                    } else if(input.startsWith("b")) {
+                    } else if(input.startsWith("b")) { // Set breakpoints in form of b# or b #
                         // Insert a space after the b
                         input = input.charAt(0) + " " + input.substring(1);
-                        int pcValue = Integer.parseInt(input.split(" ")[1]);
-                        pipeline.addBreakpoint(pcValue);
+                        int pcValue = Integer.parseInt(input.split(" ")[1]); // Get the PC value
+                        pipeline.addBreakpoint(pcValue); // Unlimited breakpoints
                     } 
-                    else if(input.matches("^0x[0-9a-fA-F]{0,8}$")) {
-                    	// Remove the "0x" prefix if it exists
-                    	if (input.startsWith("0x")) {
-                    	    input = input.substring(2);
-                    	}
+                    else if(input.matches("^0x[0-9a-fA-F]{0,8}$")) { // Regex to get 0x# thru 0x######## hex digits
+                    	// Remove the "0x" prefix because it exists
+                    	input = input.substring(2);
 
-                    	// Convert the hexadecimal string to a binary string
-                    	String binaryInstruction = Long.toBinaryString(Long.parseLong(input, 16));
-
-                    	// Pad the binary string to ensure it's 32 bits long
-                    	while (binaryInstruction.length() < 32) {
-                    	    binaryInstruction = "0" + binaryInstruction;
-                    	}
-                    	System.out.println("Binary: " + binaryInstruction);
-
+                    	// Convert the hexadecimal string to a binary string and pad it to 32 bits
+                    	String binaryInstruction = Utility.leftPadSigned((int) Long.parseLong(input, 16));
                         String content = memory.getMemoryValue(binaryInstruction);
-                        System.out.println(content);
+                        // convert input to 0x########
+                        input = "0x" + input;
+                        while (input.length() < 10) {
+                            input = input.substring(0, 2) + "0" + input.substring(2);
+                        }
+                        System.out.println(input + ": " + content);
                     } else {
                         System.out.println("Invalid command!");
                     }
