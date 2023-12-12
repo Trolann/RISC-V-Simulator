@@ -13,7 +13,6 @@ public class Memory {
 
 	public void setMemoryValue(String address, String value) {
 		// TODO: error handling for memory? ie. check if value is valid?
-		System.out.println("Address: " + address + ", Value: " + value);
 		memoryMap.put(address, value);
 	}
 
@@ -64,8 +63,14 @@ public class Memory {
         return loadedWord.toString();
     }
     
+    public String loadHalfword2(int address) {
+    	String halfwordValue = getMemoryValue(Utility.leftPadSigned(address));
+        System.out.println("MEMORY DEBUG: halfwordValue: " + halfwordValue);
+        return halfwordValue;
+    }
+    
     public String loadHalfword(int address) {
-        // Assuming that the address is an integer for simplicity
+    	// Assuming that the address is an integer for simplicity
         // Load the two bytes starting from the given address
         String byte1 = getMemoryValue(Integer.toString(address));
         String byte2 = getMemoryValue(Integer.toString(address + 1));
