@@ -36,15 +36,24 @@ public class Memory {
 		return instruction;
 	}
 
+    public String loadWord2(int memoryAddress) {
+        String memoryValue = Utility.leftPadSigned(memoryAddress);
+        String wordValue = "";
+        for (int i = 0; i < 2; i++) {
+            wordValue = getMemoryValue(memoryValue) + wordValue;
+            memoryValue = Utility.StringCrement(memoryValue, 1);
+        }
+        return wordValue;
+    }
 	
     public String loadWord(int memoryAddress) {
         // Assuming each word is 32 bits
         StringBuilder loadedWord = new StringBuilder();
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             // Get the value of each byte in the word
             String byteValue = getMemoryValue(Integer.toString(memoryAddress + i));
-            
+
             // Ensure that the byte value is 8 bits long
             byteValue = Utility.leftPad(byteValue);
 
@@ -71,13 +80,8 @@ public class Memory {
         String byteValue = getMemoryValue(Utility.leftPadSigned(address));
         return byteValue;
     }
-    
-    public void storeByte(int memoryAddress, String byteValue) {
-        // Ensure byteValue is 8 bits long
-        if (byteValue.length() != 8) {
-            throw new IllegalArgumentException("Byte value must be 8 bits long");
-        }
 
+    public void storeByte(int memoryAddress, String byteValue) {
         // Store the byte at the specified memory address
         String address = Utility.leftPadSigned(memoryAddress);
         setMemoryValue(address, byteValue);

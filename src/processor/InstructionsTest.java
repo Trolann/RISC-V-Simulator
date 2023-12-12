@@ -193,7 +193,7 @@ class InstructionsTest {
         instructionMapSmallOffset.put("imm", "00000000000000000000000000000101"); // Example offset (5 in binary)
         testMemory.storeByte(15, "00101010"); // Example byte value (42 in decimal) at memory address 15
         testInstructions.LB(instructionMapSmallOffset);
-        
+
         String resultSmallOffset = testRegisters.getRegisterValue("x10");
         System.out.println("Result Small Offset: " + resultSmallOffset);
         assertEquals("00000000000000000000000000101010", resultSmallOffset); // Expected value at memory address 15

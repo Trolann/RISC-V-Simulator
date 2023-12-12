@@ -433,11 +433,11 @@ public class Instructions {
 
 	    // Calculate the effective memory address by adding the immediate value to the base register value
 	    int address = (int) Long.parseUnsignedLong(valueRs1, 2) + (int) Long.parseUnsignedLong(imm, 2);
-
+		System.out.println("LB DEBUG: address: " + address);
 	    // Load the 8-bit value from memory at the calculated address
 	    String result = memory.loadByte(address);
-	    System.out.println("Address should be 0101: " + Integer.toBinaryString(address));
-	    System.out.println("Loaded value should be 00100101: " + result);
+	    //System.out.println("Address should be 0101: " + Integer.toBinaryString(address));
+	    //System.out.println("Loaded value should be 00100101: " + result);
 	    
 	    // Sign-extend the 8-bit value to 32 bits
 	    String resultBinary = Utility.leftPadSigned(Integer.parseInt(result));
@@ -496,9 +496,11 @@ public class Instructions {
 	    int memoryAddress = baseAddress + offsetValue;
 
 	    // Load the word from memory
-	    String loadedWord = memory.loadWord(memoryAddress);
-
+	    String loadedWord = memory.loadWord2(memoryAddress);
+		System.out.println("LW DEBUG: loadedWord: " + loadedWord);
 	    // Update rd register value
+		loadedWord = Utility.leftPad(loadedWord);
+		System.out.println("LW DEBUG: rd: " + rd);
 	    registers.setRegisterValue(rd, loadedWord);
 	    registers.incrementProgramCounter();
 
