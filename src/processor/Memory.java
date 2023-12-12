@@ -9,7 +9,6 @@ public class Memory {
 
 	public Memory() {
 		memoryMap = new HashMap<>();
-		memoryArray = new byte[size];
 	}
 
 	public void setMemoryValue(String address, String value) {
@@ -36,45 +35,84 @@ public class Memory {
 		return instruction;
 	}
 
-	public String loadByte(int address) {
-		byte loadedByte = memoryArray[address];
-		return Byte.toString(loadedByte);
-	}
+	
+    public String loadWord(int memoryAddress) {
+        // Assuming each word is 32 bits
+        StringBuilder loadedWord = new StringBuilder();
 
-	public String loadHalfword(int address) {
-		short loadedHalfword = (short) ((memoryArray[address] & 0xFF) | ((memoryArray[address + 1] & 0xFF) << 8));
-		return Short.toString(loadedHalfword);
-	}
+        for (int i = 0; i < 4; i++) {
+            // Get the value of each byte in the word
+            String byteValue = getMemoryValue(Integer.toString(memoryAddress + i));
+            
+            // Ensure that the byte value is 8 bits long
+            byteValue = Utility.leftPad(byteValue);
 
-	public String loadWord(int address) {
-		int loadedWord = (memoryArray[address] & 0xFF) | ((memoryArray[address + 1] & 0xFF) << 8)
-				| ((memoryArray[address + 2] & 0xFF) << 16) | ((memoryArray[address + 3] & 0xFF) << 24);
-		return Integer.toString(loadedWord);
-	}
+            // Append the byte value to the loadedWord
+            loadedWord.append(byteValue);
+        }
 
-	public void storeByte(int address, String substring) {
-		// Convert the substring to a byte value
-		byte byteValue = (byte) Integer.parseInt(substring, 2);
+        return loadedWord.toString();
+    }
+    
+    public String loadHalfword(int address) {
+        // Assuming that the address is an integer for simplicity
+        // Load the two bytes starting from the given address
+        String byte1 = getMemoryValue(Integer.toString(address));
+        String byte2 = getMemoryValue(Integer.toString(address + 1));
 
-		// Store the byte in memory at the specified address
-		memoryArray[address] = byteValue;
-	}
+        // Combine the two bytes to form the halfword
+        String halfwordValue = byte1 + byte2;
+        return halfwordValue;
+    }
+    
+    public String loadByte(int address) {
+        // Assuming that the address is an integer for simplicity
+        String byteValue = getMemoryValue(Integer.toString(address));
+        return byteValue;
+    }
+    
+    public void storeByte(int memoryAddress, String byteValue) {
+        // Ensure byteValue is 8 bits long
+        if (byteValue.length() != 8) {
+            throw new IllegalArgumentException("Byte value must be 8 bits long");
+        }
 
-	public void storeWord(int address, String string) {
-	    // Convert the string to an integer
-	    int intValue = Integer.parseInt(string, 2);
+        // Store the byte at the specified memory address
+        String address = Utility.leftPad(Integer.toBinaryString(memoryAddress));
+        setMemoryValue(address, byteValue);
+    }
+    
+    public void storeHalfword(int address, int halfwordValue) {
+        // Convert the halfword value to binary string representation
+        String halfwordBinary = Integer.toBinaryString(halfwordValue);
 
-	    // Store the word at the specified address
-	    memoryArray[address] = (byte) (intValue & 0xFF);
-	    memoryArray[address + 1] = (byte) ((intValue >> 8) & 0xFF);
-	    memoryArray[address + 2] = (byte) ((intValue >> 16) & 0xFF);
-	    memoryArray[address + 3] = (byte) ((intValue >> 24) & 0xFF);
-	}
+        // Pad the binary string to ensure it is 16 bits long
+        halfwordBinary = Utility.leftPad(halfwordBinary);
 
-	public void storeHalfword(int address, int valueInt) {
-		// Store the halfword at the specified address
-		memoryArray[address] = (byte) (valueInt & 0xFF);
-		memoryArray[address + 1] = (byte) ((valueInt >> 8) & 0xFF);
-	}
+        // Split the 16-bit binary string into two 8-bit strings
+        String lowByte = halfwordBinary.substring(0, 8);
+        String highByte = halfwordBinary.substring(8);
+
+        // Store the low byte at the specified address
+        setMemoryValue(String.valueOf(address), lowByte);
+
+        // Increment the address and store the high byte
+        setMemoryValue(Utility.StringCrement(String.valueOf(address), 1), highByte);
+    }
+
+    public void storeWord(int memoryAddress, String value) {
+        // Split the 32-bit value into 4 bytes
+        String[] bytes = new String[4];
+        for (int i = 0; i < 4; i++) {
+            bytes[i] = value.substring(i * 8, (i + 1) * 8);
+        }
+
+        // Store each byte at the corresponding memory address
+        for (int i = 0; i < 4; i++) {
+            String address = Utility.leftPad(Integer.toBinaryString(memoryAddress + i));
+            setMemoryValue(address, bytes[i]);
+        }
+    }
+
 
 }
