@@ -138,6 +138,35 @@ public class SimulatorMain {
                 case "q":
                     isRunning = false;
                     break;
+                //accessing mem address and putting hex mem address
+//                case "0x":
+//                    System.out.println("Enter the memory address in hexadecimal format (e.g., 0x12345678): ");
+//                    String hexAddr = scanner.nextLine().trim();
+//
+//                    // Convert hex address to binary
+//                    String binAddr = Integer.toBinaryString(Integer.parseInt(hexAddr.substring(2), 16));
+//
+//                    // Access memory using the binary address
+//                    String memValue = memory.getMemoryValue(binAddr);
+//
+//                    System.out.println("Value at memory address " + hexAddr + ": " + memValue);
+//                    break;
+//                case "b":
+//                    if (pipeline.getNumOfBreakpoints() >= 5) {
+//                        System.out.println("Maximum number of breakpoints reached.");
+//                        break;
+//                    }
+//                    System.out.println("Enter the breakpoint memory address in hexadecimal format (e.g., 0x12345678): ");
+//                    String breakpointAddr = scanner.nextLine().trim();
+//
+//                    // Convert breakpoint hex address to binary
+//                    String breakpointBinAddr = Integer.toBinaryString(Integer.parseInt(breakpointAddr.substring(2), 16));
+//
+//                    // Add breakpoint
+//                    pipeline.addBreakpoint(breakpointBinAddr);
+//                    System.out.println("Breakpoint added at address: " + breakpointAddr);
+//                    break;
+
                 default:
                     if(input.startsWith("x")) {
                         System.out.println(registers.getRegisterValue(input));
@@ -146,9 +175,25 @@ public class SimulatorMain {
                         input = input.charAt(0) + " " + input.substring(1);
                         int pcValue = Integer.parseInt(input.split(" ")[1]);
                         pipeline.addBreakpoint(pcValue);
-                    } else if(input.matches("^0x[0-9a-fA-F]{8}$")) {
-                        String value2 = memory.getMemoryValue(input.substring(2));
-                        System.out.println(value2);
+                    } 
+                    else if(input.matches("^0x[0-9a-fA-F]{8}$")) {
+//                    	String content = memory.getMemoryValue(input);
+                    	// Remove the "0x" prefix if it exists
+                    	if (input.startsWith("0x")) {
+                    	    input = input.substring(2);
+                    	}
+
+                    	// Convert the hexadecimal string to a binary string
+                    	String binaryInstruction = Long.toBinaryString(Long.parseLong(input, 16));
+
+                    	// Pad the binary string to ensure it's 32 bits long
+                    	while (binaryInstruction.length() < 32) {
+                    	    binaryInstruction = "0" + binaryInstruction;
+                    	}
+                    	System.out.println("Binary: " + binaryInstruction);
+
+                        String content = memory.getMemoryValue(binaryInstruction);
+                        System.out.println(content);
                     } else {
                         System.out.println("Invalid command!");
                     }
