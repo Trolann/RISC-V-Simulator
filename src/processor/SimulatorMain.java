@@ -15,6 +15,31 @@ public class SimulatorMain {
     private static Pipeline pipeline = new Pipeline(memory, registers);
     // Define a constant for all zeroes
     private static final String allZeroes = Utility.ALLZEROS;
+    private static long startTime = 0;
+    private static long elapsedTime = 0;
+
+    private static void startTimer() {
+        startTime = System.nanoTime();
+    }
+
+    private static void stopTimer() {
+        if (startTime == 0) {
+            System.out.println("Timer not started!");
+            return;
+        }
+        elapsedTime += System.nanoTime() - startTime;
+        startTime = 0;
+    }
+
+    private static void printTime() {
+        // Print in min, sec, ms, us, ns
+        int min = (int) (elapsedTime / 60000000000L);
+        int sec = (int) (elapsedTime / 1000000000L) % 60;
+        int ms = (int) (elapsedTime / 1000000L) % 1000;
+        int us = (int) (elapsedTime / 1000L) % 1000;
+        int ns = (int) (elapsedTime % 1000);
+        System.out.println("Execution time: " + min + "m " + sec + "s " + ms + "ms " + us + "us " + ns + "ns");
+    }
 
 
     public static void main(String[] args) {
@@ -120,10 +145,14 @@ public class SimulatorMain {
                     }
                     break;
                 case "r":          
+                    startTimer();
                     isRunning = pipeline.runUntilEnd();
+                    stopTimer();
                     break;
                 case "s":
+                    startTimer();
                     isRunning = pipeline.runNextInstruction();
+                    stopTimer();
                     break;
                 case "pc":
                     System.out.println(registers.getRegisterValue(input));
@@ -133,7 +162,9 @@ public class SimulatorMain {
                     System.out.println(pipeline.printNextAsmInstruction());
                     break;
                 case "c":
+                    startTimer();
                     isRunning = pipeline.continueExecution();
+                    stopTimer();
                     break;
                 case "q":
                     isRunning = false;
@@ -155,6 +186,8 @@ public class SimulatorMain {
                     break;
             }
         }
+        System.out.println("Execution complete!");
+        printTime();
         System.out.print("Final register states (0's are omitted): \n" + registers.toString());
 
         if (dataLinesInMemory > 0) {

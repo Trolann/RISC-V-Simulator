@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 
 public class Pipeline {
 
@@ -80,7 +81,7 @@ public class Pipeline {
         String instruction = memory.getInstruction(registers.getProgramCounter());
         System.out.println("PIPELINE DEBUG: raw instruction: " + instruction);
 
-        if(instruction == null) {
+        if(instruction.equals(Utility.ALLZEROS)) {
             return STOP;
         }
 

@@ -714,46 +714,31 @@ public class Instructions {
 	}
 
 	public String SLL(HashMap<String, String> instructionComponents) {
+		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd"); // destination register
 		String rs1 = instructionComponents.get("rs1"); // source register 1
-		String shamtStr = instructionComponents.get("imm"); // shift amount
-
-		// Check if any of the required values are null
-		if (rd == null || rs1 == null || shamtStr == null) {
-			// Handle the error, maybe throw an exception or return an error message
-			return "Error: Missing values in instruction";
-		}
+		String rs2 = instructionComponents.get("rs2"); // source register 2
 
 		// Get values from registers
 		String valueRs1 = registers.getRegisterValue(rs1);
+		String valueRs2 = registers.getRegisterValue(rs2);
 
-		// Check if register value is null
-		if (valueRs1 == null) {
-			// Handle the error, maybe throw an exception or return an error message
-			return "Error: Null register value for rs1";
-		}
+		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		int valueIntRs2 = (int) Long.parseUnsignedLong(valueRs2, 2);
 
-		// Convert register value and shift amount from binary string to integer
-		int intValueRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		// Perform shift left logical operation
+		int result = valueIntRs1 << valueIntRs2;
+		System.out.println("SLL DEBUG: Shifting " + valueIntRs1 + " left by " + valueIntRs2 + " to get " + result);
 
-		// Check if shamt is not null before parsing
-		if (shamtStr.equals("")) {
-			// Handle the error, maybe throw an exception or return an error message
-			return "Error: Null or empty shamt value";
-		}
+		// Convert result to 32-bit binary string
+		String resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
 
-		int shamt = Integer.parseInt(shamtStr, 2);
-
-		// Perform SLL operation
-		int result = intValueRs1 << shamt;
-
-		// Store the result in the destination register
-		registers.setRegisterValue(result, rd);
-
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
 		registers.incrementProgramCounter();
 
 		// Build and return the instruction result string
-		return String.format("sll %s, %s, %d", rd, rs1, shamt);
+		return String.format("sll %s, %s, %s", rd, rs1, rs2);
 	}
 
 	public String ADD(HashMap<String, String> instructionComponents) {
