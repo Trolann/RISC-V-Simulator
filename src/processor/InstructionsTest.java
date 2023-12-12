@@ -191,12 +191,12 @@ class InstructionsTest {
         instructionMapSmallOffset.put("rs1", "x1");
         instructionMapSmallOffset.put("rd", "x10");
         instructionMapSmallOffset.put("imm", "00000000000000000000000000000101"); // Example offset (5 in binary)
-        testMemory.storeByte(15, "00101010"); // Example byte value (42 in decimal) at memory address 15
+        testMemory.storeByte(15, "11111111"); // Example byte value (42 in decimal) at memory address 15
         testInstructions.LB(instructionMapSmallOffset);
 
         String resultSmallOffset = testRegisters.getRegisterValue("x10");
         System.out.println("Result Small Offset: " + resultSmallOffset);
-        assertEquals("00000000000000000000000000101010", resultSmallOffset); // Expected value at memory address 15
+        assertEquals("11111111111111111111111111111111", resultSmallOffset); // Expected value at memory address 15
         
         // Test LB with zero offset
         HashMap<String, String> instructionMapZeroOffset = new HashMap<>();

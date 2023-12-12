@@ -50,7 +50,7 @@ public class Memory {
         // Assuming each word is 32 bits
         StringBuilder loadedWord = new StringBuilder();
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
             // Get the value of each byte in the word
             String byteValue = getMemoryValue(Integer.toString(memoryAddress + i));
 
@@ -78,6 +78,7 @@ public class Memory {
     public String loadByte(int address) {
         // Assuming that the address is an integer for simplicity
         String byteValue = getMemoryValue(Utility.leftPadSigned(address));
+        System.out.println("MEMORY DEBUG: byteValue: " + byteValue);
         return byteValue;
     }
 

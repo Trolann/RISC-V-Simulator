@@ -436,12 +436,13 @@ public class Instructions {
 		System.out.println("LB DEBUG: address: " + address);
 	    // Load the 8-bit value from memory at the calculated address
 	    String result = memory.loadByte(address);
+		System.out.println("LB DEBUG: result: " + result);
 	    //System.out.println("Address should be 0101: " + Integer.toBinaryString(address));
 	    //System.out.println("Loaded value should be 00100101: " + result);
 	    
 	    // Sign-extend the 8-bit value to 32 bits
-	    String resultBinary = Utility.leftPadSigned(Integer.parseInt(result));
-
+	    String resultBinary = Utility.leftPad(result);
+		System.out.println("LB DEBUG: resultBinary: " + resultBinary);
 	    // Update rd register value
 	    registers.setRegisterValue(rd, resultBinary);
 
