@@ -582,30 +582,28 @@ public class Instructions {
 	}
 
 	public String SB(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
-		String rs1 = instructionComponents.get("rs1"); // base register
-		String rs2 = instructionComponents.get("rs2"); // source register
-		String imm = instructionComponents.get("imm"); // immediate offset
+	    // Extract components from the HashMap
+	    String rs1 = instructionComponents.get("rs1"); // base register
+	    String rs2 = instructionComponents.get("rs2"); // source register
+	    String imm = instructionComponents.get("imm"); // immediate offset
 
-		// Get values from registers
-		String valueRs1 = registers.getRegisterValue(rs1);
-		String valueRs2 = registers.getRegisterValue(rs2);
+	    // Get values from registers
+	    String valueRs2 = registers.getRegisterValue(rs2);
 
-		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
-		// Convert immediate value from binary string to integer
-		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+            int valueIntRs2 = Integer.parseUnsignedInt(valueRs2, 2);
+	    // Convert immediate value from binary string to integer
+	    int offset = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
 
-		// Calculate memory address
-		int address = valueIntRs1 + immediate;
-
-		// Store byte to memory
-		memory.storeByte(address, valueRs2.substring(24)); // Assuming 32-bit registers, store the least significant
-															// byte
-
-		registers.incrementProgramCounter();
+	    // Calculate effective address
+	    int effectiveAddress = valueIntRs2 + offset;
+	    System.out.println("SB DEBUG: StoreByte " + valueIntRs2 + " offset " + offset + " to get " + effectiveAddress);
+	    
+	    // Store the word to memory
+	    memory.storeByte(effectiveAddress, valueRs2);
+	    registers.incrementProgramCounter();
 
 		// Build and return the instruction result string
-		return String.format("sb %s, %d(%s)", rs2, immediate, rs1);
+	    return String.format("sb %s, %s, %d", rs2, rs1, offset);
 	}
 	
 	public String SLLI(HashMap<String, String> instructionComponents) {
@@ -665,28 +663,28 @@ public class Instructions {
 	}
 
 	public String SH(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
-		String rs1 = instructionComponents.get("rs1"); // base register
-		String rs2 = instructionComponents.get("rs2"); // source register 2
-		String imm = instructionComponents.get("imm"); // offset
+	    // Extract components from the HashMap
+	    String rs1 = instructionComponents.get("rs1"); // base register
+	    String rs2 = instructionComponents.get("rs2"); // source register 2
+	    String imm = instructionComponents.get("imm"); // offset
 
-		// Get values from registers
-		String valueRs2 = registers.getRegisterValue(rs2);
+	    // Get values from registers
+	    String valueRs2 = registers.getRegisterValue(rs2);
 
-		int valueIntRs2 = (int) Long.parseUnsignedLong(valueRs2, 2);
-		// Convert immediate value from binary string to integer
-		int offset = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+	    int valueIntRs2 = Integer.parseUnsignedInt(valueRs2, 2);
+	    // Convert immediate value from binary string to integer
+	    int offset = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
 
-		// Calculate effective address
-		int effectiveAddress = valueIntRs2 + offset;
+	    // Calculate effective address
+	    int effectiveAddress = valueIntRs2 + offset;
+	    System.out.println("SH DEBUG: StoreHalfWord " + valueIntRs2 + " offset " + offset + " to get " + effectiveAddress);
+	    
+	    // Store the word to memory
+	    memory.storeHalfword(effectiveAddress, valueRs2);
+	    registers.incrementProgramCounter();
 
-		// Store the halfword at the effective address
-		memory.storeHalfword(effectiveAddress, valueIntRs2);
-
-		registers.incrementProgramCounter();
-
-		// Build and return the instruction result string
-		return String.format("sh %s, %d(%s)", rs2, offset, rs1);
+	    // Build and return the instruction result string
+	    return String.format("sh %s, %s, %d", rs2, rs1, offset);
 	}
 
 	public String SW(HashMap<String, String> instructionComponents) {
@@ -696,23 +694,23 @@ public class Instructions {
 	    String imm = instructionComponents.get("imm"); // offset
 
 	    // Get values from registers
-	    String valueRs1 = registers.getRegisterValue(rs1);
 	    String valueRs2 = registers.getRegisterValue(rs2);
 
-	    int baseAddress = Integer.parseUnsignedInt(valueRs1, 2);
-	    // Convert offset value from binary string to integer
-	    int offsetValue = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
+	    int valueIntRs2 = Integer.parseUnsignedInt(valueRs2, 2);
+	    // Convert immediate value from binary string to integer
+	    int offset = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
 
-	    // Calculate memory address to store to
-	    int memoryAddress = baseAddress + offsetValue;
-
+	    // Calculate effective address
+	    int effectiveAddress = valueIntRs2 + offset;
+	    System.out.println("SW DEBUG: StoreWord " + valueIntRs2 + " offset " + offset + " to get " + effectiveAddress);
+	    
 	    // Store the word to memory
-	    memory.storeWord(memoryAddress, valueRs2);
-
+	    memory.storeWord(effectiveAddress, valueRs2);
 	    registers.incrementProgramCounter();
 
+
 	    // Build and return the instruction result string
-	    return String.format("sw %s, %s, %d", rs2, rs1, offsetValue);
+	    return String.format("sw %s, %s, %d", rs2, rs1, offset);
 	}
 
 
