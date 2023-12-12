@@ -74,47 +74,35 @@ public class Memory {
     }
     
     public void storeByte(int memoryAddress, String byteValue) {
-        // Ensure byteValue is 8 bits long
-        if (byteValue.length() != 8) {
-            throw new IllegalArgumentException("Byte value must be 8 bits long");
-        }
-
         // Store the byte at the specified memory address
         String address = Utility.leftPad(Integer.toBinaryString(memoryAddress));
         setMemoryValue(address, byteValue);
     }
     
-    public void storeHalfword(int address, int halfwordValue) {
-        // Convert the halfword value to binary string representation
-        String halfwordBinary = Integer.toBinaryString(halfwordValue);
-
-        // Pad the binary string to ensure it is 16 bits long
-        halfwordBinary = Utility.leftPad(halfwordBinary);
-
-        // Split the 16-bit binary string into two 8-bit strings
-        String lowByte = halfwordBinary.substring(0, 8);
-        String highByte = halfwordBinary.substring(8);
-
-        // Store the low byte at the specified address
-        setMemoryValue(String.valueOf(address), lowByte);
-
-        // Increment the address and store the high byte
-        setMemoryValue(Utility.StringCrement(String.valueOf(address), 1), highByte);
-    }
-
-    public void storeWord(int memoryAddress, String value) {
-        // Split the 32-bit value into 4 bytes
-        String[] bytes = new String[4];
-        for (int i = 0; i < 4; i++) {
-            bytes[i] = value.substring(i * 8, (i + 1) * 8);
+    public void storeHalfword(int memoryAddress, String halfWordvalue) {
+        // Split the 16-bit value into 2 bytes
+        String[] bytes = new String[2];
+        for (int i = 0; i < 2; i++) {
+            bytes[i] = halfWordvalue.substring(i * 8, (i + 1) * 8);
         }
-
         // Store each byte at the corresponding memory address
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             String address = Utility.leftPad(Integer.toBinaryString(memoryAddress + i));
             setMemoryValue(address, bytes[i]);
         }
     }
 
 
+    public void storeWord(int memoryAddress, String value) {
+        // Split the 32-bit value into 4 bytes
+        String[] bytes = new String[4];
+        for (int i = 0; i < 4; i++) {
+            bytes[i] = value.substring((3 - i) * 8, (4 - i) * 8);
+        }
+        // Store each byte at the consecutive memory addresses
+        for (int i = 0; i < 4; i++) {
+            String address = Utility.leftPad(Integer.toBinaryString(memoryAddress + i));
+            setMemoryValue(address, bytes[i]);
+        }
+    }
 }
