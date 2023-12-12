@@ -503,14 +503,14 @@ public class Instructions {
 	    // Extract components from the HashMap
 	    String rd = instructionComponents.get("rd"); // destination register
 	    String rs1 = instructionComponents.get("rs1"); // base register
-	    String offset = instructionComponents.get("offset"); // offset
+	    String imm = instructionComponents.get("imm"); // offset
 
 	    // Get values from registers
 	    String valueRs1 = registers.getRegisterValue(rs1);
 
 	    int baseAddress = (int) Long.parseUnsignedLong(valueRs1, 2);
 	    // Convert offset value from binary string to integer
-	    int offsetValue = (int) Long.parseUnsignedLong(Utility.leftPad(offset), 2);
+	    int offsetValue = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
 
 	    // Calculate memory address to load from
 	    int memoryAddress = baseAddress + offsetValue;
@@ -609,31 +609,32 @@ public class Instructions {
 	}
 
 	public String SLLI(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
-		String rd = instructionComponents.get("rd"); // destination register
-		String rs1 = instructionComponents.get("rs1"); // source register 1
-		String imm = instructionComponents.get("imm"); // immediate register
+	    // Extract components from the HashMap
+	    String rd = instructionComponents.get("rd"); // destination register
+	    String rs1 = instructionComponents.get("rs1"); // source register 1
+	    String imm = instructionComponents.get("imm"); // immediate register
 
-		// Get values from registers
-		String valueRs1 = registers.getRegisterValue(rs1);
+	    // Get values from registers
+	    String valueRs1 = registers.getRegisterValue(rs1);
 
-		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
-		// Convert immediate value from binary string to integer
-		int immediate = Integer.parseInt(Utility.leftPad(imm), 2);
+	    int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+	    // Convert immediate value from binary string to integer
+	    int immediate = Integer.parseInt(Utility.leftPad(imm), 2);
 
-		// Perform SLLI operation
-		int result = valueIntRs1 << immediate;
+	    // Perform SLLI operation
+	    int result = valueIntRs1 << immediate;
 
-		// Convert result to 32-bit binary string
-		String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+	    // Convert result to 32-bit binary string
+	    String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
 
-		// Update rd register value
-		registers.setRegisterValue(rd, resultBinary);
-		registers.incrementProgramCounter();
+	    // Update rd register value
+	    registers.setRegisterValue(rd, resultBinary);
+	    registers.incrementProgramCounter();
 
-		// Build and return the instruction result string
-		return String.format("slli %s, %s, %d", rd, rs1, immediate);
+	    // Build and return the instruction result string
+	    return String.format("slli %s, %s, %d", rd, rs1, immediate);
 	}
+
 
 	public String SRAI(HashMap<String, String> instructionComponents) {
 		// Extract components from the HashMap
@@ -688,29 +689,32 @@ public class Instructions {
 	}
 
 	public String SW(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
-		String rs1 = instructionComponents.get("rs1"); // base register
-		String rs2 = instructionComponents.get("rs2"); // source register 2
-		String imm = instructionComponents.get("imm"); // offset
+	    // Extract components from the HashMap
+	    String rs1 = instructionComponents.get("rs1"); // base register
+	    String rs2 = instructionComponents.get("rs2"); // source register
+	    String imm = instructionComponents.get("imm"); // offset
 
-		// Get values from registers
-		String valueRs2 = registers.getRegisterValue(rs2);
+	    // Get values from registers
+	    String valueRs1 = registers.getRegisterValue(rs1);
+	    String valueRs2 = registers.getRegisterValue(rs2);
 
-		int valueIntRs2 = (int) Long.parseUnsignedLong(valueRs2, 2);
-		// Convert immediate value from binary string to integer
-		int offset = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
+	    int baseAddress = Integer.parseUnsignedInt(valueRs1, 2);
+	    // Convert offset value from binary string to integer
+	    int offsetValue = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
 
-		// Calculate effective address
-		int effectiveAddress = valueIntRs2 + offset;
+	    // Calculate memory address to store to
+	    int memoryAddress = baseAddress + offsetValue;
 
-		// Store the word at the effective address
-		memory.storeWord(effectiveAddress, memory.loadWord(valueIntRs2));
+	    // Store the word to memory
+	    memory.storeWord(memoryAddress, valueRs2);
 
-		registers.incrementProgramCounter();
+	    registers.incrementProgramCounter();
 
-		// Build and return the instruction result string
-		return String.format("sw %s, %d(%s)", rs2, offset, rs1);
+	    // Build and return the instruction result string
+	    return String.format("sw %s, %s, %d", rs2, rs1, offsetValue);
 	}
+
+
 
 	public String ADD(HashMap<String, String> instructionComponents) {
 		String rd = instructionComponents.get("rd"); // destination register
@@ -1020,22 +1024,25 @@ public class Instructions {
 
 
 	public String AND(HashMap<String, String> instructionComponents) {
-		String rd = instructionComponents.get("rd"); // destination register
-		String rs1 = instructionComponents.get("rs1"); // source register 1
-		String rs2 = instructionComponents.get("rs2"); // source register 2
+	    String rd = instructionComponents.get("rd"); // destination register
+	    String rs1 = instructionComponents.get("rs1"); // source register 1
+	    String rs2 = instructionComponents.get("rs2"); // source register 2
 
-		// Get values from registers
-		String valueRs1 = registers.getRegisterValue(rs1);
-		String valueRs2 = registers.getRegisterValue(rs2);
+	    // Get values from registers
+	    String valueRs1 = registers.getRegisterValue(rs1);
+	    String valueRs2 = registers.getRegisterValue(rs2);
 
-		// AND values and set the result in the destination register
-		int result = Integer.parseInt(valueRs1) & Integer.parseInt(valueRs2);
-		registers.setRegisterValue(result, rd);
+	    // AND values and set the result in the destination register
+	    long result = Long.parseLong(valueRs1, 2) & Long.parseLong(valueRs2, 2);
+	    registers.setRegisterValue(Long.toBinaryString(result & 0xFFFF_FFFF), rd);
 
-		registers.incrementProgramCounter();
+	    registers.incrementProgramCounter();
 
-		// Build and return the instruction result string
-		return String.format("and %s, %s, %s", rd, rs1, rs2);
+	    // Build and return the instruction result string
+	    return String.format("and %s, %s, %s", rd, rs1, rs2);
 	}
+
+
+
 
 }
