@@ -98,22 +98,18 @@ public class Registers {
         return "x" + registerInt;
     }
 
-    // Set register value based on integer
-    public void setRegisterValue(int registerInt, String value) {
-        String registerKey = getRegisterString(registerInt);
-        setRegisterValue(registerKey, value);
-    }
-
-    // Get register value based on integer
-    public String getRegisterValue(int registerInt) {
-        String registerKey = getRegisterString(registerInt);
-        return getRegisterValue(registerKey);
-    }
-
     public void setRegisterValue(String registerKey, String value) {
         if (registerMap.containsKey(registerKey) && !registerKey.equals("x0") && value.length() == 32) {
             registerMap.put(registerKey, value);
-            System.out.println("REGISTER DEBUG: Set " + registerKey + "(" + xToT(registerKey) +") to " + value);
+            System.out.print("REGISTER DEBUG: Set " + registerKey + "(" + xToT(registerKey) +") to " + value);
+            int valueAsInt = 0;
+            try {
+                valueAsInt = (int) Long.parseUnsignedLong(value, 2);
+                System.out.println(" (" + valueAsInt + ")");
+            } catch (NumberFormatException e) {
+                System.out.println(" (UnK)");
+            }
+
         }
     }
 
@@ -139,10 +135,6 @@ public class Registers {
         return registerMap.get("pc");
     }
 
-    public void setProgramCounter(int programCounter) {
-        String localPcValue = Utility.StringCrement(Utility.ALLZEROS, programCounter);
-        registerMap.put("pc", localPcValue);
-    }
 
     public void setProgramCounter(String programCounter) {
         String localPcValue = programCounter;

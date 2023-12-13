@@ -69,8 +69,6 @@ public class Instructions {
 		int jumpTargetAddress = programCounter + immediate;
 		System.out.println("JAL DEBUG: immediate: " + immediate + " programCounter: " + programCounter
 				+ " jumpTargetAddress: " + jumpTargetAddress);
-		System.out.println("Integer.toUnsignedString(programCounter + 4, 2): " +
-				Integer.toUnsignedString(programCounter + 4, 2));
 
 		// Save the return address (program counter + 4) in the destination register
 		registers.setRegisterValue(rd, Integer.toUnsignedString(programCounter + 4, 2));
@@ -117,27 +115,32 @@ public class Instructions {
 		String rs2 = instructionComponents.get("rs2");
 		String imm = instructionComponents.get("imm");
 
-		int immediate = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
-
 		String rs1Value = registers.getRegisterValue(rs1);
 		String rs2Value = registers.getRegisterValue(rs2);
-		int offset = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
+		int offset = Integer.parseUnsignedInt(imm, 2);
+		System.out.println("BEQ DEBUG: offset: " + offset);
 
 		// Convert program counter to integer before adding the offset
 		int programCounter = Integer.parseUnsignedInt(registers.getProgramCounter(), 2);
+		System.out.println("BEQ DEBUG: programCounter: " + programCounter);
 		int branchTargetAddress = programCounter + offset;
-
+		System.out.println("BEQ DEBUG: branchTargetAddress: " + branchTargetAddress);
 		// Branch if rs1Value is equal to rs2Value
-		boolean isEqual = rs1Value.equals(rs2Value);
 
-		System.out.println("BEQ DEBUG: Branch if " + rs1 + " equal " + rs2 + " MOVE TO " + branchTargetAddress);
-		if (isEqual) {
+		int rs1IntValue = Integer.parseUnsignedInt(rs1Value, 2);
+		int rs2IntValue = Integer.parseUnsignedInt(rs2Value, 2);
+
+		if (rs1Value.equals(rs2Value)) {
+			System.out.println("BEQ DEBUG: rs1Value (" + rs1IntValue + ") is equal to rs2Value (" + rs2IntValue
+					+ ") branching to " + branchTargetAddress);
 			registers.setProgramCounter(Integer.toUnsignedString(branchTargetAddress, 2));
 		} else {
+			System.out.println("BEQ DEBUG: rs1Value (" + rs1IntValue + ") is not equal to rs2Value (" + rs2IntValue
+					+ ") incrementing program counter");
 			registers.incrementProgramCounter();
 		}
 
-		return String.format("beq %s, %s, %d", rs1, rs2, immediate);
+		return String.format("beq %s, %s, %d", rs1, rs2, offset);
 	}
 
 	public String BNE(HashMap<String, String> instructionComponents) {
@@ -198,28 +201,33 @@ public class Instructions {
 		String rs2 = instructionComponents.get("rs2");
 		String imm = instructionComponents.get("imm");
 
-		int immediate = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
-
 		String rs1Value = registers.getRegisterValue(rs1);
 		String rs2Value = registers.getRegisterValue(rs2);
-		int offset = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
+		int offset = Integer.parseUnsignedInt(imm, 2);
+		System.out.println("BGE DEBUG: offset: " + offset);
 
 		// Convert program counter to integer before adding the offset
 		int programCounter = Integer.parseUnsignedInt(registers.getProgramCounter(), 2);
+		System.out.println("BGE DEBUG: programCounter: " + programCounter);
 		int branchTargetAddress = programCounter + offset;
-
+		System.out.println("BGE DEBUG: branchTargetAddress: " + branchTargetAddress);
 		// Branch if rs1Value is greater than or equal to rs2Value
-		boolean isGreaterThanOrEqual = rs1Value.compareTo(rs2Value) >= 0;
 
-		System.out.println(
-				"BGE DEBUG: Branch if " + rs1 + " greater or equal " + rs2 + " MOVE TO " + branchTargetAddress);
+		int rs1IntValue = Integer.parseUnsignedInt(rs1Value, 2);
+		int rs2IntValue = Integer.parseUnsignedInt(rs2Value, 2);
+
+		boolean isGreaterThanOrEqual = rs1IntValue >= rs2IntValue;
 		if (isGreaterThanOrEqual) {
+			System.out.println("BGE DEBUG: rs1Value (" + rs1IntValue + ") is greater than or equal to rs2Value ("
+					+ rs2IntValue + ") branching to " + branchTargetAddress);
 			registers.setProgramCounter(Integer.toUnsignedString(branchTargetAddress, 2));
 		} else {
+			System.out.println("BGE DEBUG: rs1Value (" + rs1IntValue + ") is less than rs2Value ("
+					+ rs2IntValue + ") incrementing program counter");
 			registers.incrementProgramCounter();
 		}
 
-		return String.format("bge %s, %s, %d", rs1, rs2, immediate);
+		return String.format("bge %s, %s, %d", rs1, rs2, offset);
 	}
 
 	public String BLTU(HashMap<String, String> instructionComponents) {

@@ -84,7 +84,7 @@ public class Pipeline {
     }
     // Execute a single instruction
     public boolean runNextInstruction() throws IOException {
-    	System.out.println("PIPELINE DEBUG: Running next instruction: " + registers.getProgramCounter());
+    	//System.out.println("PIPELINE DEBUG: Running next instruction: " + registers.getProgramCounter());
         String instruction = memory.getInstruction(registers.getProgramCounter());
         //System.out.println("PIPELINE DEBUG: raw instruction: " + instruction);
 
@@ -100,6 +100,7 @@ public class Pipeline {
         if (functionMap.containsKey(asmComponents.get("instructionName"))) {
             String result;
             result = functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
+
             //System.out.println("PIPELINE DEBUG: result: " + result);
             String oldPC = Utility.StringCrement(registers.getProgramCounter(), -4);
             // Convert oldPC to 32 bit hex
@@ -109,6 +110,7 @@ public class Pipeline {
                 oldPC = "0" + oldPC;
             }
             oldPC = "0x" + oldPC;
+            System.out.println(oldPC + ": " + result);
             // Parse instruction as an unsigned binary string, then convert to hex
             String machineCode = Integer.toHexString((int) Long.parseLong(instruction, 2));
             //System.out.println("PIPELINE DEBUG: machineCode: " + machineCode);
@@ -276,7 +278,8 @@ public class Pipeline {
                         instruction.charAt(24) + instruction.charAt(1) + instruction.charAt(2) +
                         instruction.charAt(3) + instruction.charAt(4) + instruction.charAt(5) +
                         instruction.charAt(6) + instruction.charAt(20) + instruction.charAt(21) +
-                        instruction.charAt(23) + instruction.charAt(23);
+                        instruction.charAt(22) + instruction.charAt(23) + "0";
+                System.out.println("PIPELINE DEBUG: branch imm: " + imm);
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -440,7 +443,7 @@ public class Pipeline {
         decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
         decodedInstruction.put("rs2", registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("imm", imm);
-        System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
+        //System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
 
         return decodedInstruction;
     }

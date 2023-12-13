@@ -13,7 +13,9 @@ public class Memory {
 
 	public void setMemoryValue(String address, String value) {
 		if(Long.parseLong(address, 2) >= Long.parseLong(Utility.DATA_MEMORY_ADDRESS, 2)) {
-            System.out.println("  MEMORY DEBUG: Putting data " + value + " at address " + address);
+            System.out.print("  MEMORY DEBUG: Putting data " + value + " at address " + address);
+            // Print memory address as 8 byte hex
+            System.out.println(" (0x" + Long.toHexString(Long.parseLong(address, 2)) + ")");
             this.dataLines++;
         }
 		memoryMap.put(address, value);
