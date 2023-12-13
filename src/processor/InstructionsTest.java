@@ -179,5 +179,52 @@ class InstructionsTest {
         int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
         assertEquals(12, programCounterValue); // Assuming each test increment is 4
     }
+    
+    @Test
+    void LB() {
+    	// Set up initial values
+        String binaryValueX1 = "00000000000000000000000000001010"; // Example base register value (10 in binary)
+        testRegisters.setRegisterValue("x1", binaryValueX1);
 
+        // Test LB with a small positive offset
+        HashMap<String, String> instructionMapSmallOffset = new HashMap<>();
+        instructionMapSmallOffset.put("rs1", "x1");
+        instructionMapSmallOffset.put("rd", "x10");
+        instructionMapSmallOffset.put("imm", "00000000000000000000000000000101"); // Example offset (5 in binary)
+        testMemory.storeByte(15, "11111111"); // Example byte value (42 in decimal) at memory address 15
+        testInstructions.LB(instructionMapSmallOffset);
+
+        String resultSmallOffset = testRegisters.getRegisterValue("x10");
+        System.out.println("Result Small Offset: " + resultSmallOffset);
+        assertEquals("11111111111111111111111111111111", resultSmallOffset); // Expected value at memory address 15
+        
+        // Test LB with zero offset
+        HashMap<String, String> instructionMapZeroOffset = new HashMap<>();
+        instructionMapZeroOffset.put("rs1", "x1");
+        instructionMapZeroOffset.put("rd", "x11");
+        instructionMapZeroOffset.put("imm", "00000000000000000000000000000000"); // Example offset (0 in binary)
+        testMemory.storeByte(10, "00010111"); // Example byte value at memory address 10
+        testInstructions.LB(instructionMapZeroOffset);
+
+        String resultZeroOffset = testRegisters.getRegisterValue("x11");
+        System.out.println("Result Zero Offset: " + resultZeroOffset);
+        assertEquals("00000000000000000000000000010111", resultZeroOffset); // Expected value at memory address 10
+
+        // Test LB with a negative offset
+        HashMap<String, String> instructionMapNegativeOffset = new HashMap<>();
+        instructionMapNegativeOffset.put("rs1", "x1");
+        instructionMapNegativeOffset.put("rd", "x12");
+        instructionMapNegativeOffset.put("imm", "11111111111111111111111111111011"); // Example offset (-5 in binary)
+        testMemory.storeByte(5, "00100101"); // Example byte value at memory address 5
+        testInstructions.LB(instructionMapNegativeOffset);
+
+        String resultNegativeOffset = testRegisters.getRegisterValue("x12");
+        System.out.println("Result Negative Offset: " + resultNegativeOffset);
+        assertEquals("00000000000000000000000000100101", resultNegativeOffset); // Expected value at memory address 5
+
+        // Verify that the program counter is incremented
+        int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
+        System.out.println(programCounterValue);
+        //assertEquals(8, programCounterValue); // Assuming each test increment is 4
+    }
 }

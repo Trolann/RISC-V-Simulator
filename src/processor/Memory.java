@@ -12,10 +12,15 @@ public class Memory {
 	}
 
 	public void setMemoryValue(String address, String value) {
+<<<<<<< HEAD
 		if(Long.parseLong(address, 2) >= Long.parseLong(Utility.DATA_MEMORY_ADDRESS, 2)) {
             System.out.println("  MEMORY DEBUG: Putting data " + value + " at address " + address);
             this.dataLines++;
         }
+=======
+		// TODO: error handling for memory? ie. check if value is valid?
+		System.out.println("Address: " + address + ", Value: " + value);
+>>>>>>> sohini-branch
 		memoryMap.put(address, value);
 	}
 
@@ -38,6 +43,15 @@ public class Memory {
 		return instruction;
 	}
 
+    public String loadWord2(int memoryAddress) {
+        String memoryValue = Utility.leftPadSigned(memoryAddress);
+        String wordValue = "";
+        for (int i = 0; i < 2; i++) {
+            wordValue = getMemoryValue(memoryValue) + wordValue;
+            memoryValue = Utility.StringCrement(memoryValue, 1);
+        }
+        return wordValue;
+    }
 	
     public String loadWord(int memoryAddress) {
         // Assuming each word is 32 bits
@@ -46,7 +60,7 @@ public class Memory {
         for (int i = 0; i < 4; i++) {
             // Get the value of each byte in the word
             String byteValue = getMemoryValue(Integer.toString(memoryAddress + i));
-            
+
             // Ensure that the byte value is 8 bits long
             byteValue = Utility.leftPad(byteValue);
 
@@ -73,7 +87,7 @@ public class Memory {
         String byteValue = getMemoryValue(Utility.leftPadSigned(address));
         return byteValue;
     }
-    
+
     public void storeByte(int memoryAddress, String byteValue) {
         // Store the byte at the specified memory address
         String address = Utility.leftPadSigned(memoryAddress);
@@ -92,7 +106,6 @@ public class Memory {
             setMemoryValue(address, bytes[i]);
         }
     }
-
 
     public void storeWord(int memoryAddress, String value) {
         // Split the 32-bit value into 4 bytes
