@@ -16,8 +16,6 @@ public class Memory {
             System.out.println("  MEMORY DEBUG: Putting data " + value + " at address " + address);
             this.dataLines++;
         }
-
-		System.out.println("Address: " + address + ", Value: " + value);
 		memoryMap.put(address, value);
 	}
 
@@ -43,45 +41,16 @@ public class Memory {
     public String loadWord2(int memoryAddress) {
         String memoryValue = Utility.leftPadSigned(memoryAddress);
         String wordValue = "";
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
             wordValue = getMemoryValue(memoryValue) + wordValue;
             memoryValue = Utility.StringCrement(memoryValue, 1);
         }
         return wordValue;
     }
-	
-    public String loadWord(int memoryAddress) {
-        // Assuming each word is 32 bits
-        StringBuilder loadedWord = new StringBuilder();
-
-        for (int i = 0; i < 4; i++) {
-            // Get the value of each byte in the word
-            String byteValue = getMemoryValue(Integer.toString(memoryAddress + i));
-
-            // Ensure that the byte value is 8 bits long
-            byteValue = Utility.leftPad(byteValue);
-
-            // Append the byte value to the loadedWord
-            loadedWord.append(byteValue);
-        }
-
-        return loadedWord.toString();
-    }
     
     public String loadHalfword2(int address) {
     	String halfwordValue = getMemoryValue(Utility.leftPadSigned(address));
         System.out.println("MEMORY DEBUG: halfwordValue: " + halfwordValue);
-        return halfwordValue;
-    }
-    
-    public String loadHalfword(int address) {
-    	// Assuming that the address is an integer for simplicity
-        // Load the two bytes starting from the given address
-        String byte1 = getMemoryValue(Integer.toString(address));
-        String byte2 = getMemoryValue(Integer.toString(address + 1));
-
-        // Combine the two bytes to form the halfword
-        String halfwordValue = byte1 + byte2;
         return halfwordValue;
     }
     

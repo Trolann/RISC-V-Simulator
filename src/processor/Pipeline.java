@@ -264,7 +264,7 @@ public class Pipeline {
                         instruction.charAt(1) + instruction.charAt(2) + instruction.charAt(3) +
                         instruction.charAt(4) + instruction.charAt(5) + instruction.charAt(6) +
                         instruction.charAt(7) + instruction.charAt(8) + instruction.charAt(9) +
-                        instruction.charAt(10);
+                        instruction.charAt(10) + "0";
                 instructionName = "jal";
                 break;
             case "1100111":

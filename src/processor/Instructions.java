@@ -67,11 +67,13 @@ public class Instructions {
 		// Convert program counter to integer before adding the offset
 		int programCounter = Integer.parseUnsignedInt(registers.getProgramCounter(), 2);
 		int jumpTargetAddress = programCounter + immediate;
+		System.out.println("JAL DEBUG: immediate: " + immediate + " programCounter: " + programCounter
+				+ " jumpTargetAddress: " + jumpTargetAddress);
+		System.out.println("Integer.toUnsignedString(programCounter + 4, 2): " +
+				Integer.toUnsignedString(programCounter + 4, 2));
 
 		// Save the return address (program counter + 4) in the destination register
 		registers.setRegisterValue(rd, Integer.toUnsignedString(programCounter + 4, 2));
-
-		System.out.println("JAL DEBUG: Jump to " + jumpTargetAddress);
 
 		// Set the program counter to the jump target address
 		registers.setProgramCounter(Integer.toUnsignedString(jumpTargetAddress, 2));
@@ -89,19 +91,23 @@ public class Instructions {
 		// Read the value from the base register (rs1)
 		int baseRegisterValue = Integer.parseUnsignedInt(registers.getRegisterValue(rs1), 2);
 
+
 		// Calculate the jump target address by adding the immediate to the base
 		// register value
 		int jumpTargetAddress = baseRegisterValue + immediate;
+		String jumpTargetString = Utility.leftPad("0" + Integer.toUnsignedString(jumpTargetAddress, 2));
+		//replace last char with 0
+		jumpTargetString = jumpTargetString.substring(0, jumpTargetString.length() - 1) + "0";
 
 		// Save the return address (program counter + 4) in the destination register
 		// (rd)
 		registers.setRegisterValue(rd,
 				Integer.toUnsignedString(Integer.parseInt(registers.getProgramCounter(), 2) + 4, 2));
 
-		System.out.println("JALR DEBUG: Jump to " + jumpTargetAddress);
+		System.out.println("JALR DEBUG: Jump to " + jumpTargetString);
 
 		// Set the program counter to the jump target address
-		registers.setProgramCounter(Integer.toUnsignedString(jumpTargetAddress, 2));
+		registers.setProgramCounter(jumpTargetString);
 
 		return String.format("jalr %s, %s, %d", rd, rs1, immediate);
 	}
@@ -640,7 +646,7 @@ public class Instructions {
 
 		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
 		// Convert immediate value from binary string to integer
-		int immediate = Integer.parseInt(Utility.leftPad(imm), 2);
+		int immediate = (int) Long.parseUnsignedLong(Utility.leftPad(imm), 2);
 
 		// Perform SLLI operation
 		int result = valueIntRs1 << immediate;
@@ -860,11 +866,7 @@ public class Instructions {
 		String valueRs1 = registers.getRegisterValue(rs1);
 		String valueRs2 = registers.getRegisterValue(rs2);
 
-		// Check if register values are null
-		if (valueRs1 == null || valueRs2 == null) {
-			// Handle the error, maybe throw an exception or return an error message
-			return "Error: Null register value for rs1 or rs2";
-		}
+
 
 		// Convert register values from binary string to integer
 		int intValueRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
