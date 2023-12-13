@@ -630,30 +630,32 @@ public class Instructions {
 	}
 
 	public String SLLI(HashMap<String, String> instructionComponents) {
-	    // Extract components from the HashMap
-	    String rd = instructionComponents.get("rd"); // destination register
-	    String rs1 = instructionComponents.get("rs1"); // source register 1
-	    String imm = instructionComponents.get("imm"); // immediate value
-	    // Get values from registers
-	    String valueRs1 = registers.getRegisterValue(rs1);
+		// Extract components from the HashMap
+		String rd = instructionComponents.get("rd"); // destination register
+		String rs1 = instructionComponents.get("rs1"); // source register 1
+		String imm = instructionComponents.get("shamt"); // immediate register
 
-	    int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
-	    // Convert shift amount from binary string to integer
-	    int shiftAmount = Integer.parseInt(imm, 2);
+		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
 
-		int result = valueIntRs1 << shiftAmount;
+		int valueIntRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		// Convert immediate value from binary string to integer
+		int immediate = Integer.parseInt(Utility.leftPad(imm), 2);
+
+		// Perform SLLI operation
+		int result = valueIntRs1 << immediate;
 
 		// Convert result to 32-bit binary string
 		String resultBinary = Integer.toBinaryString(result);
 		// Pad result to 32 bits
 		resultBinary = String.format("%32s", resultBinary).replace(' ', '0');
 
-	    // Update rd register value
-	    registers.setRegisterValue(rd, resultBinary);
-	    registers.incrementProgramCounter();
+		// Update rd register value
+		registers.setRegisterValue(rd, resultBinary);
+		registers.incrementProgramCounter();
 
-	    // Build and return the instruction result string
-	    return String.format("slli %s, %s, %d", rd, rs1, shiftAmount);
+		// Build and return the instruction result string
+		return String.format("slli %s, %s, %d", rd, rs1, immediate);
 	}
 
 	public String SRAI(HashMap<String, String> instructionComponents) {
@@ -844,28 +846,36 @@ public class Instructions {
 	}
 
 	public String SLT(HashMap<String, String> instructionComponents) {
-		// Extract components from the HashMap
 		String rd = instructionComponents.get("rd"); // destination register
 		String rs1 = instructionComponents.get("rs1"); // source register 1
 		String rs2 = instructionComponents.get("rs2"); // source register 2
+
+		// Check if any of the required values are null
+		if (rd == null || rs1 == null || rs2 == null) {
+			// Handle the error, maybe throw an exception or return an error message
+			return "Error: Missing values in instruction";
+		}
 
 		// Get values from registers
 		String valueRs1 = registers.getRegisterValue(rs1);
 		String valueRs2 = registers.getRegisterValue(rs2);
 
-		// Convert values to signed integers
-		int valueIntRs1 = Integer.parseInt(valueRs1, 2);
-		int valueIntRs2 = Integer.parseInt(valueRs2, 2);
+		// Check if register values are null
+		if (valueRs1 == null || valueRs2 == null) {
+			// Handle the error, maybe throw an exception or return an error message
+			return "Error: Null register value for rs1 or rs2";
+		}
 
-		// Perform the set less than operation
-		int result = (valueIntRs1 < valueIntRs2) ? 1 : 0;
-		System.out.println("SLT DEBUG: Comparing " + valueIntRs1 + " < " + valueIntRs2 + " to get " + result);
+		// Convert register values from binary string to integer
+		int intValueRs1 = (int) Long.parseUnsignedLong(valueRs1, 2);
+		int intValueRs2 = (int) Long.parseUnsignedLong(valueRs2, 2);
 
-		// Convert result to 32-bit binary string
+		// Perform SLT operation
+		int result = (intValueRs1 < intValueRs2) ? 1 : 0;
 		String resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
+		// Store the result in the destination register
+		registers.setRegisterValue(rd, Utility.leftPad("0" + result));
 
-		// Update rd register value
-		registers.setRegisterValue(rd, resultBinary);
 		registers.incrementProgramCounter();
 
 		// Build and return the instruction result string
