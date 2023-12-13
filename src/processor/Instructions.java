@@ -705,18 +705,27 @@ public class Instructions {
 		String rs2 = instructionComponents.get("rs2"); // source register 2
 		String imm = instructionComponents.get("imm"); // offset
 
+		System.out.println("SB DEBUG: imm: " + imm);
 		// Get values from registers
+		String valueRs1 = registers.getRegisterValue(rs1);
+		System.out.println("SB DEBUG: valueRs1: " + Integer.parseInt(valueRs1, 2));
+		System.out.println("SB DEBUG: rs1: " + rs1);
+		int valueIntRs1 = Integer.parseInt(rs1.substring(1));
+		System.out.println("SB DEBUG: Integer.parseInt(rs1): " + Integer.parseInt(rs1.substring(1)));
 		String valueRs2 = registers.getRegisterValue(rs2);
 		int valueIntRs2 = Integer.parseUnsignedInt(valueRs2, 2);
 		// Convert immediate value from binary string to integer
-		int offset = Integer.parseUnsignedInt(Utility.leftPad(imm), 2);
+		int offset = Integer.parseInt(imm, 2);
+		System.out.println("SB DEBUG: offset: " + offset);
 
 		// Calculate effective address
-		int effectiveAddress = Integer.parseInt(Utility.DATA_MEMORY_ADDRESS, 2) + offset;
+		int effectiveAddress = Integer.parseInt(valueRs1, 2) + offset;
+		System.out.println("SB DEBUG: DATA_MEMORY_ADDRESS: " + Integer.parseInt(Utility.DATA_MEMORY_ADDRESS, 2));
 		System.out.println("SB DEBUG: StoreByte " + effectiveAddress + " offset " + offset + " to get " + valueIntRs2);
 
+		System.out.println("Utility.leftPadSigned(valueIntRs2)" + Utility.leftPadSigned(valueIntRs2));
 		// Store the byte to memory
-		memory.storeByte(effectiveAddress, valueRs2.substring(24));
+		memory.storeByte(effectiveAddress, Utility.leftPadSigned(valueIntRs2).substring(24));
 		registers.incrementProgramCounter();
 
 		// Build and return the instruction result string

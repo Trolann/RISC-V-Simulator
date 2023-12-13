@@ -86,7 +86,7 @@ public class Pipeline {
     public boolean runNextInstruction() throws IOException {
     	//System.out.println("PIPELINE DEBUG: Running next instruction: " + registers.getProgramCounter());
         String instruction = memory.getInstruction(registers.getProgramCounter());
-        //System.out.println("PIPELINE DEBUG: raw instruction: " + instruction);
+        System.out.println("PIPELINE DEBUG: raw instruction: " + instruction);
 
         if(instruction.equals(Utility.ALLZEROS)) {
             outputFile.close();
@@ -133,6 +133,7 @@ public class Pipeline {
         int pcIntValue = Integer.parseInt(registers.getProgramCounter(), 2); // Convert binary to int
         //System.out.println("PIPELINE DEBUG: Checking for breakpoint at: " + pcIntValue);
         if(breakpoints.contains(pcIntValue)) {
+            System.out.println("PIPELINE DEBUG: Reached breakpoint at: " + pcIntValue);
             hasReachedBreakpoint = true;
         }
         return RUN;
