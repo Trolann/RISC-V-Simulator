@@ -367,4 +367,49 @@ class InstructionsTest {
         int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
         assertEquals(12, programCounterValue); // Assuming each test increment is 4
     }
+
+    @Test
+    void BNE() {
+        // Set up initial register values
+        testRegisters.setRegisterValue("x1", "00000000000000000000000000000100"); // 4 in binary
+        testRegisters.setRegisterValue("x2", "00000000000000000000000000001000"); // 8 in binary
+        testRegisters.setRegisterValue("x3", "00000000000000000000000000000100"); // 4 in binary
+        testRegisters.setRegisterValue("x5", "11111111111111111111111111111100"); // -4 in two's complement
+
+        // Test where rs1 < rs2
+        HashMap<String, String> instructionMap1 = new HashMap<>();
+        instructionMap1.put("rs1", "x1");
+        instructionMap1.put("rs2", "x2");
+        instructionMap1.put("imm", "00000000000000000000000000000010"); // imm set to 2
+        testInstructions.BNE(instructionMap1);  // should increment PC by 2
+        assertEquals("00000000000000000000000000000100", testRegisters.getProgramCounter());
+
+        // Test where rs1 > rs2
+        HashMap<String, String> instructionMap2 = new HashMap<>();
+        instructionMap2.put("rs1", "x2");
+        instructionMap2.put("rs2", "x1");
+        instructionMap2.put("imm", "00000000000000000000000000000010"); // imm set to 2
+        testInstructions.BNE(instructionMap2);  // should increment PC by 2
+        assertEquals("00000000000000000000000000001000", testRegisters.getProgramCounter());
+
+        // Test where rs1 == rs2
+        HashMap<String, String> instructionMap3 = new HashMap<>();
+        instructionMap3.put("rs1", "x1");
+        instructionMap3.put("rs2", "x3");
+        instructionMap3.put("imm", "00000000000000000000000000000010"); // imm set to 2
+        testInstructions.BNE(instructionMap3);  // should increment PC by 4
+        assertEquals("00000000000000000000000000001100", testRegisters.getProgramCounter());
+
+        // Test with a negative value
+        HashMap<String, String> instructionMap4 = new HashMap<>();
+        instructionMap4.put("rs1", "x5");
+        instructionMap4.put("rs2", "x1");
+        instructionMap4.put("imm", "00000000000000000000000000000010"); // imm set to 2
+        testInstructions.BNE(instructionMap4);  // should increment PC by 2
+        assertEquals("00000000000000000000000000010000", testRegisters.getProgramCounter());
+
+        // Verify that the program counter is incremented correctly
+        int programCounterValue = Integer.parseInt(testRegisters.getProgramCounter(), 2);
+        assertEquals(10, programCounterValue); // Assuming each *successful* test increment is 2
+    }
 }
