@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 
 public class Pipeline {
 
@@ -17,14 +18,20 @@ public class Pipeline {
     private FileWriter outputFile;
     private final boolean RUN = true;
     private final boolean STOP = false;
+    private String datFile;
 
-    public Pipeline(Memory memory, Registers registers) {
+    public Pipeline(Memory memory, Registers registers, String inputFile) {
         this.memory = memory;
         this.registers = registers;
         this.breakpoints = new HashSet<>();
         this.hasReachedBreakpoint = false;
         this.functionMap = new HashMap<>();
         this.instructions = new Instructions(memory, registers);
+        // outputFile = input file before the extension + .asm
+        inputFile = inputFile.split("/")[(inputFile.split("/").length) - 1];
+        String[] inputFileSplit = inputFile.split("\\.");
+        this.datFile = inputFileSplit[0] + ".asm";
+        System.out.println("datFile: " + datFile);
         functionMap.put("lui", this.instructions::LUI); // 1
         functionMap.put("auipc", this.instructions::AUIPC); // 2
         functionMap.put("jal", this.instructions::JAL); // 3
@@ -68,52 +75,75 @@ public class Pipeline {
     }
 
     // Run until a breakpoint or end
-    public boolean runUntilEnd() {
+    public boolean runUntilEnd() throws IOException {
     	while(!memory.getInstruction(registers.getProgramCounter()).equals(Utility.ALLZEROS)) {
         	runNextInstruction();
         }
-        	return STOP;
+        outputFile.close();
+        return STOP;
     }
     // Execute a single instruction
-    public boolean runNextInstruction() {
-    	System.out.println("PIPELINE DEBUG: Running next instruction: " + registers.getProgramCounter());
+    public boolean runNextInstruction() throws IOException {
+    	//System.out.println("PIPELINE DEBUG: Running next instruction: " + registers.getProgramCounter());
         String instruction = memory.getInstruction(registers.getProgramCounter());
         System.out.println("PIPELINE DEBUG: raw instruction: " + instruction);
 
-        if(instruction == null) {
+        if(instruction.equals(Utility.ALLZEROS)) {
+            outputFile.close();
             return STOP;
         }
 
         // Convert machine instruction to assembly components (you'll need to implement this)
         HashMap<String, String> asmComponents = machineToAsm(instruction);
-        System.out.println("PIPELINE DEBUG: instructionName: " + asmComponents.get("instructionName"));
+        //System.out.println("PIPELINE DEBUG: instructionName: " + asmComponents.get("instructionName"));
 
         if (functionMap.containsKey(asmComponents.get("instructionName"))) {
             String result;
             result = functionMap.get(asmComponents.get("instructionName")).execute(asmComponents);
-            System.out.println("PIPELINE DEBUG: result: " + result);
-            
+
+            //System.out.println("PIPELINE DEBUG: result: " + result);
+            String oldPC = Utility.StringCrement(registers.getProgramCounter(), -4);
+            // Convert oldPC to 32 bit hex
+            int digits = Integer.toHexString(Integer.parseInt(oldPC, 2)).length();
+            oldPC = Integer.toHexString(Integer.parseInt(oldPC, 2));
+            for (int i = 0; i < 8 - digits; i++) {
+                oldPC = "0" + oldPC;
+            }
+            oldPC = "0x" + oldPC;
+            System.out.println(oldPC + ": " + result);
+            // Parse instruction as an unsigned binary string, then convert to hex
+            String machineCode = Integer.toHexString((int) Long.parseLong(instruction, 2));
+            //System.out.println("PIPELINE DEBUG: machineCode: " + machineCode);
+            digits = machineCode.length();
+            for (int i = 0; i < 8 - digits; i++) {
+                machineCode = "0" + machineCode;
+            }
+            machineCode = "0x" + machineCode;
+
             // Write the assembly instruction to a .asm file
-            writeInstructionToFile(result);
+            writeInstructionToFile(oldPC, machineCode, result);
         } else {
         	System.out.println("PIPELINE DEBUG: Instruction not found: " + asmComponents);
+            outputFile.close();
             return STOP;
         }
 
         // Check for breakpoints
         //int pcIntValue = Integer.parseInt(pcValue, 2); // Convert binary to int
         int pcIntValue = Integer.parseInt(registers.getProgramCounter(), 2); // Convert binary to int
-        System.out.println("PIPELINE DEBUG: Checking for breakpoint at: " + pcIntValue);
+        //System.out.println("PIPELINE DEBUG: Checking for breakpoint at: " + pcIntValue);
         if(breakpoints.contains(pcIntValue)) {
+            System.out.println("PIPELINE DEBUG: Reached breakpoint at: " + pcIntValue);
             hasReachedBreakpoint = true;
         }
         return RUN;
     }
 
     public String printNextAsmInstruction() {
+        // test
         // create a bogus instructions so that it does not affect the actual program
         // and use return (execute) value to return the asm.
-        Instructions bogusInstructions = new Instructions(new Memory(), new Registers());
+        Instructions bogusInstructions = new Instructions(new Memory(), new Registers(registers));
         Map<String, InstructionFunction> bogusMap = new HashMap<String, InstructionFunction>();
         bogusMap.put("lui", bogusInstructions::LUI); // 1
         bogusMap.put("auipc", bogusInstructions::AUIPC); // 2
@@ -168,15 +198,16 @@ public class Pipeline {
         }
     }
 
-    private void writeInstructionToFile(String result) {
+    private void writeInstructionToFile(String programCounter, String machineInstruction, String result) {
 		try {
             if (outputFile == null) {
                 // Open the file for writing
-                outputFile = new FileWriter("output.asm");
+                outputFile = new FileWriter(datFile);
+                outputFile.write("Address     Code        Basic\n");
             }
 
             // Write the instruction to the file
-            outputFile.write(result + "\n");
+            outputFile.write(programCounter + "  " + machineInstruction + "  "  + result + "\n");
             
             // Flush the buffer to ensure data is written immediately
             outputFile.flush();
@@ -186,12 +217,14 @@ public class Pipeline {
 	}
 
 	// Continue execution until the next breakpoint or end
-    public boolean continueExecution() {
-    	boolean done;
+    public boolean continueExecution() throws IOException {
+    	boolean continueRunning;
         hasReachedBreakpoint = false; // Reset breakpoint flag
     	while(!hasReachedBreakpoint) {
-            done = runNextInstruction();
-            if(!done) {
+            continueRunning = runNextInstruction();
+            //System.out.println("PIPELINE DEBUG: continueRunning: " + continueRunning);
+            if(!continueRunning) {
+                outputFile.close();
                 return STOP;
             }
         }
@@ -234,7 +267,7 @@ public class Pipeline {
                         instruction.charAt(1) + instruction.charAt(2) + instruction.charAt(3) +
                         instruction.charAt(4) + instruction.charAt(5) + instruction.charAt(6) +
                         instruction.charAt(7) + instruction.charAt(8) + instruction.charAt(9) +
-                        instruction.charAt(10);
+                        instruction.charAt(10) + "0";
                 instructionName = "jal";
                 break;
             case "1100111":
@@ -246,7 +279,8 @@ public class Pipeline {
                         instruction.charAt(24) + instruction.charAt(1) + instruction.charAt(2) +
                         instruction.charAt(3) + instruction.charAt(4) + instruction.charAt(5) +
                         instruction.charAt(6) + instruction.charAt(20) + instruction.charAt(21) +
-                        instruction.charAt(23) + instruction.charAt(23);
+                        instruction.charAt(22) + instruction.charAt(23) + "0";
+                System.out.println("PIPELINE DEBUG: branch imm: " + imm);
                 switch (fc) {
                     default:
                         instructionName += " fc: " + fc;
@@ -339,11 +373,11 @@ public class Pipeline {
                         instructionName = "andi";
                         break;
                     case "001":
-                        imm = instruction.substring(0, 7);
+                        decodedInstruction.put("shamt", rs2);
                         instructionName = "slli";
                         break;
                     case "101":
-                        imm = instruction.substring(0, 7);
+                        decodedInstruction.put("shamt", rs2);
                         instructionName = imm.contains("1") ? "srai" : "srli";
                         break;
                 }
@@ -410,7 +444,7 @@ public class Pipeline {
         decodedInstruction.put("rs1", registers.getRegisterString(Integer.parseInt(rs1, 2)));
         decodedInstruction.put("rs2", registers.getRegisterString(Integer.parseInt(rs2, 2)));
         decodedInstruction.put("imm", imm);
-        System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
+        //System.out.println("PIPELINE DEBUG: decodedInstruction: " + decodedInstruction);
 
         return decodedInstruction;
     }

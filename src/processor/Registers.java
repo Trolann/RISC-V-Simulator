@@ -21,6 +21,12 @@ public class Registers {
         registerMap.put("pc", Utility.ALLZEROS);
     }
 
+    public Registers(Registers oldRegisters) {
+        this.registerMap = new HashMap<>();
+        this.aliasMap = new HashMap<>(oldRegisters.aliasMap);
+        this.registerMap.putAll(oldRegisters.registerMap);
+    }
+
     private void initializeRegistersAndAliases() {
         String[] aliases = {
                 "x0", // x0 (zero)
@@ -63,26 +69,47 @@ public class Registers {
         }
     }
 
+    public String xToT(String xRegister) {
+        Map<String, String> xToTMap = new HashMap<>();
+        xToTMap.put("x5", "t0");
+        xToTMap.put("x6", "t1");
+        xToTMap.put("x7", "t2");
+        xToTMap.put("x28", "t3");
+        xToTMap.put("x29", "t4");
+        xToTMap.put("x30", "t5");
+        xToTMap.put("x31", "t6");
+        return xToTMap.getOrDefault(xRegister, xRegister);
+    }
+
+    public String tToX(String tRegister) {
+        Map<String, String> tToXMap = new HashMap<>();
+        tToXMap.put("t0", "x5");
+        tToXMap.put("t1", "x6");
+        tToXMap.put("t2", "x7");
+        tToXMap.put("t3", "x28");
+        tToXMap.put("t4", "x29");
+        tToXMap.put("t5", "x30");
+        tToXMap.put("t6", "x31");
+        return tToXMap.getOrDefault(tRegister, tRegister);
+    }
+
     // Get register string based on integer
     public String getRegisterString(int registerInt) {
         return "x" + registerInt;
     }
 
-    // Set register value based on integer
-    public void setRegisterValue(int registerInt, String value) {
-        String registerKey = getRegisterString(registerInt);
-        setRegisterValue(registerKey, value);
-    }
-
-    // Get register value based on integer
-    public String getRegisterValue(int registerInt) {
-        String registerKey = getRegisterString(registerInt);
-        return getRegisterValue(registerKey);
-    }
-
     public void setRegisterValue(String registerKey, String value) {
         if (registerMap.containsKey(registerKey) && !registerKey.equals("x0") && value.length() == 32) {
             registerMap.put(registerKey, value);
+            System.out.print("REGISTER DEBUG: Set " + registerKey + "(" + xToT(registerKey) +") to " + value);
+            int valueAsInt = 0;
+            try {
+                valueAsInt = (int) Long.parseUnsignedLong(value, 2);
+                System.out.println(" (" + valueAsInt + ")");
+            } catch (NumberFormatException e) {
+                System.out.println(" (UnK)");
+            }
+
         }
     }
 
@@ -108,10 +135,6 @@ public class Registers {
         return registerMap.get("pc");
     }
 
-    public void setProgramCounter(int programCounter) {
-        String localPcValue = Utility.StringCrement(Utility.ALLZEROS, programCounter);
-        registerMap.put("pc", localPcValue);
-    }
 
     public void setProgramCounter(String programCounter) {
         String localPcValue = programCounter;

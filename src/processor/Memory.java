@@ -3,15 +3,21 @@ package processor;
 import java.util.HashMap;
 
 public class Memory {
-
 	private HashMap<String, String> memoryMap;
+    public int dataLines;
 
 	public Memory() {
 		memoryMap = new HashMap<>();
+        this.dataLines = 0;
 	}
 
 	public void setMemoryValue(String address, String value) {
-		// TODO: error handling for memory? ie. check if value is valid?
+		if(Long.parseLong(address, 2) >= Long.parseLong(Utility.DATA_MEMORY_ADDRESS, 2)) {
+            System.out.print("  MEMORY DEBUG: Putting data " + value + " at address " + address);
+            // Print memory address as 8 byte hex
+            System.out.println(" (0x" + Long.toHexString(Long.parseLong(address, 2)) + ")");
+            this.dataLines++;
+        }
 		memoryMap.put(address, value);
 	}
 
@@ -34,45 +40,31 @@ public class Memory {
 		return instruction;
 	}
 
-	
-    public String loadWord(int memoryAddress) {
-        // Assuming each word is 32 bits
-        StringBuilder loadedWord = new StringBuilder();
-
+    public String loadWord2(int memoryAddress) {
+        String memoryValue = Utility.leftPadSigned(memoryAddress);
+        String wordValue = "";
         for (int i = 0; i < 4; i++) {
-            // Get the value of each byte in the word
-            String byteValue = getMemoryValue(Integer.toString(memoryAddress + i));
-            
-            // Ensure that the byte value is 8 bits long
-            byteValue = Utility.leftPad(byteValue);
-
-            // Append the byte value to the loadedWord
-            loadedWord.append(byteValue);
+            wordValue = getMemoryValue(memoryValue) + wordValue;
+            memoryValue = Utility.StringCrement(memoryValue, 1);
         }
-
-        return loadedWord.toString();
+        return wordValue;
     }
     
-    public String loadHalfword(int address) {
-        // Assuming that the address is an integer for simplicity
-        // Load the two bytes starting from the given address
-        String byte1 = getMemoryValue(Integer.toString(address));
-        String byte2 = getMemoryValue(Integer.toString(address + 1));
-
-        // Combine the two bytes to form the halfword
-        String halfwordValue = byte1 + byte2;
+    public String loadHalfword2(int address) {
+    	String halfwordValue = getMemoryValue(Utility.leftPadSigned(address));
+        System.out.println("MEMORY DEBUG: halfwordValue: " + halfwordValue);
         return halfwordValue;
     }
     
     public String loadByte(int address) {
         // Assuming that the address is an integer for simplicity
-        String byteValue = getMemoryValue(Integer.toString(address));
+        String byteValue = getMemoryValue(Utility.leftPadSigned(address));
         return byteValue;
     }
-    
+
     public void storeByte(int memoryAddress, String byteValue) {
         // Store the byte at the specified memory address
-        String address = Utility.leftPad(Integer.toBinaryString(memoryAddress));
+        String address = Utility.leftPadSigned(memoryAddress);
         setMemoryValue(address, byteValue);
     }
     
@@ -84,11 +76,10 @@ public class Memory {
         }
         // Store each byte at the corresponding memory address
         for (int i = 0; i < 2; i++) {
-            String address = Utility.leftPad(Integer.toBinaryString(memoryAddress + i));
+            String address = Utility.leftPadSigned(memoryAddress + i);
             setMemoryValue(address, bytes[i]);
         }
     }
-
 
     public void storeWord(int memoryAddress, String value) {
         // Split the 32-bit value into 4 bytes
@@ -98,7 +89,7 @@ public class Memory {
         }
         // Store each byte at the consecutive memory addresses
         for (int i = 0; i < 4; i++) {
-            String address = Utility.leftPad(Integer.toBinaryString(memoryAddress + i));
+            String address = Utility.leftPadSigned(memoryAddress + i);
             setMemoryValue(address, bytes[i]);
         }
     }

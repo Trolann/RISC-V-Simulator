@@ -40,17 +40,23 @@ public class Utility {
         return result;
     }
 
+    public static String leftPadSigned(int result) {
+        String resultBinary = Utility.leftPad(Integer.toBinaryString(result));
+        if (result >= 0 ) {
+            resultBinary = Utility.leftPad("0" + Integer.toBinaryString(result));
+        }
+        return resultBinary;
+    }
+
     public static String leftPad(String binaryString) {
         int firstChar = Integer.parseInt(binaryString.substring(0, 1));
         while (binaryString.length() < 32) {
             binaryString = firstChar + binaryString;
         }
-        //return binaryString;
+        
         // Return the last 32 bits
         return binaryString.substring(binaryString.length() - 32);
     }
-
-
 
     public static void main(String[] args) {
         System.out.println("leftPad with a 0: " + leftPad("0111"));
